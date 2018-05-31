@@ -38,7 +38,7 @@ module.exports = {
         include: path.join(__dirname, 'src'),
       },
       {
-        test: /\.styl/,
+        test: /\.styl$/,
         use: [
           'style-loader',
           {
