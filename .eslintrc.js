@@ -35,7 +35,10 @@ module.exports = {
     // 坚定的 semicolon-less 拥护者
     "semi": [2, "never"],
     "linebreak-style": 0,
+    "react/forbid-prop-types": 0,
+    "react/require-default-props": 0,
   },
   "env": {
     "browser": true,
-  }}
+  },
+}

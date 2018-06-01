@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
   /* 入口 */
   entry: [path.join(__dirname, 'src/app.jsx')],
-
+  mode: 'production',
   /* 输出到dist文件夹，输出文件名字为bundle.js */
   output: {
     path: path.join(__dirname, './dist'),
@@ -26,7 +26,7 @@ module.exports = {
       // component: path.join(__dirname, 'src/component'),
       // router: path.join(__dirname, 'src/router')
     },
-    // modules: [path.resolve('./client'), path.resolve('./node_modules')],
+    // modules: [path.resolve('./src'), path.resolve('./node_modules')],
     extensions: ['.js', '.jsx'],
   },
   devtool: 'inline-source-map',
