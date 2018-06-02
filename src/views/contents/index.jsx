@@ -2,10 +2,12 @@ import React from 'react'
 import Blog from './blog'
 
 export default class Contents extends React.Component {
-  handl = () => {}
+  shouldComponentUpdate(nextProps) {
+    return this.props.style.marginLeft !== nextProps.style.marginLeft
+  }
   render() {
     return (
-      <div className="contents">
+      <div className="contents" style={this.props.style}>
         <Blog />
         <Blog />
         <Blog />

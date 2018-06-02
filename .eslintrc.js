@@ -20,6 +20,7 @@ module.exports = {
         "trailingComma": "all",
         "bracketSpacing": true,
         "jsxBracketSameLine": true,
+        "printWidth":100,
       }
     ],
     // 一个函数的复杂性不超过 10，所有分支、循环、回调加在一起，在一个函数里不超过 10 个
@@ -35,8 +36,8 @@ module.exports = {
     // 坚定的 semicolon-less 拥护者
     "semi": [2, "never"],
     "linebreak-style": 0,
-    "react/forbid-prop-types": 0,
-    "react/require-default-props": 0,
+    "react/prop-types": 0,
+    "max-len": [2,120]
   },
   "env": {
     "browser": true,

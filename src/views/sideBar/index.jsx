@@ -1,16 +1,65 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 export default class sidebar extends React.Component {
-  static propTypes = {
-    classNames: PropTypes.string,
-    style: PropTypes.object,
-  }
   handle = () => {}
   render() {
     return (
       <aside className={this.props.classNames} style={this.props.style}>
-        sidebar
+        <h3>sidebar</h3>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
+        <p>something</p>
       </aside>
     )
   }
