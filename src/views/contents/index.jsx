@@ -1,20 +1,18 @@
 import React from 'react'
+import { inject, observer } from 'mobx-react'
+// import injectSheet from 'react-jss'
 import Blog from './blog'
 
-export default class Contents extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    return this.props.style.marginLeft !== nextProps.style.marginLeft
-  }
+const Contents = inject('appStore')(
+  observer(({ appStore }) => (
+    <div className="contents" style={{ ...appStore.contentStyle }}>
+      <Blog />
+      <Blog />
+      <Blog />
+      <Blog />
+      <Blog />
+    </div>
+  )),
+)
 
-  render() {
-    return (
-      <div className="contents" style={this.props.style}>
-        <Blog />
-        <Blog />
-        <Blog />
-        <Blog />
-        <Blog />
-      </div>
-    )
-  }
-}
+export default Contents

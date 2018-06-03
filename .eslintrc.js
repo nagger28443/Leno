@@ -38,7 +38,8 @@ module.exports = {
     "linebreak-style": 0,
     "react/prop-types": 0,
     "max-len": [2, 120],
-    "no-plusplus":0,
+    "no-plusplus": 0,
+    "react/sort-comp":0,
   },
   "env": {
     "browser": true,
