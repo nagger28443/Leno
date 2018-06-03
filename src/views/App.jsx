@@ -5,69 +5,70 @@ import Contnets from './contents'
 import { SIDE_TO_TOP_WIDTH } from '../../src/constants'
 
 const TOPBAR = 'topbar'
-const FIXEDBAR = 'fixedbar'
-const FLOATBAR = 'floatbar'
+const SIDEBAR = 'sidebar'
 
 export default class App extends React.Component {
   constructor(props) {
     super(props)
     const barType = this.getBarType()
     this.state = {
-      contentStyle: this.getContentStyle(barType),
-      barStyle: this.getBarStyle(barType),
       barType,
+      contentStyle: this.getContentStyle(barType),
+      barStyle:
+        barType === TOPBAR ? { height: window.innerWidth * 0.17 } : { position: 'fixed', top: 0 },
     }
   }
 
   componentDidMount() {
-    window.addEventListener(
-      'resize',
-      _.throttle(() => {
-        const barType = this.getBarType()
-        this.setState({
-          contentStyle: this.getContentStyle(barType),
-          barStyle: this.getBarStyle(barType),
-          barType,
-        })
-      }, 200),
-      false,
-    )
-    window.addEventListener(
-      'scroll',
-      _.throttle(() => {
-        const barType = this.getBarType()
-        this.setState({
-          barStyle: this.getBarStyle(barType),
-          barType,
-        })
-      }, 0),
-      false,
-    )
+    window.addEventListener('resize', _.throttle(this.handleResize, 50), false)
+    window.addEventListener('scroll', _.throttle(this.getHandleScroll(), 30), false)
   }
-  getBarType = () => {
-    let barType
-    if (!window.matchMedia(`(min-width: ${SIDE_TO_TOP_WIDTH}px)`).matches) {
-      barType = TOPBAR
-    } else if (
-      document.querySelector('.sidebar') &&
-      window.innerHeight + document.documentElement.scrollTop >=
-        document.querySelector('.sidebar').clientHeight
-    ) {
-      barType = FIXEDBAR
-    } else {
-      barType = FLOATBAR
+
+  getBarType = () =>
+    window.matchMedia(`(min-width: ${SIDE_TO_TOP_WIDTH}px)`).matches ? SIDEBAR : TOPBAR
+
+  getBarStyle = (barType, scrollDir) => {
+    if (barType === TOPBAR) {
+      return { height: window.innerWidth * 0.17 }
     }
-    return barType
+    const offset =
+      window.innerHeight + window.pageYOffset - document.querySelector('.banner').clientHeight
+    const { barStyle } = this.state
+    if (scrollDir === 'down' && offset >= 0) {
+      return { ...barStyle, position: 'fixed', top: null, bottom: 0 }
+    } else if (scrollDir === 'up' && offset >= 0 && !this.state.barStyle.top) {
+      return { barStyle, position: 'absolute', top: offset, bottom: null }
+    }
+    return barStyle
   }
-  getBarStyle = barType =>
-    barType === TOPBAR
-      ? { height: window.innerWidth * 0.17, width: '100vw' }
-      : { minHeight: '100vh', width: '27%' }
+
   getContentStyle = barType => ({ marginLeft: barType === TOPBAR ? 0 : '27%' })
+
+  getHandleScroll = () => {
+    let prevY = window.pageYOffset
+    return () => {
+      this.setState({
+        barStyle: this.getBarStyle(
+          this.getBarType(),
+          window.pageYOffset - prevY < 0 ? 'up' : 'down',
+        ),
+      })
+      prevY = window.pageYOffset
+    }
+  }
+
+  handleResize = () => {
+    const barType = this.getBarType()
+    this.setState({
+      barType,
+      contentStyle: this.getContentStyle(barType),
+      barStyle: this.getBarStyle(barType),
+    })
+  }
   render() {
     return (
       <React.Fragment>
-        <SideBar classNames={`sidebar ${this.state.barType}`} style={this.state.barStyle} />
+        <SideBar classNames={`banner ${this.state.barType}`} style={this.state.barStyle} />
         <Contnets style={this.state.contentStyle} />
       </React.Fragment>
     )
