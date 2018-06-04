@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import { Provider } from 'mobx-react'
 import { configure } from 'mobx'
+import { BrowserRouter } from 'react-router-dom'
 import App from './views/App'
 import appStore from './store/appStore'
 import './app.styl'
@@ -15,7 +16,9 @@ const stores = {
 
 ReactDom.render(
   <Provider {...stores}>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </Provider>,
   document.getElementById('root'),
 )
