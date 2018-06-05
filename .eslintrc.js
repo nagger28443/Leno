@@ -40,6 +40,9 @@ module.exports = {
     "max-len": [2, 120],
     "no-plusplus": 0,
     "react/sort-comp":0,
+    "no-case-declarations": 0,
+    "no-cond-assign": 0,
+    "no-console":0,
   },
   "env": {
     "browser": true,
