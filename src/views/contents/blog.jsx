@@ -1,10 +1,40 @@
-import React from 'react'
+import React from 'react';
+import article from '../../blogs/1.md';
+
+const blockRegexes = [/^ ?(#+)/];
+
+function blockFormat(block) {
+  blockRegexes.forEach((regex) => {
+    const matches = regex.exec(block);
+    console.log(matches);
+  });
+}
+function devideIntoBlocks(md) {
+  return md.replace(/^ ?(?=#)/gm, '\n\n')
+    .replace(/^-{3,}$/gm, '\n---\n')
+    .replace(/\*{3,}$/gm, '\n***\n')
+    .replace(/\n\s+\n/gm, '\n\n')
+    .split(/\n\n/gm);
+}
+
+function MDParser(md) {
+  const blocks = devideIntoBlocks(md);
+  const jsx = blocks.map(block => blockFormat(block));
+  console.log(blocks);
+  console.log(jsx);
+
+  // return blocks.map((line) => {
+
+  // }).join('');
+}
 
 export default class Blog extends React.Component {
   handl = () => {}
   render() {
+    // console.log(article);
     return (
       <article className="contents">
+        {MDParser(article)}
         <header>Header 文章标题</header>
         <h1>Hhhhhhh1 段落标题</h1>
         <p>
@@ -56,6 +86,6 @@ export default class Blog extends React.Component {
           第二个参数为一个分支函数列表）。
         </p>
       </article>
-    )
+    );
   }
 }
