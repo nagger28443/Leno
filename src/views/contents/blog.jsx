@@ -6,21 +6,25 @@ const TAGS = {
   ul: Symbol('ul'),
   ol: Symbol('ol'),
   quote: Symbol('quote'),
-  codeBlock: Symbol('codeBlock'),
+  nest: Symbol('nest'),
   thinLine: Symbol('thinLine'),
   thickLine: Symbol('thickLine'),
+  codeBlockQuote: Symbol('codeBlockQuote'),
+  codeBlockTab: Symbol('codeBlockTab'),
+  p: Symbol('p'),
   empty: Symbol('empty'),
 }
 
-const hRegex = /^ {0,3}(#+) +/
-const ulRegex = /^ {0,3}- /
-const olRegex = /^ {0,3}\d. /
-// const pRegex =  //default
+const hRegex = /^ {0,3}(#+)\s+/
+const ulRegex = /^ {0,1}-\s/
+const olRegex = /^ {0,1}\d.\s/
+const nestBlockRegex = /^ *((- )|(\d\. )|>)/
 const quoteRegex = /^ ?(>+)/
-const codeBlockRegex = /^ {4,}|^\t/
-const thinLineRegex = /^ {0,3}---/
-const thickLineRegex = /^ {0,3}\*\*\*/
-// const codeInline = //
+const codeBlockQuoteRegex = /^ *`{3,}\s*$/
+const codeBlockTabRegex = /^ {4,}/
+const thinLineRegex = /^ {0,3}-{3,}\s*$/
+const thickLineRegex = /^ {0,3}\*{3,}\s?$/
+const pRegex = /^ {0,3}[^\s]+/
 
 function devideIntoBlocks(md) {
   let lastTag = null
@@ -37,30 +41,48 @@ function devideIntoBlocks(md) {
 
   function getBlock(line) {
     switch (true) {
-      case codeBlockRegex.test(line):
-        // todo
+      case codeBlockQuoteRegex.test(line):
+        if (lastTag !== TAGS.codeBlockQuote) {
+          mergeBlock(line, TAGS.codeBlockQuote)
+        } else {
+          blocks[blocks.length - 1].content.push(line)
+          lastTag = null
+        }
+        break
+      case lastTag === TAGS.codeBlockQuote:
+        blocks[blocks.length - 1].content.push(line)
         break
       case hRegex.test(line):
         blocks.push({ tag: TAGS.h, content: [line] })
         lastTag = null
         break
-      case ulRegex.test(line):
-        mergeBlock(line, TAGS.ul)
-        break
-      case olRegex.test(line):
-        mergeBlock(line, TAGS.ol)
-        break
-      case quoteRegex.test(line):
-        mergeBlock(line, TAGS.quote)
-        break
+
       case thinLineRegex.test(line):
         blocks.push({ tag: TAGS.thinLine, content: [line] })
+        lastTag = null
         break
       case thickLineRegex.test(line):
         blocks.push({ tag: TAGS.thickLine, content: [line] })
+        lastTag = null
         break
+
+      case nestBlockRegex.test(line):
+        mergeBlock(line, TAGS.nest)
+        break
+
+      case pRegex.test(line):
+        mergeBlock(line, TAGS.p)
+        break
+
+      case codeBlockTabRegex.test(line) || lastTag === TAGS.codeBlockTab:
+        mergeBlock(line, TAGS.codeBlockTab)
+        break
+      case lastTag === TAGS.codeBlockTab:
+        blocks[blocks.length - 1].content.push(line)
+        break
+
       default:
-        // p
+        lastTag = null
         break
     }
   }
@@ -75,44 +97,44 @@ function devideIntoBlocks(md) {
   //   .replace(/\n\s+\n/gm, '\n\n')
   //   .split(/\n{2,}/gm)
 }
-function generateJSX(block) {
-  let res
-  let content
-  let Tag
-  switch (true) {
-    case !!(res = hRegex.exec(block)):
-      Tag = `h${res[1].length}`
-      content = res.input.slice(res[0].length)
-      return <Tag>{content}</Tag>
-    case !!(res = ulRegex.exec(block)):
-      console.log(res)
-      break
-    case !!(res = olRegex.exec(block)):
-      console.log(res)
-      break
-    case !!(res = quoteRegex.exec(block)):
-      console.log(res)
-      break
-    case !!(res = codeBlockRegex.exec(block)):
-      console.log(res)
-      break
-    case !!(res = thinLineRegex.exec(block)):
-      console.log(res)
-      break
-    case !!(res = thickLineRegex.exec(block)):
-      console.log(res)
-      break
+// function generateJSX(block) {
+//   let res
+//   let content
+//   let Tag
+//   switch (true) {
+//     case !!(res = hRegex.exec(block)):
+//       Tag = `h${res[1].length}`
+//       content = res.input.slice(res[0].length)
+//       return <Tag>{content}</Tag>
+//     case !!(res = ulRegex.exec(block)):
+//       console.log(res)
+//       break
+//     case !!(res = olRegex.exec(block)):
+//       console.log(res)
+//       break
+//     case !!(res = quoteRegex.exec(block)):
+//       console.log(res)
+//       break
+//     case !!(res = codeBlockRegex.exec(block)):
+//       console.log(res)
+//       break
+//     case !!(res = thinLineRegex.exec(block)):
+//       console.log(res)
+//       break
+//     case !!(res = thickLineRegex.exec(block)):
+//       console.log(res)
+//       break
 
-    default:
-      // p
-      break
-  }
-}
+//     default:
+//       // p
+//       break
+//   }
+// }
 function MDParser(md) {
   const blocks = devideIntoBlocks(md)
-  const jsx = blocks.map(generateJSX)
-  console.log(blocks)
-  console.log(jsx)
+  // const jsx = blocks.map(generateJSX)
+  console.table(blocks)
+  // console.log(jsx)
 
   // return blocks.map((line) => {
 
