@@ -16,10 +16,10 @@ const TAGS = {
 }
 
 const hRegex = /^ {0,3}(#+)\s+/
-const ulRegex = /^ {0,1}-\s/
-const olRegex = /^ {0,1}\d.\s/
+const ulRegex = /^( *)- (.*)/
+const olRegex = /^( *)\d\. (.*)/
+const quoteRegex = /^( *)(>+)(.*)/
 const nestBlockRegex = /^ *((- )|(\d\. )|>)/
-const quoteRegex = /^ ?(>+)/
 const codeBlockQuoteRegex = /^ *`{3,}\s*$/
 const codeBlockTabRegex = /^ {4,}/
 const thinLineRegex = /^ {0,3}-{3,}\s*$/
@@ -90,105 +90,90 @@ function devideIntoBlocks(md) {
   md.split('\n').forEach(getBlock)
 
   return blocks
-  // return md
-  //   .replace(/^ ?(?=#|-|>)/gm, '\n')
-  //   .replace(/^-{3,}$/gm, '\n---\n')
-  //   .replace(/\*{3,}$/gm, '\n***\n')
-  //   .replace(/\n\s+\n/gm, '\n\n')
-  //   .split(/\n{2,}/gm)
 }
-// function generateJSX(block) {
-//   let res
-//   let content
-//   let Tag
-//   switch (true) {
-//     case !!(res = hRegex.exec(block)):
-//       Tag = `h${res[1].length}`
-//       content = res.input.slice(res[0].length)
-//       return <Tag>{content}</Tag>
-//     case !!(res = ulRegex.exec(block)):
-//       console.log(res)
-//       break
-//     case !!(res = olRegex.exec(block)):
-//       console.log(res)
-//       break
-//     case !!(res = quoteRegex.exec(block)):
-//       console.log(res)
-//       break
-//     case !!(res = codeBlockRegex.exec(block)):
-//       console.log(res)
-//       break
-//     case !!(res = thinLineRegex.exec(block)):
-//       console.log(res)
-//       break
-//     case !!(res = thickLineRegex.exec(block)):
-//       console.log(res)
-//       break
 
-//     default:
-//       // p
-//       break
-//   }
-// }
+function handleNestedBlock(content) {
+  const tagStack = []
+  let lastIndent = 0
+  let res = null
+  return (
+    content
+      .map(line => {
+        let tmp = ''
+        let tag
+        if ((res = ulRegex.exec(line))) {
+          tag = 'ul'
+        } else if ((res = olRegex.exec(line))) {
+          tag = 'ol'
+        }
+        console.log(res)
+
+        if (res[1].length < lastIndent) {
+          while (res[1].length < lastIndent) {
+            tmp += `</${tagStack.pop()}>`
+            lastIndent -= 2
+          }
+          tmp = `<li>${res[2]}</li>`
+        } else if (res[1].length === lastIndent + 2 || tagStack.length === 0) {
+          tagStack.push(tag)
+          tmp = `<${tag}><li>${res[2]}</li>`
+        } else if (res[1].length > lastIndent + 2) {
+          tmp = `${res[2]}`
+        } else if (res[1].length === lastIndent) {
+          tmp = `<li>${res[2]}</li>`
+        }
+
+        lastIndent = res[1].length
+        return tmp
+      })
+      .join('') + tagStack.map(tag => `</${tag}>`).join('')
+  )
+}
+function handleBI(content) {
+  return content
+    .replace(/\*{3}(?!\*)(.*?)\*{3}/g, '<strong><i>$1</i></strong>')
+    .replace(/\*{2}(?!\*)(.*?)\*{2}/g, '<strong>$1</strong>')
+    .replace(/\*(?!\*)(.*?)\*/g, '<i>$1</i>')
+}
+function generateJSX(block) {
+  let res
+  let text
+  let Tag
+  const { content, tag } = block
+  switch (tag) {
+    case TAGS.h:
+      res = hRegex.exec(content[0])
+      Tag = `h${res[1].length}`
+      text = content[0].slice(res[0].length)
+      return <Tag dangerouslySetInnerHTML={{ __html: handleBI(text) }} />
+    case TAGS.codeBlockQuote:
+      let len = content.length
+      if (codeBlockQuoteRegex.test(content[len - 1])) --len
+      text = content.slice(1, len).join('\n')
+      return <pre className="code-block-quote">{text}</pre>
+    case TAGS.codeBlockTab:
+      return <pre className="code-block-tab">{content.join('\n')}</pre>
+    case TAGS.thinLine:
+      return <hr className="thin-line" />
+    case TAGS.thickLine:
+      return <hr className="thick-line" /> // 段落处理?标题内处理?
+    case TAGS.nest:
+      return <div dangerouslySetInnerHTML={{ __html: handleNestedBlock(content) }} />
+    default:
+      return <p dangerouslySetInnerHTML={{ __html: handleBI(content.join('')) }} />
+  }
+}
 function MDParser(md) {
   const blocks = devideIntoBlocks(md)
-  // const jsx = blocks.map(generateJSX)
-  console.table(blocks)
-  // console.log(jsx)
-
-  // return blocks.map((line) => {
-
-  // }).join('');
+  const jsx = blocks.map(generateJSX)
+  console.log(jsx)
+  return jsx
 }
 
 export default class Blog extends React.Component {
   handl = () => {}
   render() {
     // console.log(article);
-    return (
-      <article className="contents">
-        {MDParser(article)}
-        <header>Header 文章标题</header>
-        <h1>Hhhhhhh1 段落标题</h1>
-        <p>
-          I use the vector template in almost all my C++ software. Essentially, you can use it
-          whenever you need a dynamic array. The title of my blog post is word play: please use
-          vectors, but use them properly if you need speed!
-        </p>
-        <p>
-          R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。
-        </p>
-        <p>
-          R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。
-        </p>
-        <p>
-          R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。R.call 可以用作 R.converge 的 convergeing
-          函数：第一个分支函数生成函数，其余分支函数生成一系列值作为该函数的参数。（R.converge
-          第二个参数为一个分支函数列表）。
-        </p>
-      </article>
-    )
+    return <article className="contents">{MDParser(article)}</article>
   }
 }
