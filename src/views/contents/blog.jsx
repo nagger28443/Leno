@@ -69,16 +69,18 @@ function devideIntoBlocks(md) {
       case nestBlockRegex.test(line):
         mergeBlock(line, TAGS.nest)
         break
-
-      case pRegex.test(line):
-        mergeBlock(line, TAGS.p)
+      case line.trim().length === 0:
+        lastTag = null
         break
-
-      case codeBlockTabRegex.test(line) || lastTag === TAGS.codeBlockTab:
+      case lastTag === TAGS.nest:
+        const lastBlock = blocks[blocks.length - 1]
+        lastBlock.content[lastBlock.content.length - 1] += ` ${line}`
+        break
+      case codeBlockTabRegex.test(line):
         mergeBlock(line, TAGS.codeBlockTab)
         break
-      case lastTag === TAGS.codeBlockTab:
-        blocks[blocks.length - 1].content.push(line)
+      case pRegex.test(line):
+        mergeBlock(line, TAGS.p)
         break
 
       default:
@@ -88,8 +90,18 @@ function devideIntoBlocks(md) {
   }
 
   md.split('\n').forEach(getBlock)
-
   return blocks
+}
+
+function handleInline(content) {
+  // bold & italic & link
+  return content
+    .replace(/\*{3}(?!\*)(.*?)\*{3}/, '<strong><i>$1</i></strong>')
+    .replace(/\*{2}(?!\*)(.*?)\*{2}/, '<strong>$1</strong>')
+    .replace(/\*(?!\*)(.*?)\*/, '<i>$1</i>')
+    .replace(/<(https?:\/\/.*?)>/, '<a href="$1">$1</a>')
+    .replace(/<(.+?@.+?\..+?)>/, '<a href="mailto:$1">$1</a>')
+    .replace(/[\n\r]/, '')
 }
 
 function handleNestedBlock(content) {
@@ -101,26 +113,55 @@ function handleNestedBlock(content) {
       .map(line => {
         let tmp = ''
         let tag
-        if ((res = ulRegex.exec(line))) {
+        const deltLine = handleInline(line)
+        if ((res = ulRegex.exec(deltLine))) {
           tag = 'ul'
-        } else if ((res = olRegex.exec(line))) {
+        } else if ((res = olRegex.exec(deltLine))) {
           tag = 'ol'
+        } else if ((res = quoteRegex.exec(deltLine))) {
+          tag = `blockquote${res[2].length}`
+        } else {
+          return deltLine
         }
-        console.log(res)
 
-        if (res[1].length < lastIndent) {
+        const lastTag = tagStack[tagStack.length - 1]
+
+        if (tag.includes('blockquote')) {
+          if (lastTag === tag) {
+            return `<br>${res[3]}`
+          }
+          if (!lastTag || !lastTag.includes('blockquote') || tag > lastTag) {
+            tagStack.push(tag)
+            return `<blockquote>${res[3]}`
+          }
+          if (tag === 'blockquote1') {
+            return `<br>${res[3]}`
+          }
+
+          tagStack.pop()
+          return `</blockquote>${res[3]}`
+        } else if (lastTag && lastTag.includes('blockquote')) {
+          while (tagStack.length > 0 && tagStack[tagStack.length - 1].includes('blockquote')) {
+            tmp += '</blockquote>'
+            tagStack.pop()
+          }
+        }
+
+        if (res[1].length <= lastIndent) {
           while (res[1].length < lastIndent) {
             tmp += `</${tagStack.pop()}>`
             lastIndent -= 2
           }
-          tmp = `<li>${res[2]}</li>`
+          if (lastTag !== tag) {
+            tmp += `</${tagStack.pop()}><${tag}>`
+            tagStack.push(tag)
+          }
+          tmp += `<li>${res[2]}</li>`
         } else if (res[1].length === lastIndent + 2 || tagStack.length === 0) {
           tagStack.push(tag)
-          tmp = `<${tag}><li>${res[2]}</li>`
-        } else if (res[1].length > lastIndent + 2) {
-          tmp = `${res[2]}`
-        } else if (res[1].length === lastIndent) {
-          tmp = `<li>${res[2]}</li>`
+          tmp += `<${tag}><li>${res[2]}</li>`
+        } else {
+          tmp += `${res[2]}`
         }
 
         lastIndent = res[1].length
@@ -129,12 +170,7 @@ function handleNestedBlock(content) {
       .join('') + tagStack.map(tag => `</${tag}>`).join('')
   )
 }
-function handleBI(content) {
-  return content
-    .replace(/\*{3}(?!\*)(.*?)\*{3}/g, '<strong><i>$1</i></strong>')
-    .replace(/\*{2}(?!\*)(.*?)\*{2}/g, '<strong>$1</strong>')
-    .replace(/\*(?!\*)(.*?)\*/g, '<i>$1</i>')
-}
+
 function generateJSX(block) {
   let res
   let text
@@ -145,7 +181,7 @@ function generateJSX(block) {
       res = hRegex.exec(content[0])
       Tag = `h${res[1].length}`
       text = content[0].slice(res[0].length)
-      return <Tag dangerouslySetInnerHTML={{ __html: handleBI(text) }} />
+      return <Tag dangerouslySetInnerHTML={{ __html: handleInline(text) }} />
     case TAGS.codeBlockQuote:
       let len = content.length
       if (codeBlockQuoteRegex.test(content[len - 1])) --len
@@ -159,15 +195,13 @@ function generateJSX(block) {
       return <hr className="thick-line" /> // 段落处理?标题内处理?
     case TAGS.nest:
       return <div dangerouslySetInnerHTML={{ __html: handleNestedBlock(content) }} />
-    default:
-      return <p dangerouslySetInnerHTML={{ __html: handleBI(content.join('')) }} />
+    default: {
+      return <p dangerouslySetInnerHTML={{ __html: handleInline(content.join('')) }} />
+    }
   }
 }
 function MDParser(md) {
-  const blocks = devideIntoBlocks(md)
-  const jsx = blocks.map(generateJSX)
-  console.log(jsx)
-  return jsx
+  return devideIntoBlocks(md).map(generateJSX)
 }
 
 export default class Blog extends React.Component {

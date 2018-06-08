@@ -7,10 +7,7 @@ const Contents = inject('appStore')(
   observer(({ appStore }) => (
     <div className="contents" style={{ ...appStore.contentStyle }}>
       <Blog />
-      <Blog />
-      <Blog />
-      <Blog />
-      <Blog />
+
     </div>
   )),
 )
