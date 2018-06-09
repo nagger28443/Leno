@@ -8,12 +8,10 @@ body
   background: #e9f2f9
   margin: 0
 
-@media (max-width: 960px)
-  .banner
-    .menu
-      float: right 
     
-    
+#root
+  display: flex
+
 
 .banner
   background: #0a89cc
@@ -23,31 +21,51 @@ body
     padding: 0
     margin: auto
     text-align: center
+    font-size smaller
     li
       display: inline-block
-      margin: 1rem
-
+      margin: 0.5rem
 
 .sidebar
-  position: fixed
-  height: 100vh
   width: 27%
   max-width 22rem
-  float left
+  min-width 16rem
+  transition 0.8s margin-top cubic-bezier(0,.5,.7,1.36)
+  padding 300vh 2rem
+  // float left
+  // position: fixed
 
 .topbar
+  position: fixed
   min-height: 6rem
   width: 100vw 
   overflow: hidden
+  // transition height 0.4s
 
 .contents
   padding: 5%
   article 
     background: #ffffff
     margin-bottom: 6%
+    word-break: break-word;
   header 
     font-size: xx-large
     font-weight: bold
   p
     line-height: 1.7
     text-indent: 2rem
+  pre
+    text-overflow: clip;
+    white-space: pre-wrap;
+
+@media (max-width: 414px)
+  html 
+    font-size 66%
+
+    
+@media (max-width: 960px)
+  #root
+    display block
+  .banner
+    .menu
+      float: right 

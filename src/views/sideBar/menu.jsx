@@ -4,13 +4,13 @@ import { BrowserRouter as Router, Link } from 'react-router-dom'
 const Menu = () => (
   <ul className="menu">
     <li>
-      <Link to="/">首页</Link>
+      <Link to="/">Home</Link>
     </li>
     <li>
-      <Link to="/catalog">目录</Link>
+      <Link to="/catalog">Archive</Link>
     </li>
     <li>
-      <Link to="/tags">标签</Link>
+      <Link to="/tags">Labels</Link>
     </li>
   </ul>
 )

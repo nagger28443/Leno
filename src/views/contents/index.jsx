@@ -4,10 +4,13 @@ import { inject, observer } from 'mobx-react'
 import Blog from './blog'
 
 const Contents = inject('appStore')(
-  observer(({ appStore }) => (
-    <div className="contents" style={{ ...appStore.contentStyle }}>
+  observer(() => (
+    <div className="contents">
       <Blog />
-
+      <Blog />
+      <Blog />
+      <Blog />
+      <Blog />
     </div>
   )),
 )
