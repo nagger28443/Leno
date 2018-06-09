@@ -43,6 +43,7 @@ module.exports = {
     "no-case-declarations": 0,
     "no-cond-assign": 0,
     "no-console":0,
+    "jsx-a11y/anchor-is-valid": 0,
   },
   "env": {
     "browser": true,

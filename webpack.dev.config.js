@@ -10,6 +10,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, './dist'),
     filename: 'bundle.js',
+    publicPath: '/',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -19,6 +20,7 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, './dist'),
     port: clientServerPort,
+    historyApiFallback: true,
   },
   resolve: {
     alias: {

@@ -208,6 +208,6 @@ export default class Blog extends React.Component {
   handl = () => {}
   render() {
     // console.log(article);
-    return <article className="contents">{MDParser(article)}</article>
+    return <article className="article">{MDParser(article)}</article>
   }
 }

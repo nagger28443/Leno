@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import { Provider } from 'mobx-react'
 import { configure } from 'mobx'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import App from './views/App'
 import appStore from './store/appStore'
 import './app.styl'
@@ -16,8 +16,10 @@ const stores = {
 
 ReactDom.render(
   <Provider {...stores}>
-    <BrowserRouter>
-      <App />
+    <BrowserRouter basename="">
+      <Switch>
+        <Route key="/home" component={App} />
+      </Switch>
     </BrowserRouter>
   </Provider>,
   document.getElementById('root'),
