@@ -45,8 +45,8 @@ class AppStore {
     window.matchMedia(`(min-width: ${SIDE_TO_TOP_WIDTH}px)`).matches ? SIDEBAR : TOPBAR
 
   getBarStyle = barType => ({
-    height: barType === TOPBAR ? window.innerWidth * 0.17 : '700vh',
-    marginTop: barType === TOPBAR ? 0 : window.pageYOffset - window.innerHeight * 3,
+    height: barType === TOPBAR ? window.innerWidth * 0.17 : '100vh',
+    marginTop: barType === TOPBAR ? 0 : window.pageYOffset,
   })
 }
 export default new AppStore()

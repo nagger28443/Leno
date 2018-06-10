@@ -4,19 +4,45 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   /* 入口 */
-  entry: [path.join(__dirname, 'src/app.jsx')],
+  entry: {
+    app: [path.join(__dirname, 'src/app.jsx')],
+    vendor: [
+      'react',
+      'react-router-dom',
+      'mobx',
+      'mobx-react',
+      'react-jss',
+      'react-dom',
+      'lodash',
+      'antd',
+    ],
+  },
   mode: 'production',
   /* 输出到dist文件夹，输出文件名字为bundle.js */
   output: {
     path: path.join(__dirname, './dist'),
-    filename: 'bundle.js',
-    publicPath: '/',
+    filename: '[name].[chumlhash].js',
+    chunkFilename: '[name].[chunkhash].js',
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, './src/index.html'),
     }),
   ],
+  optimization: {
+    runtimeChunk: {
+      name: 'manifest',
+    },
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          chunks: 'all',
+        },
+      },
+    },
+  },
   devServer: {
     contentBase: path.join(__dirname, './dist'),
     port: clientServerPort,

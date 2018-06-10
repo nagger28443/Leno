@@ -7,13 +7,11 @@ import App from './views/App'
 import appStore from './store/appStore'
 import './app.styl'
 
-// don't allow state modifications outside actions
 configure({ enforceActions: true })
 
 const stores = {
   appStore,
 }
-
 ReactDom.render(
   <Provider {...stores}>
     <BrowserRouter basename="">

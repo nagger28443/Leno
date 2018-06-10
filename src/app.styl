@@ -5,37 +5,22 @@ html
   font-family: Menlo, "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei",sans-serif
 
 body
-  background: #f5f5f5
   margin: 0
 
 #root
   display: flex
+  background-color: #f5f5f5
 
-.banner
-  background: #2c76c7e3
-  color: #f5f5f5
-.menu
-  padding: 0
-  margin: auto
-  text-align: center
-  font-size smaller
-  color: #073e5b
-  .menu-item
-    display: inline-block
-    margin: 0.5rem
-    &:hover
-      transition: 0.5s transform;
-      transform: scale(1.1);
-  .menu-link
-    text-decoration: none;
-
+.banner 
+  color: #555
+  background-color: inherit 
 
 .sidebar
   width: 27%
   max-width 22rem
   min-width 16rem
   transition margin-top 0.8s cubic-bezier(0,.5,.7,1.36)
-  padding 300vh 2rem
+  padding 0 2rem
 
 .topbar
   position: fixed
@@ -47,19 +32,10 @@ body
   overflow: hidden
   transition: height 0.4s
 
-.bar-place-holder
-  min-height: 6rem
-  max-height: 10rem
-
 .contents
-  padding: 5% 0
+  padding: 0
   flex: 1
   color: #555
-  article 
-    background: #ffffff
-    margin-bottom: 6%
-    word-break: break-word;
-    padding: 2rem 5%
   header 
     font-size: xx-large
     font-weight: bold
@@ -69,8 +45,18 @@ body
   pre
     text-overflow: clip;
     white-space: pre-wrap;
-
-
+  blockquote
+    padding: 0.4rem 0
+    position relative
+    color: #666
+    &:before
+      content: ''
+      background: linear-gradient(to right, #dbdbdb, #6680990d 0.6rem,#6680990d)
+      left: -2rem
+      top: 0
+      width: 110%
+      height 100%
+      position absolute
 
 @media (max-width: 414px)
   html 
@@ -79,6 +65,3 @@ body
 @media (max-width: 960px)
   #root
     display block
-  .banner
-    .menu
-      float: right 
