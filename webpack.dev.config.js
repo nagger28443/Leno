@@ -6,16 +6,7 @@ module.exports = {
   /* 入口 */
   entry: {
     app: [path.join(__dirname, 'src/app.jsx')],
-    vendor: [
-      'react',
-      'react-router-dom',
-      'mobx',
-      'mobx-react',
-      'react-jss',
-      'react-dom',
-      'lodash',
-      'antd',
-    ],
+    vendor: ['react', 'react-router-dom', 'mobx', 'mobx-react', 'react-jss', 'react-dom', 'lodash'],
   },
   mode: 'production',
   /* 输出到dist文件夹，输出文件名字为bundle.js */
