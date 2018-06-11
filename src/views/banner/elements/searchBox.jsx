@@ -20,9 +20,9 @@ const styles = {
     fontFamily: 'inherit',
     fontSize: 'inherit',
     background: 'linear-gradient(to right,#e6e1e1e0,#f5f5f5)',
-    '& :focus': {
+    '&:focus': {
       outline: 0,
-      background: 'linear-gradient(to right,#e6e1e1e0,#f5f5f5)',
+      background: 'linear-gradient(to right,#d4d2d2,#f5f5f5)',
     },
   },
 }
