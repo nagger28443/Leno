@@ -12,13 +12,25 @@ configure({ enforceActions: true })
 const stores = {
   appStore,
 }
-ReactDom.render(
-  <Provider {...stores}>
-    <BrowserRouter basename="">
-      <Switch>
-        <Route key="/home" component={App} />
-      </Switch>
-    </BrowserRouter>
-  </Provider>,
-  document.getElementById('root'),
-)
+
+const render = Component => {
+  ReactDom.render(
+    <Provider {...stores}>
+      <BrowserRouter basename="">
+        <Switch>
+          <Route key="/home" component={Component} />
+        </Switch>
+      </BrowserRouter>
+    </Provider>,
+    document.getElementById('root'),
+  )
+}
+
+render(App)
+
+// Remove Webpack Hot Module Replacement API
+if (module.hot) {
+  module.hot.accept('./views/App.jsx', () => {
+    render(App)
+  })
+}

@@ -8,7 +8,7 @@ import Menu from './elements/menu'
 
 const styles = {}
 const Banner = inject('appStore')(
-  observer(({ appStore, classes }) => (
+  observer(({ appStore }) => (
     <aside className={`banner ${appStore.barType}`} style={{ ...appStore.barStyle }}>
       <h1>EVO</h1>
       <Menu />

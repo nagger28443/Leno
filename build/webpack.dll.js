@@ -27,7 +27,7 @@ const config = {
       title: 'dll过渡文件',
       // excludeChunks: ['ipad'],
       filename: 'dll.template.html',
-      template: path.join(__dirname, '../client/client.template.html'),
+      template: path.join(__dirname, '../src/index.html'),
     }),
   ],
 };

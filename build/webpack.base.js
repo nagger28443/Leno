@@ -1,31 +1,35 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   module: {
     rules: [
       {
         enforce: 'pre',
-        test: /\.js$/,
+        test: /\.jsx?$/,
         use: ['eslint-loader'],
         exclude: path.join(__dirname, '../node_modules'),
       },
       /** 只使用js的文件后缀 减少正则表达式的匹配 */
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         use: ['babel-loader?cacheDirectory=true'],
         exclude: path.join(__dirname, '../node_modules'),
       },
       {
         test: /\.css$/,
-        use: ['style-loader', {
-          loader: 'css-loader',
-          options: { minimize: true },
-        }],
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: { minimize: true },
+          },
+        ],
         // exclude: path.join(__dirname, '../node_modules'),
       },
       {
         test: /\.less$/,
-        use: ['style-loader',
+        use: [
+          'style-loader',
           {
             loader: 'css-loader',
             options: { minimize: true },
@@ -39,7 +43,8 @@ module.exports = {
       },
       {
         test: /\.styl/,
-        use: ['style-loader',
+        use: [
+          'style-loader',
           {
             loader: 'css-loader',
             options: { minimize: true },
@@ -50,13 +55,19 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|eot|ttf|otf)$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[hash:8].[ext]',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[hash:8].[ext]',
+            },
           },
-        }],
+        ],
         // exclude: path.join(__dirname, '../node_modules'),
+      },
+      {
+        test: /\.(txt|md)$/,
+        use: 'raw-loader',
       },
     ],
   },
@@ -84,5 +95,6 @@ module.exports = {
   resolve: {
     modules: [path.join(__dirname, '../node_modules')],
     mainFields: ['jsnext:main', 'browser', 'main'],
+    extensions: ['.js', '.jsx'],
   },
-};
+}

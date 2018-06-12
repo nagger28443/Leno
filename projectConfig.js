@@ -17,11 +17,11 @@ const projectConfig = {
    * 那么登录完成后会自动跳转到进入的页面
    * 下面这个配置 配置的是直接进入登录页面 登陆后默认跳转路由
    */
-  defaultRouteOnLogin: '/index',
+  defaultRouteOnLogin: '/',
   /**
    * 无需登录时 默认跳转路由
    */
-  defaultRoute: '/index',
+  defaultRoute: '/',
   /* 项目名称 方便在tomcat目录下存放 */
   projectName: 'Leno',
 }
