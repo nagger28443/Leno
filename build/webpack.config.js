@@ -89,7 +89,7 @@ if (isDev) {
   config.output = {
     path: path.join(__dirname, '../dist'),
     filename: '[name].[hash:8].js',
-    publicPath: `/${projectName}/`,
+    publicPath: `./`,
   }
   config.plugins = [
     /** 自动生成 html 并插入 js, css */
