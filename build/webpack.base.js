@@ -97,4 +97,7 @@ module.exports = {
     mainFields: ['jsnext:main', 'browser', 'main'],
     extensions: ['.js', '.jsx'],
   },
+  node: {
+    fs: 'empty',
+  },
 }
