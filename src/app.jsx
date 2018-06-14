@@ -29,8 +29,8 @@ const render = Component => {
 render(App)
 
 // Remove Webpack Hot Module Replacement API
-if (module.hot) {
-  module.hot.accept('./views/App.jsx', () => {
-    render(App)
-  })
-}
+// if (module.hot) {
+//   module.hot.accept('./views/App.jsx', () => {
+//     render(App)
+//   })
+// }

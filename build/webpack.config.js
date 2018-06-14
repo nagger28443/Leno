@@ -53,11 +53,7 @@ if (isDev) {
     disableHostCheck: true,
     port: clientServerPort,
     compress: true,
-    /**
-     * contentBase只能用来配置暴露本地文件的规则
-     * 而不能是 dev-server构建出的在内存中的结果
-     */
-    // contentBase: path.join(__dirname, '../dist'),
+
     overlay: {
       errors: true,
     },
@@ -73,11 +69,8 @@ if (isDev) {
     noInfo: false,
     inline: true,
     lazy: false,
-    // stats: 'errors-only',
     headers: { 'Access-Control-Allow-Origin': '*' },
-    // stats: 'minimal',
-    // progress: true,
-    // open: 'Google Chrome',
+
     watchOptions: {
       ignored: path.join(__dirname, '../node_modules/'),
       aggregateTimeout: 500,
@@ -92,9 +85,7 @@ if (isDev) {
     publicPath: `/${projectName}/`,
   }
   config.plugins = [
-    /** 自动生成 html 并插入 js, css */
     new HtmlWebpackPlugin({
-      // title: '大屏',
       template: path.join(__dirname, '../src/index.html'),
     }),
   ]

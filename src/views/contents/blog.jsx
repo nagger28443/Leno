@@ -9,7 +9,7 @@ const styles = {
   article: {
     background: '#ffffff',
     wordBreak: 'break-word',
-    padding: ['2rem', '5%', '6rem', '5%'],
+    padding: ['2rem', '5%', '8rem', '5%'],
     position: 'relative',
     transition: 'height 0.3s',
     overflow: 'hidden',
@@ -26,15 +26,15 @@ const styles = {
   toggleCollapse: {
     position: 'absolute',
     width: '100%',
-    height: '2rem',
+    height: '5rem',
     bottom: '4rem',
     left: 0,
-    background: '#ffffff',
+    paddingTop: '3rem',
     textAlign: 'center',
     letterSpacing: '0.3rem',
     fontSize: 'smaller',
     color: '#4663bbdb',
-
+    background: 'linear-gradient(to top,#f5f5f5,#ffffff 50%,#ffffff66)',
     '&:hover': {
       cursor: 'pointer',
     },
@@ -48,7 +48,6 @@ class Blog extends React.Component {
   @action
   toggleArticleCollapse = e => {
     this.isArticleCollapsed = !this.isArticleCollapsed
-    console.log(e.target.parentElement.offsetTop)
     if (this.isArticleCollapsed) {
       window.scrollTo({
         top: e.target.parentElement.offsetTop,

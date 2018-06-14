@@ -44,7 +44,6 @@ class SearchBox extends React.Component {
   handleSearch = e => {
     this.inputValue = e.target.value
     if (e.key === 'Enter') {
-      console.log(`search${this.inputValue}`)
       e.target.value = ''
       this.isInputCollapsed = true
     }
@@ -59,7 +58,7 @@ class SearchBox extends React.Component {
           placeholder="搜索标题和标签"
           onKeyPress={this.handleSearch}
           className={classes.searchInput}
-          style={{ width: this.isInputCollapsed ? 0 : '8rem' }}
+          style={{ width: this.isInputCollapsed ? 0 : '80%' }}
         />
       </div>
     )

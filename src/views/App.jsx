@@ -7,6 +7,7 @@ import Archive from './archive'
 import Labels from './labels'
 import About from './about'
 import Page404 from './page404'
+import Admin from './admin'
 import { TOPBAR } from '../constants'
 
 const App = inject('appStore')(
@@ -22,12 +23,13 @@ const App = inject('appStore')(
         }}
       />
       <Banner />
-      <div style={{ backgroundColor: '#f5f5f5' }}>
+      <div style={{ backgroundColor: '#f5f5f5', flex: 1 }}>
         <Switch>
           <Route path="/" exact key="/Contnets" component={Contnets} />
           <Route path="/archive" key="/archive" component={Archive} />
           <Route path="/labels" key="/labels" component={Labels} />
           <Route path="/about" key="/about" component={About} />
+          <Route path="/admin" key="/admin" component={Admin} />
           <Route key="404" component={Page404} />
         </Switch>
       </div>
