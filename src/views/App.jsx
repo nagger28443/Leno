@@ -9,6 +9,7 @@ import About from './about'
 import Page404 from './page404'
 import Admin from './admin'
 import { TOPBAR } from '../constants'
+import FullPage from './fullpage'
 
 const App = inject('appStore')(
   observer(({ appStore }) => (
@@ -30,6 +31,7 @@ const App = inject('appStore')(
           <Route path="/labels" key="/labels" component={Labels} />
           <Route path="/about" key="/about" component={About} />
           <Route path="/admin" key="/admin" component={Admin} />
+          <Route path="/blog/:blog" key="/fullpage" component={FullPage} />
           <Route key="404" component={Page404} />
         </Switch>
       </div>

@@ -7,7 +7,7 @@ import { TOPBAR } from '../../../constants'
 const styles = {
   menu: {
     padding: 0,
-    margin: 'auto',
+    // margin: 'auto',
     textAlign: 'center',
     fontSize: 'smaller',
     color: '#073e5b',

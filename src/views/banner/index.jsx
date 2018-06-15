@@ -6,19 +6,25 @@ import Links from './elements/links'
 import SearchBox from './elements/searchBox'
 import Menu from './elements/menu'
 
-const styles = {}
+const styles = {
+  root: {
+    float: 'right',
+  },
+}
 const Banner = inject('appStore')(
-  observer(({ appStore }) => (
+  observer(({ appStore, classes }) => (
     <aside className={`banner ${appStore.barType}`} style={{ ...appStore.barStyle }}>
-      <h1>EVO</h1>
-      <Menu />
-      <Links />
-      <Archive />
-      <SearchBox />
-      <p>someting</p>
-      <p>someting</p>
-      <p>someting</p>
-      <p>someting</p>
+      <div className={classes.root}>
+        <h1>EVO</h1>
+        <Menu />
+        <Links />
+        <Archive />
+        <SearchBox />
+        <p>someting</p>
+        <p>someting</p>
+        <p>someting</p>
+        <p>someting</p>
+      </div>
     </aside>
   )),
 )
