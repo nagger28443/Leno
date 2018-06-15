@@ -9,7 +9,7 @@ const styles = {
   article: {
     background: '#ffffff',
     wordBreak: 'break-word',
-    padding: ['2rem', '5%', '8rem', '5%'],
+    padding: ['2rem', '5%', '12rem', '5%'],
     position: 'relative',
     transition: 'height 0.3s',
     overflow: 'hidden',
@@ -26,10 +26,10 @@ const styles = {
   toggleCollapse: {
     position: 'absolute',
     width: '100%',
-    height: '5rem',
+    height: '8rem',
     bottom: '4rem',
     left: 0,
-    paddingTop: '3rem',
+    paddingTop: '6rem',
     textAlign: 'center',
     letterSpacing: '0.3rem',
     fontSize: 'smaller',
@@ -61,7 +61,7 @@ class Blog extends React.Component {
     return (
       <article
         className={classes.article}
-        style={{ height: this.isArticleCollapsed ? '40rem' : '100%' }}>
+        style={{ height: this.isArticleCollapsed ? '50rem' : '' }}>
         {MDParser(article)}
         <div className={classes.toggleCollapse} onClick={this.toggleArticleCollapse}>
           {this.isArticleCollapsed ? '<<<点击展开>>>' : '>>>点击收起<<<'}

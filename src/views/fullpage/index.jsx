@@ -20,7 +20,7 @@ inject('appStore')
 class FullPage extends React.Component {
   render() {
     const { classes } = this.props
-    return <article className={`contents ${classes.article}`}>{MDParser(article)}</article>
+    return <article className={`blog ${classes.article}`}>{MDParser(article)}</article>
   }
 }
 

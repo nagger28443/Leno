@@ -1,18 +1,19 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-// import injectSheet from 'react-jss'
+import injectSheet from 'react-jss'
 import Blog from './blog'
 
-const Contents = inject('appStore')(
+const styles = {}
+const Home = inject('appStore')(
   observer(() => (
-    <div className="contents">
+    <React.Fragment>
       <Blog />
       <Blog />
       <Blog />
       <Blog />
       <Blog />
-    </div>
+    </React.Fragment>
   )),
 )
 
-export default Contents
+export default injectSheet(styles)(Home)

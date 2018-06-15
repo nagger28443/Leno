@@ -1,16 +1,11 @@
 import React from 'react'
 import injectSheet from 'react-jss'
+import { Detail } from '../../styles'
 
-const styles = {
-  root: {
-    background: '#ffffff',
-    padding: '3rem',
-    minHeight: '100%',
-  },
-}
+const styles = {}
 
-const Archive = ({ classes }) => (
-  <div className={classes.root}>
+const Archive = () => (
+  <Detail>
     123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123
     123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123
     123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123
@@ -25,7 +20,7 @@ const Archive = ({ classes }) => (
     123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123
     123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123
     123 123 123 123 123 123 123 123
-  </div>
+  </Detail>
 )
 
 export default injectSheet(styles)(Archive)

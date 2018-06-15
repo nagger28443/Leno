@@ -2,7 +2,7 @@ import React from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import Banner from './banner'
-import Contnets from './contents'
+import Home from './home'
 import Archive from './archive'
 import Labels from './labels'
 import About from './about'
@@ -24,9 +24,9 @@ const App = inject('appStore')(
         }}
       />
       <Banner />
-      <div style={{ backgroundColor: '#f5f5f5', flex: 1 }}>
+      <div style={{ backgroundColor: '#f5f5f5', flex: 1, maxWidth: '55rem' }}>
         <Switch>
-          <Route path="/" exact key="/Contnets" component={Contnets} />
+          <Route path="/" exact key="/home" component={Home} />
           <Route path="/archive" key="/archive" component={Archive} />
           <Route path="/labels" key="/labels" component={Labels} />
           <Route path="/about" key="/about" component={About} />
