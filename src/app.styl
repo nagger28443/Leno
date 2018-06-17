@@ -12,28 +12,31 @@ body
   display: flex
   color: #555
   margin: auto
-  max-width: 80rem
+  max-width: 100rem
 
 .banner 
-  background-color: inherit 
+  background-color: #f5f5f5 
 
 .sidebar
-  width: 27%
-  max-width 22rem
-  min-width 16rem
-  transition margin-top 0.8s cubic-bezier(0,.5,.7,1.36)
+  width: 20%
+  max-width: 22rem
+  min-width: 16rem
+  transition: margin-top 0.8s cubic-bezier(0,.5,.7,1.36)
   padding: 2rem
+  background: linear-gradient(to bottom,#f2f2f2,#f5f5f5 2rem)
 
 .topbar
   position: fixed
   top: 0
-  min-height: 4rem
-  max-height: 10rem
-  padding: 1rem 2rem
+  min-height: 3.5rem
+  max-height: 6rem
+  padding: 0 8rem 0 4rem
   width: 100vw 
   overflow: hidden
-  transition: height 0.4s
+  transition: height 0.5s ease-in-out
   z-index: 10
+  display: flex
+  align-items: center
 
 article
   header 
@@ -63,7 +66,7 @@ article
   html 
     font-size 66%
 
-@media (max-width: 960px)
+@media (max-width: 1200px)
   #root
     display block
 

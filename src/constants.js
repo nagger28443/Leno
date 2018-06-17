@@ -1,4 +1,4 @@
-export const SIDE_TO_TOP_WIDTH = 960
+export const SIDE_TO_TOP_WIDTH = 1200
 
 export const eslintPlaceholder = 0
 

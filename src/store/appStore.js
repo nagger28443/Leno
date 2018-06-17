@@ -5,48 +5,54 @@ import { SIDE_TO_TOP_WIDTH, TOPBAR, SIDEBAR } from '../../src/constants'
 class AppStore {
   constructor() {
     window.addEventListener('resize', _.throttle(this.handleResize, 100), false)
-    window.addEventListener('scroll', _.throttle(this.handleScroll(), 200), false)
+    window.addEventListener('scroll', _.debounce(this.handleScroll(), 50), false)
   }
-  @observable barType = this.getBarType()
-  @observable barStyle = this.getBarStyle(this.barType)
+  @observable bannerType = this.getBannerType()
+  @observable bannerStyle = this.getBannerStyle(this.bannerType)
+  @observable rightBarStyle = this.getRightBarStyle()
 
-  isBarExpanded = true
+  isBannerExpanded = true
 
   @action
   handleResize = () => {
-    const barType = this.getBarType()
-    this.barType = barType
-    this.isBarExpanded = true
-    Object.assign(this.barStyle, this.getBarStyle(barType))
+    const bannerType = this.getBannerType()
+    this.bannerType = bannerType
+    this.isBannerExpanded = true
+    Object.assign(this.bannerStyle, this.getBannerStyle(bannerType))
   }
 
   handleScroll = () => {
     let prevY = window.pageYOffset
     return action(() => {
       const curY = window.pageYOffset
-      const { barType } = this
-      if (barType === TOPBAR) {
-        if (curY > prevY && this.isBarExpanded) {
+      const { bannerType } = this
+      if (bannerType === TOPBAR) {
+        if (curY > prevY + 100 && this.isBannerExpanded) {
           // down, collapsed
-          Object.assign(this.barStyle, { height: 0 })
-          this.isBarExpanded = false
-        } else if (curY < prevY && !this.isBarExpanded) {
-          Object.assign(this.barStyle, { height: window.innerWidth * 0.17 })
-          this.isBarExpanded = true
+          Object.assign(this.bannerStyle, { height: 0 })
+          this.isBannerExpanded = false
+        } else if (curY < prevY - 100 && !this.isBannerExpanded) {
+          Object.assign(this.bannerStyle, { height: window.innerWidth * 0.17 })
+          this.isBannerExpanded = true
         }
       } else {
-        Object.assign(this.barStyle, this.getBarStyle(barType))
+        Object.assign(this.bannerStyle, this.getBannerStyle(bannerType))
       }
+      Object.assign(this.rightBarStyle, this.getRightBarStyle())
       prevY = curY
     })
   }
 
-  getBarType = () =>
-    window.matchMedia(`(min-width: ${SIDE_TO_TOP_WIDTH}px)`).matches ? SIDEBAR : TOPBAR
+  getBannerType = () =>
+    window.matchMedia(`(max-width: ${SIDE_TO_TOP_WIDTH}px)`).matches ? TOPBAR : SIDEBAR
 
-  getBarStyle = barType => ({
-    height: barType === TOPBAR ? window.innerWidth * 0.17 : '100vh',
-    marginTop: barType === TOPBAR ? 0 : window.pageYOffset,
+  getBannerStyle = bannerType => ({
+    height: bannerType === TOPBAR ? window.innerWidth * 0.17 : '100vh',
+    marginTop: bannerType === TOPBAR ? 0 : window.pageYOffset,
+  })
+
+  getRightBarStyle = () => ({
+    marginTop: window.pageYOffset,
   })
 }
 export default new AppStore()

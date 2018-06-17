@@ -1,7 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 import injectSheet from 'react-jss'
-import Archive from './elements/archive'
 import Links from './elements/links'
 import SearchBox from './elements/searchBox'
 import Menu from './elements/menu'
@@ -10,17 +9,29 @@ import { SIDEBAR } from '../../constants'
 const styles = {}
 const Banner = inject('appStore')(
   observer(({ appStore }) => (
-    <aside className={`banner ${appStore.barType}`} style={{ ...appStore.barStyle }}>
-      <div style={appStore.barType === SIDEBAR ? { float: 'right' } : {}}>
+    <aside className={`banner ${appStore.bannerType}`} style={{ ...appStore.bannerStyle }}>
+      <div
+        style={
+          appStore.bannerType === SIDEBAR
+            ? { float: 'left' }
+            : {
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }
+        }>
         <h1>EVO</h1>
         <Menu />
-        <Links />
-        <Archive />
-        <SearchBox />
-        <p>someting</p>
-        <p>someting</p>
-        <p>someting</p>
-        <p>someting</p>
+        <div style={appStore.bannerType === SIDEBAR ? {} : { display: 'none' }}>
+          <Links />
+          <p>如人饮水，冷暖自知。</p>
+          <SearchBox />
+          <p>someting</p>
+          <p>someting</p>
+          <p>someting</p>
+          <p>someting</p>
+        </div>
       </div>
     </aside>
   )),
