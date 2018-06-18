@@ -1,6 +1,6 @@
 import { observable, action } from 'mobx'
 import _ from 'lodash'
-import { SIDE_TO_TOP_WIDTH, TOPBAR, SIDEBAR } from '../../src/constants'
+import { SIDE_TO_TOP_WIDTH, TOPBAR, SIDEBAR, SHOW_RIGHTBAR_WIDTH } from '../../src/constants'
 
 class AppStore {
   constructor() {
@@ -11,6 +11,7 @@ class AppStore {
   @observable bannerStyle = this.getBannerStyle(this.bannerType)
   @observable rightBarStyle = this.getRightBarStyle()
 
+  isRightBarVisible = window.matchMedia(`(min-width: ${SHOW_RIGHTBAR_WIDTH}px)`).matches
   isBannerExpanded = true
 
   @action
@@ -19,6 +20,9 @@ class AppStore {
     this.bannerType = bannerType
     this.isBannerExpanded = true
     Object.assign(this.bannerStyle, this.getBannerStyle(bannerType))
+
+    this.isRightBarVisible = window.matchMedia(`(min-width: ${SHOW_RIGHTBAR_WIDTH}px)`).matches
+    Object.assign(this.rightBarStyle, this.getRightBarStyle())
   }
 
   handleScroll = () => {
@@ -53,6 +57,7 @@ class AppStore {
 
   getRightBarStyle = () => ({
     marginTop: window.pageYOffset,
+    display: this.isRightBarVisible ? 'block' : ' none',
   })
 }
 export default new AppStore()

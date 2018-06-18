@@ -1,6 +1,6 @@
 import React from 'react'
 import injectSheet from 'react-jss'
-import { Detail } from '../../styles'
+import { Detail } from '../../styledComponents'
 
 const styles = {}
 

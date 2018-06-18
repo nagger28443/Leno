@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import injectSheet from 'react-jss'
 import { TOPBAR } from '../../../constants'
+import LabelModal from './labelModal'
 
 const styles = {
   menu: {
@@ -15,15 +16,7 @@ const styles = {
 
   menuItem: {
     display: 'inline-block',
-    margin: ' 0.5rem',
-    '&:hover': {
-      transition: ['0.5s', 'transform'],
-      transform: 'scale(1.1)',
-    },
-  },
-
-  menuLink: {
-    textDecoration: 'none',
+    margin: ['0.5rem', '1rem', '0.5rem', 0],
   },
 
   '@media (max-width: 1200px)': {
@@ -33,31 +26,32 @@ const styles = {
   },
 }
 
-const Menu = inject('appStore')(
-  observer(({ appStore, classes }) => (
+const Menu = inject('appStore', 'labelStore')(
+  observer(({ appStore, labelStore, classes }) => (
     <ul className={classes.menu}>
       <li className={classes.menuItem}>
-        <Link to="/" className={classes.menuLink}>
-          Home
+        <Link to="/" className="plain-link">
+          首页
         </Link>
       </li>
       <li className={classes.menuItem}>
-        <Link to="/archive" className={classes.menuLink}>
-          Archive
+        <Link to="/archive" className="plain-link">
+          存档
         </Link>
       </li>
       <li className={classes.menuItem}>
-        <Link to="/labels" className={classes.menuLink}>
-          Labels
-        </Link>
+        <span className="plain-link" onClick={labelStore.showLabelModal}>
+          标签
+        </span>
       </li>
       <li
         className={classes.menuItem}
-        style={{ display: appStore.barType === TOPBAR ? 'inline-block' : 'none' }}>
-        <Link to="/about" className={classes.menuLink}>
-          About
+        style={{ display: appStore.bannerType === TOPBAR ? 'inline-block' : 'none' }}>
+        <Link to="/about" className="plain-link">
+          关于
         </Link>
       </li>
+      <LabelModal />
     </ul>
   )),
 )

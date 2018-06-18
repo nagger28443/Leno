@@ -4,13 +4,6 @@ import { observer } from 'mobx-react'
 import { observable, action } from 'mobx'
 
 const styles = {
-  // searchBox: {
-  //   width: '2rem',
-  //   overflow: 'hidden',
-  //   '&:hover': {
-  //     width: '100%',
-  //   },
-  // },
   searchInput: {
     marginLeft: '0.5rem',
     padding: 0,
@@ -26,10 +19,6 @@ const styles = {
     },
   },
 }
-
-// const handleSearch = e => {
-//   console.log(e.target.text)
-// }
 
 @observer
 class SearchBox extends React.Component {
@@ -52,7 +41,7 @@ class SearchBox extends React.Component {
     const { classes } = this.props
     return (
       <div className={classes.searchBox}>
-        <span className="icon-search" onClick={this.toggleInputCollapse} />
+        <span className="icon-search plain-link" onClick={this.toggleInputCollapse} />
         <input
           type="text"
           placeholder="搜索标题和标签"

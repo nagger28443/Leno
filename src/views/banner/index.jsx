@@ -1,5 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+import { Link } from 'react-router-dom'
 import injectSheet from 'react-jss'
 import Links from './elements/links'
 import SearchBox from './elements/searchBox'
@@ -21,7 +22,11 @@ const Banner = inject('appStore')(
                 justifyContent: 'space-between',
               }
         }>
-        <h1>EVO</h1>
+        <h1>
+          <Link to="/" className="plain-link">
+            EVO
+          </Link>
+        </h1>
         <Menu />
         <div style={appStore.bannerType === SIDEBAR ? {} : { display: 'none' }}>
           <Links />
