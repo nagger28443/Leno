@@ -7,6 +7,7 @@ import App from './views/App'
 import appStore from './store/appStore'
 import labelStore from './store/banner/labelStore'
 import './app.styl'
+import Admin from './views/admin'
 
 configure({ enforceActions: true })
 
@@ -20,6 +21,7 @@ const render = Component => {
     <Provider {...stores}>
       <BrowserRouter basename="">
         <Switch>
+          <Route path="/admin" key="/admin" component={Admin} />
           <Route key="/home" component={Component} />
         </Switch>
       </BrowserRouter>

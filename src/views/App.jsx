@@ -8,7 +8,6 @@ import Archive from './archive'
 import Labels from './labels'
 import About from './about'
 import Page404 from './page404'
-import Admin from './admin'
 import { TOPBAR, SIDEBAR } from '../constants'
 import FullPage from './fullpage'
 import RightBar from './rightBar'
@@ -56,7 +55,6 @@ const App = inject('appStore')(
               <Route path="/archive" key="/archive" component={Archive} />
               <Route path="/labels" key="/labels" component={Labels} />
               <Route path="/about" key="/about" component={About} />
-              <Route path="/admin" key="/admin" component={Admin} />
               <Route path="/blog/:blog" key="/fullpage" component={FullPage} />
               <Route key="404" component={Page404} />
             </Switch>
