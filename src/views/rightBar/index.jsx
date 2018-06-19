@@ -1,39 +1,36 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 import injectSheet from 'react-jss'
+import _ from 'lodash'
 import CardTemplate from './cardTemplate'
 
 const data1 = {
   title: '个人分类',
-  content: [
-    { text: '这是一个分类2222222222222222', count: '5篇', link: 'blog/123', key: '1' },
-    { text: '这是一个分类', count: '5篇', link: '', key: '2' },
-    { text: '这是一个分类', count: '5篇', link: '', key: '4' },
-    { text: '这是一个分类', count: '5篇', link: '', key: '3' },
-    { text: '这是一个分类', count: '5篇', link: '', key: '5' },
-  ],
+  content: _.range(0, 5).map((item, index) => ({
+    text: '这是一个分类2222222222222222',
+    count: '5篇',
+    link: 'blog/123',
+    key: index,
+  })),
   all: '',
 }
 const data2 = {
   title: '归档',
-  content: [
-    { text: '2018年6月2222222222222222', count: '5篇', link: '', key: '1' },
-    { text: '2018年5月', count: '5篇', link: '', key: '2' },
-    { text: '2018年4月', count: '5篇', link: '', key: '4' },
-    { text: '2018年3月', count: '5篇', link: '', key: '3' },
-    { text: '2018年2月', count: '5篇', link: '', key: '5' },
-  ],
+  content: _.range(0, 5).map((item, index) => ({
+    text: `2017年${12 - index}月2222222222222222`,
+    count: '5篇',
+    link: '',
+    key: index,
+  })),
   all: '',
 }
 const styles = {
-  rightBar: {
-    padding: ['5rem', '3rem'],
-  },
+  container: {},
 }
 const RightBar = inject('appStore')(
-  observer(({ appStore }) => (
+  observer(({ appStore, classes }) => (
     <aside className="sidebar" style={{ ...appStore.rightBarStyle }}>
-      <div>
+      <div className={classes.container}>
         <CardTemplate data={data1} />
         <CardTemplate data={data2} />
       </div>

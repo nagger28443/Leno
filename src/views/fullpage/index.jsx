@@ -18,6 +18,9 @@ const styles = {
 inject('appStore')
 @observer
 class FullPage extends React.Component {
+  componentDidMount() {
+    document.documentElement.scrollIntoView()
+  }
   render() {
     const { classes } = this.props
     return <article className={`blog ${classes.article}`}>{MDParser(article)}</article>

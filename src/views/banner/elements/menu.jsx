@@ -2,7 +2,6 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import injectSheet from 'react-jss'
-import { TOPBAR } from '../../../constants'
 import LabelModal from './labelModal'
 
 const styles = {
@@ -27,7 +26,7 @@ const styles = {
 }
 
 const Menu = inject('appStore', 'labelStore')(
-  observer(({ appStore, labelStore, classes }) => (
+  observer(({ labelStore, classes }) => (
     <ul className={classes.menu}>
       <li className={classes.menuItem}>
         <Link to="/" className="plain-link">
@@ -36,7 +35,7 @@ const Menu = inject('appStore', 'labelStore')(
       </li>
       <li className={classes.menuItem}>
         <Link to="/archive" className="plain-link">
-          存档
+          归档
         </Link>
       </li>
       <li className={classes.menuItem}>
@@ -44,9 +43,7 @@ const Menu = inject('appStore', 'labelStore')(
           标签
         </span>
       </li>
-      <li
-        className={classes.menuItem}
-        style={{ display: appStore.bannerType === TOPBAR ? 'inline-block' : 'none' }}>
+      <li className={classes.menuItem}>
         <Link to="/about" className="plain-link">
           关于
         </Link>

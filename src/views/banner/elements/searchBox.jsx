@@ -4,6 +4,10 @@ import { observer } from 'mobx-react'
 import { observable, action } from 'mobx'
 
 const styles = {
+  searchBox: {
+    position: 'fixed',
+    bottom: '1rem',
+  },
   searchInput: {
     marginLeft: '0.5rem',
     padding: 0,
@@ -24,10 +28,23 @@ const styles = {
 class SearchBox extends React.Component {
   @observable isInputCollapsed = true
   inputValue = ''
+  input = null
+
+  handleInputBlur = () => {
+    setTimeout(
+      action(() => {
+        this.isInputCollapsed = true
+      }),
+      100,
+    )
+  }
 
   @action
   toggleInputCollapse = () => {
     this.isInputCollapsed = !this.isInputCollapsed
+    if (!this.isInputCollapsed) {
+      this.input.focus()
+    }
   }
   @action
   handleSearch = e => {
@@ -44,6 +61,10 @@ class SearchBox extends React.Component {
         <span className="icon-search plain-link" onClick={this.toggleInputCollapse} />
         <input
           type="text"
+          ref={input => {
+            this.input = input
+          }}
+          onBlur={this.handleInputBlur}
           placeholder="搜索标题和标签"
           onKeyPress={this.handleSearch}
           className={classes.searchInput}
@@ -55,6 +76,3 @@ class SearchBox extends React.Component {
 }
 
 export default injectSheet(styles)(SearchBox)
-
-// line-height: 1.8rem;
-// width: 80%;

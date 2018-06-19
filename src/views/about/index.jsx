@@ -1,5 +1,15 @@
 import React from 'react'
+import injectSheet from 'react-jss'
+import { Detail } from '../../styledComponents'
 
-const About = () => <div className="contents">about</div>
+const styles = {}
 
-export default About
+class About extends React.Component {
+  componentDidMount() {
+    document.documentElement.scrollIntoView()
+  }
+  render() {
+    return <Detail>about</Detail>
+  }
+}
+export default injectSheet(styles)(About)
