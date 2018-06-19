@@ -3,7 +3,6 @@ import injectSheet from 'react-jss'
 import { Detail } from '../../styledComponents'
 
 const styles = {}
-const archive = [{}]
 class Archive extends React.Component {
   componentDidMount() {
     document.documentElement.scrollIntoView()
