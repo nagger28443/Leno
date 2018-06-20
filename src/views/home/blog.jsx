@@ -35,9 +35,6 @@ const styles = {
     fontSize: 'smaller',
     color: '#4663bbdb',
     background: 'linear-gradient(to top,#f5f5f5,#ffffff 50%,#ffffff66)',
-    '&:hover': {
-      cursor: 'pointer',
-    },
   },
 }
 inject('appStore')
@@ -64,7 +61,9 @@ class Blog extends React.Component {
         style={{ height: this.isArticleCollapsed ? '50rem' : '' }}>
         {MDParser(article)}
         <div className={classes.toggleCollapse} onClick={this.toggleArticleCollapse}>
-          {this.isArticleCollapsed ? '<<<点击展开>>>' : '>>>点击收起<<<'}
+          <span className="plain-link">
+            {this.isArticleCollapsed ? '<<<点击展开>>>' : '>>>点击收起<<<'}
+          </span>
         </div>
       </article>
     )
