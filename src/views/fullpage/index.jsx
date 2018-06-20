@@ -15,6 +15,7 @@ const styles = {
     overflow: 'hidden',
   },
 }
+
 inject('appStore')
 @observer
 class FullPage extends React.Component {
