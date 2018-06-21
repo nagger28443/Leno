@@ -24,9 +24,9 @@ export const get = (url, params) =>
     })
   })
 
-export const post = (url, params, postData) =>
+export const post = (url, postData) =>
   new Promise((resolve, reject) => {
-    axios.post(parseUrl(url, params), postData).then(resp => {
+    axios.post(url, postData).then(resp => {
       const { data } = resp
       if (data.code === 20000) {
         resolve(data)
@@ -39,7 +39,7 @@ export const dele = (url, params) =>
   new Promise((resolve, reject) => {
     axios.delete(parseUrl(url, params)).then(resp => {
       const { data } = resp
-      if (data.message === 'success') {
+      if (data.code === 20000) {
         resolve(data)
       } else {
         reject(data)
@@ -47,11 +47,11 @@ export const dele = (url, params) =>
     })
   })
 
-export const put = (url, params, postData) =>
+export const put = (url, postData) =>
   new Promise((resolve, reject) => {
-    axios.put(parseUrl(url, params), postData).then(resp => {
+    axios.put(url, postData).then(resp => {
       const { data } = resp
-      if (data.message === 'success') {
+      if (data.code === 20000) {
         resolve(data)
       } else {
         reject(data)

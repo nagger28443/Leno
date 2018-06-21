@@ -53,9 +53,11 @@ const App = inject('appStore')(
             <Switch>
               <Route path="/" exact key="/" component={Home} />
               <Route path="/archive" key="/archive" component={Archive} />
-              <Route path="/labels" key="/labels" component={Labels} />
+              {/* todo */}
+              <Route path="/category" key="/category" component={Labels} />
+              {/* todo */}
               <Route path="/about" key="/about" component={About} />
-              <Route path="/blog/:blog" key="/fullpage" component={FullPage} />
+              <Route path="/blog" key="/fullpage" component={FullPage} />
               <Route key="404" component={Page404} />
             </Switch>
           </div>

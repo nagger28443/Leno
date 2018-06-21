@@ -3,13 +3,14 @@ import { inject, observer } from 'mobx-react'
 import injectSheet from 'react-jss'
 import _ from 'lodash'
 import CardTemplate from './cardTemplate'
+import { parsePath } from '../../util/utils'
 
 const data1 = {
   title: '个人分类',
   content: _.range(0, 5).map((item, index) => ({
-    text: '这是一个分类2222222222222222',
+    title: '这是一个分类2222222222222222',
     count: '5篇',
-    link: 'blog/123',
+    path: 'blog/123',
     key: index,
   })),
   all: '',
@@ -17,9 +18,10 @@ const data1 = {
 const data2 = {
   title: '归档',
   content: _.range(0, 5).map((item, index) => ({
-    text: `2017年${12 - index}月2222222222222222`,
+    title: `2017年8月2222222222222222`,
+    date: '2017-08',
     count: '5篇',
-    link: '',
+    path: parsePath({ type: 'archive', dateStr: '2017-05', title: '2017年8月2222222222222222' }),
     key: index,
   })),
   all: '',

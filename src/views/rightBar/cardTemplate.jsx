@@ -45,10 +45,11 @@ const CardTemplate = ({ classes, data }) => (
     {data.content.map(item => (
       <p key={item.key} className={classes.item}>
         <Link
-          to={item.link}
+          to={item.path}
+          replace
           style={{ width: item.count ? '80%' : '100%' }}
           className={`plain-link ${classes.link}`}>
-          {item.text}
+          {item.title}
         </Link>
         <span className={classes.count}>{item.count}</span>
       </p>
