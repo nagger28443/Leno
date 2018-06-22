@@ -24,7 +24,7 @@ const styles = {
   mark: {
     position: 'relative',
     '&:hover:before': {
-      background: 'red',
+      background: '#af75d8fc',
     },
     '&:before': {
       content: '""',
@@ -37,11 +37,45 @@ const styles = {
       background: '#b6b4b4',
     },
   },
+  year: {
+    fontSize: 'x-large',
+    margin: ['2rem', 0],
+  },
+  month: {
+    fontSize: 'larger',
+    margin: ['1rem', 0],
+  },
 }
 
 @observer
 class Archive extends React.Component {
   @observable archives = []
+
+  dataFormat = data => {
+    let preYear = null
+    let preMonth = null
+    const res = []
+    data.forEach(item => {
+      const date = new Date(item.date)
+      const yy = date.getFullYear()
+      const mm = date.getMonth() + 1
+      if (yy !== preYear) {
+        preYear = yy
+        preMonth = mm
+        res.push({ year: yy, data: [] })
+        res[res.length - 1].data.push({ month: mm, data: [{ data: item }] })
+      } else if (mm !== preMonth) {
+        preMonth = mm
+        const t = res[res.length - 1].data
+        t.push({ month: mm, data: [] })
+        t[t.length - 1].data.push({ data: item })
+      } else {
+        const t = res[res.length - 1].data
+        t[t.length - 1].data.push({ data: item })
+      }
+    })
+    return res
+  }
 
   @action
   componentDidMount() {
@@ -60,48 +94,35 @@ class Archive extends React.Component {
       .catch(err => {
         fail(err)
       })
-    this.archives = [
+    const data = [
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-06-01', id: 1 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-08', id: 9 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 66 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-12', id: 9 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-08', id: 11 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-01', id: 2 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2017-04-01', id: 3 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-05-01', id: 4 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-02-01', id: 5 },
     ]
+    this.archives = this.dataFormat(data)
   }
   render() {
-    console.log(this.props)
+    console.log(this.archives.slice())
     const { classes } = this.props
-    let preYear = null
-    let preMonth = null
     return (
       <Detail>
         <div className={classes.root}>
-          {this.archives.map(item => {
-            const date = new Date(item.date)
-            const yy = date.getFullYear()
-            const mm = date.getMonth() + 1
-            if (yy !== preYear) {
-              preYear = yy
-              preMonth = mm
-              return (
-                <React.Fragment>
-                  <p className={classes.mark}>{yy}年</p>
-                  <p className={classes.mark}>{mm}月</p>
-                  <BlogListItem data={item} key={item.id} />
-                </React.Fragment>
-              )
-            } else if (mm !== preMonth) {
-              preMonth = mm
-              return (
-                <React.Fragment>
-                  <p className={classes.mark}>{mm}月</p>
-                  <BlogListItem data={item} key={item.id} />
-                </React.Fragment>
-              )
-            }
-            return <BlogListItem data={item} key={item.id} />
-          })}
+          {this.archives.map(item => (
+            <div className={classes.mark} key={item.data.id}>
+              <p className={classes.year}>{item.year}年</p>
+              {item.data.map(ele => (
+                <div className={classes.mark} key={ele.data.id}>
+                  <p className={classes.month}>{ele.month}月</p>
+                  {ele.data.map(d => <BlogListItem data={d.data} key={d.data.id} />)}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </Detail>
     )
