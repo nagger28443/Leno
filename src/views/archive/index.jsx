@@ -6,6 +6,7 @@ import { Detail } from '../../styledComponents'
 import BlogListItem from '../commonComponents/blogListItem'
 import { get } from '../../util/http'
 import { fail } from '../../util/utils'
+import Paging from '../commonComponents/paging'
 
 const styles = {
   root: {
@@ -50,6 +51,7 @@ const styles = {
 @observer
 class Archive extends React.Component {
   @observable archives = []
+  data = []
 
   dataFormat = data => {
     let preYear = null
@@ -79,6 +81,7 @@ class Archive extends React.Component {
 
   @action
   componentDidMount() {
+    this.props.history.location.state = []
     document.documentElement.scrollIntoView()
     const { pathname } = this.props.location
     const date = pathname
@@ -94,8 +97,17 @@ class Archive extends React.Component {
       .catch(err => {
         fail(err)
       })
-    const data = [
+    this.data = [
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-06-01', id: 1 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 22 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 23 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 24 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 21 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 26 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 28 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 33 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 32 },
+      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 34 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 66 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-12', id: 9 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-08', id: 11 },
@@ -104,10 +116,18 @@ class Archive extends React.Component {
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-05-01', id: 4 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-02-01', id: 5 },
     ]
-    this.archives = this.dataFormat(data)
+    this.archives = this.dataFormat(this.data.slice(0, 10))
+  }
+  @action
+  handlePageChange = page => {
+    document.documentElement.scrollIntoView()
+    const { history } = this.props
+    const { pathname } = this.props.location
+    history.push({ [pathname]: { page } })
+    console.log(history)
+    this.archives = this.dataFormat(this.data.slice(10 * page - 10, 10 * page))
   }
   render() {
-    console.log(this.archives.slice())
     const { classes } = this.props
     return (
       <Detail>
@@ -124,6 +144,7 @@ class Archive extends React.Component {
             </div>
           ))}
         </div>
+        <Paging total={this.data.length} handlePageChange={this.handlePageChange} />
       </Detail>
     )
   }
