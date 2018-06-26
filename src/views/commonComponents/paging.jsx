@@ -1,5 +1,6 @@
 import React from 'react'
 import injectSheet from 'react-jss'
+import { withRouter } from 'react-router-dom'
 
 const styles = {
   root: {
@@ -16,30 +17,29 @@ const styles = {
 }
 
 class Paging extends React.Component {
-  constructor(props) {
-    super(props)
-    this.pageCount = 0
-    this.state = {
-      curPage: 1,
-    }
-  }
+  pageCount = 0
+  state = { curPage: 1 }
+  getCurpage = () => this.props.curPage || this.state.curPage
   goToPage = page => {
     this.props.handlePageChange(page)
-    this.setState({
-      curPage: page,
-    })
+    if (this.props.curPage !== undefined) {
+      this.setState({
+        curPage: page,
+      })
+    }
   }
   checkPageInvalid = page => {
-    const { curPage } = this.state
+    const curPage = this.getCurpage()
     return (
       (page === '<' && curPage === 1) ||
       (page === '>' && curPage === this.pageCount) ||
       Number(page) === curPage
     )
   }
+
   handlePageChange = e => {
     const target = e.target.innerText
-    const { curPage } = this.state
+    const curPage = this.getCurpage()
 
     if (this.checkPageInvalid(target)) return
     if (target === '<') {
@@ -52,7 +52,7 @@ class Paging extends React.Component {
   }
 
   render() {
-    const { curPage } = this.state
+    const curPage = this.getCurpage()
     const { total = 0, countPerPage = 10, classes } = this.props
     this.pageCount = Math.ceil(total / countPerPage)
     return (
@@ -84,4 +84,4 @@ class Paging extends React.Component {
   }
 }
 
-export default injectSheet(styles)(Paging)
+export default withRouter(injectSheet(styles)(Paging))

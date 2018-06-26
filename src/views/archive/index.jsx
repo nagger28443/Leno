@@ -51,6 +51,7 @@ const styles = {
 @observer
 class Archive extends React.Component {
   @observable archives = []
+  @observable curPage = 1
   data = []
 
   dataFormat = data => {
@@ -81,7 +82,6 @@ class Archive extends React.Component {
 
   @action
   componentDidMount() {
-    this.props.history.location.state = []
     document.documentElement.scrollIntoView()
     const { pathname } = this.props.location
     const date = pathname
@@ -122,10 +122,17 @@ class Archive extends React.Component {
   handlePageChange = page => {
     document.documentElement.scrollIntoView()
     const { history } = this.props
-    const { pathname } = this.props.location
-    history.push({ [pathname]: { page } })
-    console.log(history)
+    history.push({ state: { page } })
+    this.curPage = page
     this.archives = this.dataFormat(this.data.slice(10 * page - 10, 10 * page))
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { page } = nextProps.history.location.state || { page: 1 }
+    console.log(page, this.curPage)
+    if (page !== this.curPage) {
+      this.handlePageChange(page)
+    }
   }
   render() {
     const { classes } = this.props
@@ -144,7 +151,11 @@ class Archive extends React.Component {
             </div>
           ))}
         </div>
-        <Paging total={this.data.length} handlePageChange={this.handlePageChange} />
+        <Paging
+          total={this.data.length}
+          curPage={this.curPage}
+          handlePageChange={this.handlePageChange}
+        />
       </Detail>
     )
   }
