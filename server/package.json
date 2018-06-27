@@ -1,0 +1,23 @@
+{
+  "name": "next-ajax",
+  "version": "0.1.0",
+  "description": "Ajax 后台服务",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app/index"
+  },
+  "keywords": [
+    "next",
+    "node",
+    "ajax"
+  ],
+  "author": "jero",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0"
+  },
+  "devDependencies": {
+    "standard": "^10.0.3"
+  }
+}

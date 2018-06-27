@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <title>XHR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <style>
+    form, .box {
+      margin: 50px;
+      padding: 20px;
+    }
+
+    form div {
+      margin: 20px 0;
+    }
+
+    .box {
+      background-color: rgba(0, 0, 0, 0.2);
+      height: 40px;
+      width: 300px;
+    }
+  </style>
+</head>
+
+<body>
+  <form id="form">
+    <div><label for="nick">昵称：</label> <input value="jero" name="nick" id="nick" type="text" required></div>
+    <div><label for="love">爱好：</label> <input value="coding" name="love" id="love" type="text" required></div>
+    <div>
+      <button type="button" name="get">Get 提交</button>
+      <button type="button" name="post">Post 提交</button>
+    </div>
+  </form>
+
+  <p id="box" class="box"></p>
+
+  <script>
+    var byId = (id) => document.getElementById(id); // ES6 箭头函数
+    var form = byId('form');
+    var box = byId('box');
+    var urlMap = { // 请求的链接存起来备用
+      get: '/get',
+      post: '/post'
+    }
+
+    /**
+     * 表单的数据收集起来
+     */
+    function getData(type) {
+      var result = [];
+      var isFill = false;
+
+      // 都是文本框的 name
+      ['nick', 'love'].forEach((fieldName) => {
+        var v = form[fieldName].value;
+
+        if (v) {
+          result.push(
+            encodeURIComponent(fieldName) + '=' +
+            encodeURIComponent(form[fieldName].value) // 可以通过这种方式访问某个具体的表单 form[fieldName]
+          );
+          isFill = true;
+        } else {
+          isFill = false;
+        }
+      });
+
+      if (!isFill) { // 没填的话要返回没填的结果 false
+        return false;
+      }
+
+      return result.join('&');
+    }
+
+    function request(type, callback) {
+      var data = getData(type);
+
+      if (!data) { // 没填的话直接警告
+        return alert('完成表单！');
+      }
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          callback(JSON.parse(xhr.responseText), xhr);
+        } else {
+          console.log(xhr.status);
+        }
+      }
+
+      xhr.open(type, urlMap[type] + (type === 'get' ? `?${data}` : '')); // get 的参数直接拼在 url 的末尾
+
+      // 模拟 post 请求，必须设置个请求头
+      if (type === 'post') {
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+      }
+
+      xhr.send(type === 'get' ? null : data);
+    }
+
+    /**
+     * 绑定事件抽象下
+     */
+    function click(btn, callback) {
+      btn.addEventListener('click', () => {
+        request(btn.name, (data) => {
+          box.innerHTML = `success by ${data.type} method!<br>
+          ${data.result.nick} love ${data.result.love}!`;
+        });
+      });
+    }
+
+    // 绑定事件，代码可以从这里看
+    click(form.get);
+    click(form.post)
+
+  </script>
+</body>
+
+</html>
