@@ -127,11 +127,12 @@ class Archive extends React.Component {
     this.archives = this.dataFormat(this.data.slice(10 * page - 10, 10 * page))
   }
 
+  @action
   componentWillReceiveProps(nextProps) {
     const { page } = nextProps.history.location.state || { page: 1 }
-    console.log(page, this.curPage)
     if (page !== this.curPage) {
-      this.handlePageChange(page)
+      this.curPage = page
+      this.archives = this.dataFormat(this.data.slice(10 * page - 10, 10 * page))
     }
   }
   render() {
