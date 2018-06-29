@@ -54,7 +54,7 @@ const App = inject('appStore')(
               <Route path="/" exact key="/" component={Home} />
               <Route path="/archive" key="/archive" component={Archive} />
               {/* todo */}
-              <Route path="/category" key="/category" component={Labels} />
+              <Route path="/label" key="/label" component={Labels} />
               {/* todo */}
               <Route path="/about" key="/about" component={About} />
               <Route path="/blog" key="/fullpage" component={FullPage} />

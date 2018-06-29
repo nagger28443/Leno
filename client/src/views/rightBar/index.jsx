@@ -10,7 +10,7 @@ const data1 = {
   content: _.range(0, 5).map((item, index) => ({
     title: '这是一个分类2222222222222222',
     count: '5篇',
-    path: 'blog/123',
+    path: '/archive?label=react',
     key: index,
   })),
   all: '',
