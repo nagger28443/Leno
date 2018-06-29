@@ -1,3 +1,4 @@
 {
-  "liveServer.settings.multiRootWorkspaceName": "Leno"
+  "liveServer.settings.multiRootWorkspaceName": "Leno",
+  "git.ignoreLimitWarning": true
 }
