@@ -7,6 +7,8 @@ import BlogListItem from '../commonComponents/blogListItem'
 import { get } from '../../util/http'
 import { fail } from '../../util/utils'
 import Paging from '../commonComponents/paging'
+import { NOT_FOUND } from '../../constants'
+import f from '../../util/f'
 
 const styles = {
   root: {
@@ -80,15 +82,30 @@ class Archive extends React.Component {
     return res
   }
 
+  checkDateValid = ({ year, month }) =>
+    (year === undefined && month === undefined) ||
+    (month === undefined && f.isYear(year)) ||
+    (f.isMonth(month) && f.isYear(year))
+
+  parsePath = pathname => {
+    const params =
+      /^\/archive\/+(\d+)\/+(\d+)(?:[/\s])*$/.exec(pathname) ||
+      /^\/archive\/+(\d+)(?:[/\s])*$/.exec(pathname) ||
+      /^\/archive(?:[/\s])*$/.exec(pathname)
+    return params && this.checkDateValid({ year: params[1], month: params[2] }) ? params : NOT_FOUND
+  }
+
   @action
   componentDidMount() {
     document.documentElement.scrollIntoView()
     const { pathname } = this.props.location
-    const date = pathname
-      .split('/')
-      .slice(-2)
-      .join('-')
-    get('/demo', { date })
+    const params = this.parsePath(pathname)
+    console.log(params)
+    if (params === NOT_FOUND) {
+      this.props.history.push('/404')
+      return
+    }
+    get('/demo', params)
       .then(
         action(resp => {
           console.log(resp)
