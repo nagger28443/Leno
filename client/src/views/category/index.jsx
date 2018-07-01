@@ -8,93 +8,24 @@ import { get } from '../../util/http'
 import { fail } from '../../util/utils'
 import Paging from '../commonComponents/paging'
 import { NOT_FOUND } from '../../constants'
-import f from '../../util/f'
 
 const styles = {
-  root: {
-    position: 'relative',
-    paddingLeft: '2rem',
-    '&:before': {
-      content: '""',
-      height: '100%',
-      width: '0.2rem',
-      position: 'absolute',
-      left: 0,
-      top: '0.4rem',
-      background: '#e5e3e3',
-    },
-  },
-  mark: {
-    position: 'relative',
-    '&:hover:before': {
-      background: '#af75d8fc',
-    },
-    '&:before': {
-      content: '""',
-      height: '0.6rem',
-      width: '0.6rem',
-      borderRadius: '50%',
-      position: 'absolute',
-      left: '-2.2rem',
-      top: '0.4rem',
-      background: '#b6b4b4',
-    },
-  },
-  year: {
-    fontSize: 'x-large',
-    margin: ['2rem', 0],
-  },
-  month: {
-    fontSize: 'larger',
-    margin: ['1rem', 0],
-  },
+  // root: {
+  //   position: 'relative',
+  //   paddingLeft: '2rem',
+  // },
 }
 
 @observer
-class Archive extends React.Component {
-  @observable archives = []
+class Category extends React.Component {
+  @observable list = []
   @observable curPage = 1
   data = []
 
-  dataFormat = data => {
-    let preYear = null
-    let preMonth = null
-    const res = []
-    data.forEach(item => {
-      const date = new Date(item.date)
-      const yy = date.getFullYear()
-      const mm = date.getMonth() + 1
-      if (yy !== preYear) {
-        preYear = yy
-        preMonth = mm
-        res.push({ year: yy, data: [] })
-        res[res.length - 1].data.push({ month: mm, data: [{ data: item }] })
-      } else if (mm !== preMonth) {
-        preMonth = mm
-        const t = res[res.length - 1].data
-        t.push({ month: mm, data: [] })
-        t[t.length - 1].data.push({ data: item })
-      } else {
-        const t = res[res.length - 1].data
-        t[t.length - 1].data.push({ data: item })
-      }
-    })
-    return res
-  }
-
-  checkDateValid = ({ year, month }) =>
-    (year === undefined && month === undefined) ||
-    (month === undefined && f.isYear(year)) ||
-    (f.isMonth(month) && f.isYear(year))
-
   parsePath = pathname => {
     const ret =
-      /^\/archive\/+(\d+)\/+(\d+)(?:[/\s])*$/.exec(pathname) ||
-      /^\/archive\/+(\d+)(?:[/\s])*$/.exec(pathname) ||
-      /^\/archive(?:[/\s])*$/.exec(pathname)
-    return ret && this.checkDateValid({ year: ret[1], month: ret[2] })
-      ? { year: ret[1], month: ret[2] }
-      : NOT_FOUND
+      /^\/category\/*$/.exec(pathname) || /^\/category\/+([\d\w]+)(?:[/\s])*$/.exec(pathname)
+    return ret ? { category: ret[1] } : NOT_FOUND
   }
 
   @action
@@ -106,7 +37,7 @@ class Archive extends React.Component {
       this.props.history.push('/404')
       return
     }
-    get('/demo', params)
+    get('/category', params)
       .then(
         action(resp => {
           console.log(resp)
@@ -134,7 +65,7 @@ class Archive extends React.Component {
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-05-01', id: 4 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-02-01', id: 5 },
     ]
-    this.archives = this.dataFormat(this.data.slice(0, 10))
+    this.list = this.data.slice(0, 10)
   }
   @action
   handlePageChange = page => {
@@ -142,9 +73,8 @@ class Archive extends React.Component {
     const { history } = this.props
     history.push({ state: { page } })
     this.curPage = page
-    this.archives = this.dataFormat(this.data.slice(10 * page - 10, 10 * page))
+    this.list = this.data.slice(10 * page - 10, 10 * page)
   }
-
   @action
   componentWillReceiveProps(nextProps) {
     const { page } = nextProps.history.location.state || { page: 1 }
@@ -158,17 +88,7 @@ class Archive extends React.Component {
     return (
       <Detail>
         <div className={classes.root}>
-          {this.archives.map(item => (
-            <div className={classes.mark} key={item.data.id}>
-              <p className={classes.year}>{item.year}年</p>
-              {item.data.map(ele => (
-                <div className={classes.mark} key={ele.data.id}>
-                  <p className={classes.month}>{ele.month}月</p>
-                  {ele.data.map(d => <BlogListItem data={d.data} key={d.data.id} />)}
-                </div>
-              ))}
-            </div>
-          ))}
+          {this.list.map(item => <BlogListItem data={item} key={item.id} />)}
         </div>
         <Paging
           total={this.data.length}
@@ -179,4 +99,4 @@ class Archive extends React.Component {
     )
   }
 }
-export default injectSheet(styles)(Archive)
+export default injectSheet(styles)(Category)

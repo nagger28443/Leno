@@ -6,6 +6,7 @@ import Banner from './banner'
 import Home from './home'
 import Archive from './archive'
 import Labels from './labels'
+import Category from './category'
 import About from './about'
 import Page404 from './page404'
 import { TOPBAR, SIDEBAR } from '../constants'
@@ -53,9 +54,8 @@ const App = inject('appStore')(
             <Switch>
               <Route path="/" exact key="/" component={Home} />
               <Route path="/archive" key="/archive" component={Archive} />
-              {/* todo */}
+              <Route path="/category" key="/category" component={Category} />
               <Route path="/label" key="/label" component={Labels} />
-              {/* todo */}
               <Route path="/about" key="/about" component={About} />
               <Route path="/blog" key="/fullpage" component={FullPage} />
               <Route key="404" component={Page404} />

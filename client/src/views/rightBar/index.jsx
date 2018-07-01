@@ -10,7 +10,7 @@ const data1 = {
   content: _.range(0, 5).map((item, index) => ({
     title: '这是一个分类2222222222222222',
     count: '5篇',
-    path: '/archive?label=react',
+    path: '/category/react',
     key: index,
   })),
   all: '',
@@ -24,7 +24,7 @@ const data2 = {
     path: parsePath({ type: 'archive', dateStr: '2017-05', title: '2017年8月2222222222222222' }),
     key: index,
   })),
-  all: '',
+  all: '/archive',
 }
 const styles = {
   container: {},
