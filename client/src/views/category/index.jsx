@@ -1,5 +1,6 @@
 import React from 'react'
 import injectSheet from 'react-jss'
+import { Link } from 'react-router-dom'
 import { observable, action } from 'mobx'
 import { observer } from 'mobx-react'
 import { Detail } from '../../styledComponents'
@@ -19,24 +20,27 @@ const styles = {
 @observer
 class Category extends React.Component {
   @observable list = []
+  @observable isAll = false // 当前是否为'全部分类'页面
   @observable curPage = 1
   data = []
 
   parsePath = pathname => {
-    const ret =
+    const match =
       /^\/category\/*$/.exec(pathname) || /^\/category\/+([\d\w]+)(?:[/\s])*$/.exec(pathname)
-    return ret ? { category: ret[1] } : NOT_FOUND
+    return match ? { category: match[1] } : NOT_FOUND
   }
 
   @action
-  componentDidMount() {
+  loadPage = () => {
     document.documentElement.scrollIntoView()
     const { pathname } = this.props.location
+    console.log(pathname)
     const params = this.parsePath(pathname)
     if (params === NOT_FOUND) {
       this.props.history.push('/404')
       return
     }
+    this.isAll = !params.category
     get('/category', params)
       .then(
         action(resp => {
@@ -67,6 +71,15 @@ class Category extends React.Component {
     ]
     this.list = this.data.slice(0, 10)
   }
+
+  @action
+  componentDidMount() {
+    this.loadPage()
+  }
+
+  shouldComponentUpdate() {
+    this.loadPage()
+  }
   @action
   handlePageChange = page => {
     document.documentElement.scrollIntoView()
@@ -87,6 +100,10 @@ class Category extends React.Component {
     const { classes } = this.props
     return (
       <Detail>
+        <div style={{ display: this.isAll ? 'none' : 'block' }}>
+          <span>当前分类：</span>
+          <Link to="/category">查看全部</Link>
+        </div>
         <div className={classes.root}>
           {this.list.map(item => <BlogListItem data={item} key={item.id} />)}
         </div>

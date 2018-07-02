@@ -88,12 +88,12 @@ class Archive extends React.Component {
     (f.isMonth(month) && f.isYear(year))
 
   parsePath = pathname => {
-    const ret =
+    const match =
       /^\/archive\/+(\d+)\/+(\d+)(?:[/\s])*$/.exec(pathname) ||
       /^\/archive\/+(\d+)(?:[/\s])*$/.exec(pathname) ||
       /^\/archive(?:[/\s])*$/.exec(pathname)
-    return ret && this.checkDateValid({ year: ret[1], month: ret[2] })
-      ? { year: ret[1], month: ret[2] }
+    return match && this.checkDateValid({ year: match[1], month: match[2] })
+      ? { year: match[1], month: match[2] }
       : NOT_FOUND
   }
 
