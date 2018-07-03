@@ -1,9 +1,8 @@
 import React from 'react'
 import injectSheet from 'react-jss'
 import { Link } from 'react-router-dom'
-import { observable, action } from 'mobx'
-import { observer } from 'mobx-react'
 import { Detail } from '../../styledComponents'
+// import NoContent from '../commonComponents/noContent'
 import BlogListItem from '../commonComponents/blogListItem'
 import { get } from '../../util/http'
 import { fail } from '../../util/utils'
@@ -15,13 +14,18 @@ const styles = {
   //   position: 'relative',
   //   paddingLeft: '2rem',
   // },
+  checkAll: {
+    position: 'absolute',
+    right: '3rem',
+    top: '2rem',
+  },
 }
 
-@observer
 class Category extends React.Component {
-  @observable list = []
-  @observable isAll = false // 当前是否为'全部分类'页面
-  @observable curPage = 1
+  state = {
+    list: [],
+    curPage: 1,
+  }
   data = []
 
   parsePath = pathname => {
@@ -30,28 +34,30 @@ class Category extends React.Component {
     return match ? { category: match[1] } : NOT_FOUND
   }
 
-  @action
   loadPage = () => {
     document.documentElement.scrollIntoView()
     const { pathname } = this.props.location
-    console.log(pathname)
     const params = this.parsePath(pathname)
     if (params === NOT_FOUND) {
       this.props.history.push('/404')
       return
     }
-    this.isAll = !params.category
     get('/category', params)
-      .then(
-        action(resp => {
-          console.log(resp)
-        }),
-      )
+      .then(resp => {
+        console.log(resp)
+      })
       .catch(err => {
         fail(err)
       })
     this.data = [
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-06-01', id: 1 },
+      {
+        title:
+          'mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记',
+        readCount: 12,
+        commentCount: 11,
+        date: '2018-06-01',
+        id: 1,
+      },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 22 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 23 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 24 },
@@ -69,47 +75,62 @@ class Category extends React.Component {
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-05-01', id: 4 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-02-01', id: 5 },
     ]
-    this.list = this.data.slice(0, 10)
+    this.setState({ list: this.data.slice(0, 10) })
   }
 
-  @action
   componentDidMount() {
     this.loadPage()
   }
 
-  shouldComponentUpdate() {
-    this.loadPage()
-  }
-  @action
   handlePageChange = page => {
     document.documentElement.scrollIntoView()
     const { history } = this.props
     history.push({ state: { page } })
-    this.curPage = page
-    this.list = this.data.slice(10 * page - 10, 10 * page)
+    this.setState({
+      curPage: page,
+      list: this.data.slice(10 * page - 10, 10 * page),
+    })
   }
-  @action
-  componentWillReceiveProps(nextProps) {
+
+  static getDerivedStateFromProps(nextProps, prevState) {
     const { page } = nextProps.history.location.state || { page: 1 }
-    if (page !== this.curPage) {
-      this.curPage = page
-      this.archives = this.dataFormat(this.data.slice(10 * page - 10, 10 * page))
+    if (page !== prevState.curPage) {
+      return {
+        curPage: page,
+      }
+    }
+    return null
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.curPage !== this.state.curPage) {
+      const { curPage } = this.state
+      this.setState({ // eslint-disable-line
+        list: this.data.slice(10 * curPage - 10, 10 * curPage),
+      })
     }
   }
   render() {
+    console.log(123)
     const { classes } = this.props
+    const { curPage, list } = this.state
     return (
       <Detail>
-        <div style={{ display: this.isAll ? 'none' : 'block' }}>
-          <span>当前分类：</span>
-          <Link to="/category">查看全部</Link>
+        {/* <NoContent /> */}
+        <div
+          className={classes.checkAll}
+          style={{ display: this.props.location.pathname === '/category' ? 'none' : 'block' }}>
+          <span>当前分类：{}</span>
+          <Link to="/category" className="plain-link ">
+            查看全部
+          </Link>
         </div>
         <div className={classes.root}>
-          {this.list.map(item => <BlogListItem data={item} key={item.id} />)}
+          {list.map(item => <BlogListItem data={item} key={item.id} />)}
         </div>
         <Paging
           total={this.data.length}
-          curPage={this.curPage}
+          curPage={curPage}
           handlePageChange={this.handlePageChange}
         />
       </Detail>

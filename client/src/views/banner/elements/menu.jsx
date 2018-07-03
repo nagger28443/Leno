@@ -28,14 +28,19 @@ const styles = {
 const Menu = inject('appStore', 'labelStore')(
   observer(({ labelStore, classes }) => (
     <ul className={classes.menu}>
-      <li className={classes.menuItem}>
+      {/* <li className={classes.menuItem}>
         <Link to="/" className="plain-link">
           首页
         </Link>
-      </li>
+      </li> */}
       <li className={classes.menuItem}>
         <Link to="/archive" className="plain-link">
           归档
+        </Link>
+      </li>
+      <li className={classes.menuItem}>
+        <Link to="/category" className="plain-link">
+          分类
         </Link>
       </li>
       <li className={classes.menuItem}>

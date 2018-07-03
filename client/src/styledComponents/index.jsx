@@ -6,6 +6,7 @@ const styles = {
     background: '#ffffff',
     padding: '3rem',
     minHeight: '100vh',
+    position: 'relative',
   },
 }
 

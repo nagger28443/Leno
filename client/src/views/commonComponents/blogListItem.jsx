@@ -5,10 +5,11 @@ const styles = {
   root: {
     borderBottom: ['dashed', 1, '#bbb7b7'],
     paddingBottom: '0.5rem',
+    lineHeight: 1.6,
   },
   title: {
     fontSize: 'larger',
-    lineHeight: 0.5,
+    marginBottom: '0.5rem',
   },
   footer: {
     fontSize: 'smaller',

@@ -13,7 +13,7 @@ const data1 = {
     path: '/category/react',
     key: index,
   })),
-  all: '',
+  all: '/category',
 }
 const data2 = {
   title: '归档',
