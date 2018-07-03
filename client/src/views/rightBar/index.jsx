@@ -30,25 +30,42 @@ const styles = {
   tabHeader: {
     marginBottom: '1rem',
     textAlign: 'center',
+    fontSize: 'smaller',
   },
   tabTittle: {
     margin: [0, '0.5rem'],
   },
   container: {},
 }
-const RightBar = inject('appStore')(
-  observer(({ appStore, classes }) => (
-    <aside className="sidebar" style={{ ...appStore.rightBarStyle }}>
-      <div className={classes.tabHeader}>
-        <span className={`plain-link ${classes.tabTittle}`}>文章目录</span>
-        <span className={`plain-link ${classes.tabTittle}`}>分类·归档</span>
-      </div>
-      <div className={classes.container}>
-        <CardTemplate data={data2} />
-        <CardTemplate data={data1} />
-      </div>
-    </aside>
-  )),
-)
+
+const tabs = {
+  catalog: '文章目录',
+  categoryArchive: '分类·归档',
+}
+
+@inject('appStore')
+@observer
+class RightBar extends React.Component {
+  switchTab = e => {
+    console.log(e.target.innerText)
+  }
+  render() {
+    const { appStore, classes } = this.props
+    return (
+      <aside className="sidebar" style={{ ...appStore.rightBarStyle }}>
+        <div className={classes.tabHeader}>
+          <span className={`plain-link ${classes.tabTittle}`} style={{}} onClick={this.switchTab}>
+            {tabs.catalog}
+          </span>
+          <span className={`plain-link ${classes.tabTittle}`}>{tabs.categoryArchive}</span>
+        </div>
+        <div className={classes.container}>
+          <CardTemplate data={data2} />
+          <CardTemplate data={data1} />
+        </div>
+      </aside>
+    )
+  }
+}
 
 export default injectSheet(styles)(RightBar)

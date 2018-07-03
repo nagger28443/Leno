@@ -198,7 +198,6 @@ function handleNestedBlock(content) {
 }
 
 function getId(level, id) {
-  console.log(level)
   if (level === 2 || level === 3) {
     return inlineTagDecode(id.trim())
   }

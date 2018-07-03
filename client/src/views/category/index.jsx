@@ -42,13 +42,6 @@ class Category extends React.Component {
       this.props.history.push('/404')
       return
     }
-    get('/category', params)
-      .then(resp => {
-        console.log(resp)
-      })
-      .catch(err => {
-        fail(err)
-      })
     this.data = [
       {
         title:
@@ -57,6 +50,7 @@ class Category extends React.Component {
         commentCount: 11,
         date: '2018-06-01',
         id: 1,
+        link: `/blog/2018/06/01/mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记`,
       },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 22 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 23 },
@@ -75,6 +69,13 @@ class Category extends React.Component {
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-05-01', id: 4 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-02-01', id: 5 },
     ]
+    get('/category', params)
+      .then(resp => {
+        console.log(resp)
+      })
+      .catch(err => {
+        fail(err)
+      })
     this.setState({ list: this.data.slice(0, 10) })
   }
 
@@ -111,7 +112,6 @@ class Category extends React.Component {
     }
   }
   render() {
-    console.log(123)
     const { classes } = this.props
     const { curPage, list } = this.state
     return (

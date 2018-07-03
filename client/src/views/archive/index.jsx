@@ -1,7 +1,5 @@
 import React from 'react'
 import injectSheet from 'react-jss'
-import { observable, action } from 'mobx'
-import { observer } from 'mobx-react'
 import { Detail } from '../../styledComponents'
 import BlogListItem from '../commonComponents/blogListItem'
 import { get } from '../../util/http'
@@ -50,10 +48,11 @@ const styles = {
   },
 }
 
-@observer
 class Archive extends React.Component {
-  @observable archives = []
-  @observable curPage = 1
+  state = {
+    archives: [],
+    curPage: 1,
+  }
   data = []
 
   dataFormat = data => {
@@ -97,7 +96,6 @@ class Archive extends React.Component {
       : NOT_FOUND
   }
 
-  @action
   componentDidMount() {
     document.documentElement.scrollIntoView()
     const { pathname } = this.props.location
@@ -106,15 +104,6 @@ class Archive extends React.Component {
       this.props.history.push('/404')
       return
     }
-    get('/demo', params)
-      .then(
-        action(resp => {
-          console.log(resp)
-        }),
-      )
-      .catch(err => {
-        fail(err)
-      })
     this.data = [
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-06-01', id: 1 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 22 },
@@ -134,31 +123,50 @@ class Archive extends React.Component {
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-05-01', id: 4 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-02-01', id: 5 },
     ]
-    this.archives = this.dataFormat(this.data.slice(0, 10))
+    get('/demo', params)
+      .then(resp => {
+        console.log(resp)
+      })
+      .catch(err => {
+        fail(err)
+      })
+    this.setState({ // eslint-disable-line
+      archives: this.dataFormat(this.data.slice(0, 10)),
+    })
   }
-  @action
   handlePageChange = page => {
     document.documentElement.scrollIntoView()
     const { history } = this.props
     history.push({ state: { page } })
-    this.curPage = page
-    this.archives = this.dataFormat(this.data.slice(10 * page - 10, 10 * page))
+    this.setState({
+      curPage: page,
+      archives: this.dataFormat(this.data.slice(10 * page - 10, 10 * page)),
+    })
   }
-
-  @action
-  componentWillReceiveProps(nextProps) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     const { page } = nextProps.history.location.state || { page: 1 }
-    if (page !== this.curPage) {
-      this.curPage = page
-      this.archives = this.dataFormat(this.data.slice(10 * page - 10, 10 * page))
+    if (page !== prevState.curPage) {
+      return {
+        curPage: page,
+      }
+    }
+    return null
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.curPage !== this.state.curPage) {
+      const { curPage } = this.state
+      this.setState({ // eslint-disable-line
+        archives: this.data.slice(10 * curPage - 10, 10 * curPage),
+      })
     }
   }
   render() {
     const { classes } = this.props
+    const { curPage, archives } = this.state
     return (
       <Detail>
         <div className={classes.root}>
-          {this.archives.map(item => (
+          {archives.map(item => (
             <div className={classes.mark} key={item.data.id}>
               <p className={classes.year}>{item.year}年</p>
               {item.data.map(ele => (
@@ -172,7 +180,7 @@ class Archive extends React.Component {
         </div>
         <Paging
           total={this.data.length}
-          curPage={this.curPage}
+          curPage={curPage}
           handlePageChange={this.handlePageChange}
         />
       </Detail>

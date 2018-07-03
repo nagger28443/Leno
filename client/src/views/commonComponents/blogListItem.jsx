@@ -1,5 +1,6 @@
 import React from 'react'
 import injectSheet from 'react-jss'
+import { Link } from 'react-router-dom'
 
 const styles = {
   root: {
@@ -22,7 +23,9 @@ const styles = {
 
 const Item = ({ classes, data }) => (
   <div className={classes.root}>
-    <p className={classes.title}>{data.title}</p>
+    <Link to={`${data.link}`} className="plain-link">
+      <p className={classes.title}>{data.title}</p>
+    </Link>
     <div className={classes.footer}>
       <span>{data.date}</span>
       <span>阅读数：{data.readCount}</span>

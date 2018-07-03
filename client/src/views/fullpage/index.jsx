@@ -1,7 +1,5 @@
 import React from 'react'
 import injectSheet from 'react-jss'
-import { inject, observer } from 'mobx-react'
-// import { observable, action } from 'mobx'
 import article from '../../blogs/1.md'
 import MDParser from '../../util/MDParser'
 
@@ -16,12 +14,16 @@ const styles = {
   },
 }
 
-inject('appStore')
-@observer
 class FullPage extends React.Component {
+  getNameFromPath = path => /.*\/(.+?)\/*$/.exec(path)[1]
   componentDidMount() {
     document.documentElement.scrollIntoView()
+    const { pathname } = this.props.location
+    const name = this.getNameFromPath(pathname)
+    // getBlogByName
+    console.log(name)
   }
+
   render() {
     const { classes } = this.props
     return <article className={`blog ${classes.article}`}>{MDParser(article)}</article>
