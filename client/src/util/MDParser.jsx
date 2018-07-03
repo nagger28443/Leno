@@ -26,7 +26,7 @@ const thickLineRegex = /^ {0,3}\*{3,}\s?$/
 const pRegex = /^ {0,3}[^\s]+/
 
 const codeInlineRegex = /(`{1,2})(.*?)\1/
-const strongAndItalicRegex = /\*{3}(?!\*)(.*?)\*{3}/
+// const strongAndItalicRegex = /\*{3}(?!\*)(.*?)\*{3}/
 const strongRegex = /\*{2}(?!\*)(.*?)\*{2}/
 const italicRegex = /\*(?!\*)(.*?)\*/
 const linkRegex = /<(https?:\/\/.*?)>/
@@ -103,12 +103,21 @@ function devideIntoBlocks(md) {
 function handleInline(content) {
   // bold & italic & link
   return content
-    .replace(strongAndItalicRegex, '<strong><i>$1</i></strong>')
     .replace(strongRegex, '<strong>$1</strong>')
     .replace(italicRegex, '<i>$1</i>')
     .replace(linkRegex, '<a href="$1">$1</a>')
     .replace(mailRegex, '<a href="mailto:$1">$1</a>')
     .replace(codeInlineRegex, '<code>$2</code>')
+    .replace(newLineRegex, '')
+}
+function inlineTagDecode(content) {
+  // bold & italic & link
+  return content
+    .replace(strongRegex, '$1')
+    .replace(italicRegex, '$1')
+    .replace(linkRegex, '$1')
+    .replace(mailRegex, '$1')
+    .replace(codeInlineRegex, '$2')
     .replace(newLineRegex, '')
 }
 
@@ -188,6 +197,14 @@ function handleNestedBlock(content) {
   )
 }
 
+function getId(level, id) {
+  console.log(level)
+  if (level === 2 || level === 3) {
+    return inlineTagDecode(id.trim())
+  }
+  return null
+}
+
 function generateJSX(block) {
   let res
   let text
@@ -197,7 +214,12 @@ function generateJSX(block) {
     case TAGS.h:
       res = hRegex.exec(content[0])
       Tag = `h${res[1].length}`
-      return <Tag dangerouslySetInnerHTML={{ __html: handleInline(res[2]) }} />
+      return (
+        <Tag
+          id={getId(res[1].length, res[2])}
+          dangerouslySetInnerHTML={{ __html: handleInline(res[2]) }}
+        />
+      )
     case TAGS.codeBlockQuote:
       let len = content.length
       if (codeBlockQuoteRegex.test(content[len - 1])) --len

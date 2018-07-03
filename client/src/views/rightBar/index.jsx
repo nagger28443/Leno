@@ -27,14 +27,25 @@ const data2 = {
   all: '/archive',
 }
 const styles = {
+  tabHeader: {
+    marginBottom: '1rem',
+    textAlign: 'center',
+  },
+  tabTittle: {
+    margin: [0, '0.5rem'],
+  },
   container: {},
 }
 const RightBar = inject('appStore')(
   observer(({ appStore, classes }) => (
     <aside className="sidebar" style={{ ...appStore.rightBarStyle }}>
+      <div className={classes.tabHeader}>
+        <span className={`plain-link ${classes.tabTittle}`}>文章目录</span>
+        <span className={`plain-link ${classes.tabTittle}`}>分类·归档</span>
+      </div>
       <div className={classes.container}>
-        <CardTemplate data={data1} />
         <CardTemplate data={data2} />
+        <CardTemplate data={data1} />
       </div>
     </aside>
   )),
