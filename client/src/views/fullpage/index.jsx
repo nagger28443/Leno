@@ -1,5 +1,6 @@
 import React from 'react'
 import injectSheet from 'react-jss'
+// import _ from 'lodash'
 import { action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import article from '../../blogs/1.md'
@@ -27,15 +28,25 @@ class FullPage extends React.Component {
 
   getNameFromPath = path => /.*\/(.+?)\/*$/.exec(path)[1]
 
+  // @action
+  // generateAnchors = data => {
+  //   const { anchors } = store
+  //   data.forEach(item => {})
+  // }
+
   @action
   componentDidMount() {
     document.documentElement.scrollIntoView()
-    const { pathname } = this.props.location
-    const name = this.getNameFromPath(pathname)
+    // window.addEventListener('scroll', _.throttle(this.updateAnchor, 100), false)
+
+    // const { pathname } = this.props.location
+    // const name = this.getNameFromPath(pathname)
     // getBlogByName
-    console.log(name)
+    // console.log(name)
     store.blogContent = MDParser(article)
-    console.log(store.blogContent)
+    // console.log(store.blogContent)
+    // ajax成功回调
+    // this.generateAnchors(store.blogContent)
   }
 
   render() {

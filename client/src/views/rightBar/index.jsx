@@ -51,11 +51,23 @@ const styles = {
   },
   catalogList: {
     fontSize: 'smaller',
+    '& a': {
+      display: 'inline',
+    },
   },
   firstLevelItem: {
     counterIncrement: 'first',
+    lineHeight: 2.2,
     '&:before': {
       content: 'counter(first) "."',
+    },
+  },
+  secondLevelItem: {
+    marginLeft: '0.9rem',
+    lineHeight: 1.8,
+    counterIncrement: 'second',
+    '&:before': {
+      content: 'counter(first) "." counter(second) "."',
     },
   },
 }
@@ -78,9 +90,20 @@ class RightBar extends React.Component {
   state = {
     curTab: TABS.categoryArchive,
     isCatalogVisible: false,
+    // parentAnchorId: '',
+    // childAnchorId: '',
   }
   switchTab = e => {
     this.setState({ curTab: e.target.innerText })
+  }
+
+  updateAnchor = () => {
+    console.log(document.getElementById('归档').offsetTop)
+    console.log(window.pageYOffset)
+    const parentAnchorId = store.blogContent.find(
+      item => document.getElementById(item.title).offsetTop > 0,
+    ).tittle
+    console.log(parentAnchorId)
   }
   componentDidMount() {
     prevPath = window.location.pathname
@@ -112,6 +135,13 @@ class RightBar extends React.Component {
     })
     return t
   }
+  handleScrollTo = e => {
+    const id = e.target.innerText
+    window.scrollTo({
+      top: document.getElementById(id).offsetTop,
+      behavior: 'smooth',
+    })
+  }
   render() {
     const { classes } = this.props
     const { curTab, isCatalogVisible } = this.state
@@ -140,11 +170,15 @@ class RightBar extends React.Component {
           <ol className={classes.catalogList}>
             {this.contentFormatter(store.blogContent).map(item => (
               <li key={item.title} className={classes.firstLevelItem}>
-                <a className="link">{item.title}</a>
+                <a className="link" onClick={this.handleScrollTo}>
+                  {item.title}
+                </a>
                 <ol>
                   {item.children.map(ele => (
                     <li key={ele.title} className={classes.secondLevelItem}>
-                      <a className="link">{ele.title}</a>
+                      <a className="link" onClick={this.handleScrollTo}>
+                        {ele.title}
+                      </a>
                     </li>
                   ))}
                 </ol>
