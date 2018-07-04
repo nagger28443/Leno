@@ -7,6 +7,9 @@ class AppStore {
     window.addEventListener('resize', _.throttle(this.handleResize, 100), false)
     window.addEventListener('scroll', _.debounce(this.handleScroll(), 50), false)
   }
+
+  @observable blogContent = []
+
   @observable bannerType = this.getBannerType()
   @observable bannerStyle = this.getBannerStyle(this.bannerType)
   @observable rightBarStyle = this.getRightBarStyle()

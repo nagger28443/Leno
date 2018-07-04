@@ -74,14 +74,16 @@ article
     border-style: solid;
     border-radius: 0.05rem;
 
-.plain-link
+.link, .plain-link
   display: inline-block
-  text-decoration: none
   color: inherit
   cursor: pointer
-  transition: 0.5s transform
+  transition: 0.1s transform
   &:hover
-    transform: scale(1.05)
+    opacity: 0.7
+.plain-link
+  text-decoration: none
+  
  
 
 @media (max-width: 414px)
