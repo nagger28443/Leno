@@ -5,23 +5,26 @@ import injectSheet from 'react-jss'
 import Links from './elements/links'
 import SearchBox from './elements/searchBox'
 import Menu from './elements/menu'
+import Statistics from './elements/statistics'
 import { SIDEBAR } from '../../constants'
 
-const styles = {}
+const styles = {
+  sidebar: {
+    float: 'left',
+    // margin: 'auto',
+    // textAlign: 'center',
+  },
+  topbar: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+}
 const Banner = inject('appStore')(
-  observer(({ appStore }) => (
+  observer(({ classes, appStore }) => (
     <aside className={`banner ${appStore.bannerType}`} style={{ ...appStore.bannerStyle }}>
-      <div
-        style={
-          appStore.bannerType === SIDEBAR
-            ? { float: 'left' }
-            : {
-                flex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }
-        }>
+      <div className={appStore.bannerType === SIDEBAR ? classes.sidebar : classes.topbar}>
         <h1>
           <Link to="/" className="plain-link">
             EVO
@@ -31,11 +34,8 @@ const Banner = inject('appStore')(
         <div style={appStore.bannerType === SIDEBAR ? {} : { display: 'none' }}>
           <Links />
           <p>如人饮水，冷暖自知。</p>
+          <Statistics />
           <SearchBox />
-          <p>someting</p>
-          <p>someting</p>
-          <p>someting</p>
-          <p>someting</p>
         </div>
       </div>
     </aside>

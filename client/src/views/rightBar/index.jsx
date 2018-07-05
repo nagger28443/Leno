@@ -37,7 +37,7 @@ const styles = {
     margin: [0, '0.5rem'],
   },
   active: {
-    borderBottom: [1, 'solid', '#237567'],
+    borderBottom: [1, 'dashed', '#237567'],
     color: '#237567',
     paddingBottom: '0.2rem',
   },
@@ -58,7 +58,12 @@ const styles = {
   firstLevelItem: {
     counterIncrement: 'first',
     lineHeight: 2.2,
+    '& ol': {
+      overflow: 'hidden',
+      height: 0,
+    },
     '&:before': {
+      fontSize: 'smaller',
       content: 'counter(first) "."',
     },
   },
@@ -66,9 +71,22 @@ const styles = {
     marginLeft: '0.9rem',
     lineHeight: 1.8,
     counterIncrement: 'second',
+    color: 'inherit',
     '&:before': {
+      fontSize: 'smaller',
       content: 'counter(first) "." counter(second) "."',
     },
+  },
+  // expanded: {},
+  // folded: {
+  //   '& ol': {
+  //     transition: 'height 0.5s',
+  //     height: 0,
+  //     overflow: 'hidden',
+  //   },
+  // },
+  activeAnchor: {
+    color: 'red',
   },
 }
 
@@ -85,27 +103,44 @@ class RightBar extends React.Component {
   constructor(props) {
     super(props)
     store = props.appStore
+    this.content = []
+    this.state = {
+      curTab: TABS.categoryArchive,
+      isCatalogVisible: false,
+      parentAnchorId: '',
+      childAnchorId: '',
+    }
   }
 
-  state = {
-    curTab: TABS.categoryArchive,
-    isCatalogVisible: false,
-    // parentAnchorId: '',
-    // childAnchorId: '',
-  }
   switchTab = e => {
     this.setState({ curTab: e.target.innerText })
   }
 
   updateAnchor = () => {
-    console.log(document.getElementById('归档').offsetTop)
-    console.log(window.pageYOffset)
-    const parentAnchorId = store.blogContent.find(
-      item => document.getElementById(item.title).offsetTop > 0,
-    ).tittle
-    console.log(parentAnchorId)
+    let parent = null
+    let prevId = null
+    const { content } = this
+    for (let i = 0; i < content.length && content[i].offset <= window.pageYOffset; ++i) {
+      if (parent !== content[i].title) {
+        parent = content[i].title
+        prevId = content[i].title
+      }
+      for (
+        let j = 0;
+        j < content[i].children.length && content[i].children[j].offset <= window.pageYOffset;
+        ++j
+      ) {
+        prevId = content[i].children[j].title
+      }
+    }
+    console.log(prevId)
+    this.setState({
+      parentAnchorId: parent,
+      childAnchorId: prevId,
+    })
   }
   componentDidMount() {
+    window.addEventListener('scroll', _.debounce(this.updateAnchor, 100), false)
     prevPath = window.location.pathname
   }
   static getDerivedStateFromProps() {
@@ -121,15 +156,20 @@ class RightBar extends React.Component {
   }
   contentFormatter = data => {
     const t = []
+    let ele
     data.forEach(item => {
       if (item.type === 'h2' || (item.type === 'h3' && t.length === 0)) {
+        ele = document.getElementById(item.props.id)
         t.push({
           title: item.props.id,
+          offset: ele ? ele.offsetTop : 0,
           children: [],
         })
       } else if (item.type === 'h3') {
+        ele = document.getElementById(item.props.id)
         f.lastEle(t).children.push({
           title: item.props.id,
+          offset: ele ? ele.offsetTop : 0,
         })
       }
     })
@@ -145,6 +185,7 @@ class RightBar extends React.Component {
   render() {
     const { classes } = this.props
     const { curTab, isCatalogVisible } = this.state
+    this.content = this.content.length ? this.content : this.contentFormatter(store.blogContent)
     return (
       <aside className="sidebar" style={{ ...store.rightBarStyle }}>
         <div className={classes.tabHeader}>
@@ -168,15 +209,23 @@ class RightBar extends React.Component {
           className={`${classes.container} `}
           style={{ display: curTab === TABS.catalog ? 'block' : 'none' }}>
           <ol className={classes.catalogList}>
-            {this.contentFormatter(store.blogContent).map(item => (
+            {this.content.map(item => (
               <li key={item.title} className={classes.firstLevelItem}>
-                <a className="link" onClick={this.handleScrollTo}>
+                <a
+                  className={`link ${
+                    this.state.childAnchorId === item.title ? classes.active : ''
+                  }`}
+                  onClick={this.handleScrollTo}>
                   {item.title}
                 </a>
-                <ol>
+                <ol style={{ height: this.state.parentAnchorId === item.title ? '100%' : 0 }}>
                   {item.children.map(ele => (
                     <li key={ele.title} className={classes.secondLevelItem}>
-                      <a className="link" onClick={this.handleScrollTo}>
+                      <a
+                        className={`link ${
+                          this.state.childAnchorId === ele.title ? classes.active : ''
+                        }`}
+                        onClick={this.handleScrollTo}>
                         {ele.title}
                       </a>
                     </li>

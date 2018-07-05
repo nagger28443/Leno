@@ -7,10 +7,8 @@ import LabelModal from './labelModal'
 const styles = {
   menu: {
     padding: 0,
-    textAlign: 'left',
     fontSize: 'smaller',
     color: '#073e5b',
-    minWidth: '12rem',
   },
 
   menuItem: {
