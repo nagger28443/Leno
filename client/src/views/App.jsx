@@ -12,6 +12,7 @@ import Page404 from './page404'
 import { TOPBAR, SIDEBAR } from '../constants'
 import FullPage from './fullpage'
 import RightBar from './rightBar'
+import SearchResult from './search'
 
 const srcollToTop = () => {
   document.documentElement.scrollIntoView()
@@ -35,8 +36,14 @@ const styles = {
   },
 }
 
-const App = inject('appStore')(
-  observer(({ appStore, classes }) => {
+@inject('appStore')
+@observer
+class App extends React.Component {
+  componentDidMount() {
+    this.props.appStore.history = this.props.history
+  }
+  render() {
+    const { classes, appStore } = this.props
     const TagInside = appStore.bannerType === SIDEBAR ? React.Fragment : 'div'
     return (
       <React.Fragment>
@@ -58,6 +65,7 @@ const App = inject('appStore')(
               <Route path="/label" key="/label" component={Labels} />
               <Route path="/about" key="/about" component={About} />
               <Route path="/blog" key="/fullpage" component={FullPage} />
+              <Route path="/search" key="/search" component={SearchResult} />
               <Route key="404" component={Page404} />
             </Switch>
           </div>
@@ -71,6 +79,6 @@ const App = inject('appStore')(
         />
       </React.Fragment>
     )
-  }),
-)
+  }
+}
 export default injectSheet(styles)(App)

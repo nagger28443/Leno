@@ -133,7 +133,6 @@ class RightBar extends React.Component {
         prevId = content[i].children[j].title
       }
     }
-    console.log(prevId)
     this.setState({
       parentAnchorId: parent,
       childAnchorId: prevId,
