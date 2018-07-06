@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { serverHost, serverPort } from '../../projectConfig'
 
-const apiBaseUrl = `http://${serverHost}:${serverPort}`
+const apiBaseUrl = `http://${serverHost}:${serverPort}/leno`
 
 const parseUrl = (url, params = {}) => {
   const strParams = Object.keys(params)

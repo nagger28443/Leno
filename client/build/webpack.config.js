@@ -62,7 +62,7 @@ if (isDev) {
       index: '/asserts/index.html',
     },
     proxy: {
-      '/api': `http://${localIp}:${serverPort}`,
+      '/api': `http://${localIp}:${clientServerPort}`,
       [`/${projectName}`]: `http://${serverHost}:${serverPort}`,
     },
     quiet: false,

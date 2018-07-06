@@ -6,11 +6,11 @@ const projectConfig = {
   /**
    * tomcat服务端端口号
    */
-  serverPort: '3000',
+  serverPort: '8157',
   /**
    * 服务端主机地址 需要根据实际部署虚机的真实地址修改
    */
-  serverHost: '127.0.0.1',
+  serverHost: '118.25.56.220',
   /**
    * 如果没有直接进登录界面 而是因为没有登录
    * 从别的页面跳转进登录界面
@@ -23,7 +23,7 @@ const projectConfig = {
    */
   defaultRoute: '/',
   /* 项目名称 方便在tomcat目录下存放 */
-  projectName: 'Leno',
+  projectName: 'leno',
 }
 
 module.exports = projectConfig

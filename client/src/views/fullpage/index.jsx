@@ -3,8 +3,9 @@ import injectSheet from 'react-jss'
 import { action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Detail } from '../../styledComponents'
-import article from '../../blogs/1.md'
+import article from '../../blogs/2.md'
 import MDParser from '../../util/MDParser'
+import { get } from '../../util/http'
 import BlogHeader from '../commonComponents/blogHeader'
 
 const styles = {}
@@ -24,6 +25,10 @@ class FullPage extends React.Component {
   componentDidMount() {
     document.documentElement.scrollIntoView()
 
+    get('/blog/2').then(resp => {
+      console.log(resp)
+    })
+
     // const { pathname } = this.props.location
     // const name = this.getNameFromPath(pathname)
     // getBlogByName
@@ -41,7 +46,8 @@ class FullPage extends React.Component {
         <article style={{ paddingTop: '4rem' }}>
           <BlogHeader
             data={{
-              title: 'React中实现离开页面确认提示',
+              // title: 'React中实现离开页面确认提示',
+              title: '进化模拟器',
               date: '2018-07-05',
               category: 'coding',
               labels: ['React', 'React-Router'],
