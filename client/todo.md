@@ -1,2 +1,1 @@
-- label, 不是tag
 - 文章labels中间缺号间隔, 格式错误
