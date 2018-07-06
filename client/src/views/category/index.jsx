@@ -16,7 +16,7 @@ const styles = {
   // },
   checkAll: {
     position: 'absolute',
-    right: '3rem',
+    right: '4rem',
     top: '2rem',
   },
 }
@@ -119,11 +119,14 @@ class Category extends React.Component {
       <Detail>
         {/* <NoContent /> */}
         <div className={classes.checkAll}>
-          <span>当前分类：xxxx</span>&nbsp;&nbsp;
+          <span>当前分类：xxxx</span>
           <Link
             to="/category"
             className="link "
-            style={{ display: this.props.location.pathname === '/category' ? 'none' : 'inline' }}>
+            style={{
+              marginLeft: '1rem',
+              display: this.props.location.pathname === '/category' ? 'none' : 'inline',
+            }}>
             查看全部
           </Link>
         </div>

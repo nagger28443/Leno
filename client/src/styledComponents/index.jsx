@@ -4,14 +4,16 @@ import injectSheet from 'react-jss'
 const styles = {
   detail: {
     background: '#ffffff',
-    padding: '3rem',
+    padding: '4rem',
     minHeight: '100vh',
     position: 'relative',
   },
 }
 
-const Detail = injectSheet(styles)(({ classes, children }) => (
-  <div className={classes.detail}>{children}</div>
+const Detail = injectSheet(styles)(({ classes, children, style }) => (
+  <div className={classes.detail} style={style}>
+    {children}
+  </div>
 ))
 
 const a = 1
