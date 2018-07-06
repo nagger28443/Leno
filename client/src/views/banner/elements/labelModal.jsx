@@ -55,34 +55,34 @@ const LabelModal = inject('appStore', 'labelStore')(
       // style={{ display: labelStore.isLabelModalVisible ? 'block' : 'none' }}
       onClick={labelStore.hideLabelModal}>
       <div className={classes.labels}>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
-        <Link to="/labels" onClick={labelStore.hideLabelModal} className={classes.label}>
+        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
           123
         </Link>
       </div>
