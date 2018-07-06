@@ -9,8 +9,6 @@ class AppStore {
   }
 
   @observable blogContent = []
-  // @observable anchors = []
-  anchors = []
   history = null
 
   @observable bannerType = this.getBannerType()

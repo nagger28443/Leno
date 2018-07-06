@@ -103,12 +103,12 @@ class RightBar extends React.Component {
   constructor(props) {
     super(props)
     store = props.appStore
-    this.content = []
     this.state = {
       curTab: TABS.categoryArchive,
       isCatalogVisible: false,
       parentAnchorId: '',
       childAnchorId: '',
+      anchors: [],
     }
   }
 
@@ -119,18 +119,18 @@ class RightBar extends React.Component {
   updateAnchor = () => {
     let parent = null
     let prevId = null
-    const { content } = this
-    for (let i = 0; i < content.length && content[i].offset <= window.pageYOffset; ++i) {
-      if (parent !== content[i].title) {
-        parent = content[i].title
-        prevId = content[i].title
+    const { anchors } = this.state
+    for (let i = 0; i < anchors.length && anchors[i].offset <= window.pageYOffset; ++i) {
+      if (parent !== anchors[i].title) {
+        parent = anchors[i].title
+        prevId = anchors[i].title
       }
       for (
         let j = 0;
-        j < content[i].children.length && content[i].children[j].offset <= window.pageYOffset;
+        j < anchors[i].children.length && anchors[i].children[j].offset <= window.pageYOffset;
         ++j
       ) {
-        prevId = content[i].children[j].title
+        prevId = anchors[i].children[j].title
       }
     }
     this.setState({
@@ -172,6 +172,7 @@ class RightBar extends React.Component {
         })
       }
     })
+    console.log(t)
     return t
   }
   handleScrollTo = e => {
@@ -181,10 +182,16 @@ class RightBar extends React.Component {
       behavior: 'smooth',
     })
   }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.anchors.length === 0 && store.blogContent.length !== 0) {
+      this.setState({ //eslint-disable-line
+        anchors: this.contentFormatter(store.blogContent),
+      })
+    }
+  }
   render() {
     const { classes } = this.props
     const { curTab, isCatalogVisible } = this.state
-    this.content = this.content.length ? this.content : this.contentFormatter(store.blogContent)
     return (
       <aside className="sidebar" style={{ ...store.rightBarStyle }}>
         <div className={classes.tabHeader}>
@@ -208,30 +215,31 @@ class RightBar extends React.Component {
           className={`${classes.container} `}
           style={{ display: curTab === TABS.catalog ? 'block' : 'none' }}>
           <ol className={classes.catalogList}>
-            {this.content.map(item => (
-              <li key={item.title} className={classes.firstLevelItem}>
-                <a
-                  className={`link ${
-                    this.state.childAnchorId === item.title ? classes.active : ''
-                  }`}
-                  onClick={this.handleScrollTo}>
-                  {item.title}
-                </a>
-                <ol style={{ height: this.state.parentAnchorId === item.title ? '100%' : 0 }}>
-                  {item.children.map(ele => (
-                    <li key={ele.title} className={classes.secondLevelItem}>
-                      <a
-                        className={`link ${
-                          this.state.childAnchorId === ele.title ? classes.active : ''
-                        }`}
-                        onClick={this.handleScrollTo}>
-                        {ele.title}
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </li>
-            ))}
+            {store.blogContent.length &&
+              this.state.anchors.map(item => (
+                <li key={item.title} className={classes.firstLevelItem}>
+                  <a
+                    className={`link ${
+                      this.state.childAnchorId === item.title ? classes.active : ''
+                    }`}
+                    onClick={this.handleScrollTo}>
+                    {item.title}
+                  </a>
+                  <ol style={{ height: this.state.parentAnchorId === item.title ? '100%' : 0 }}>
+                    {item.children.map(ele => (
+                      <li key={ele.title} className={classes.secondLevelItem}>
+                        <a
+                          className={`link ${
+                            this.state.childAnchorId === ele.title ? classes.active : ''
+                          }`}
+                          onClick={this.handleScrollTo}>
+                          {ele.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </li>
+              ))}
           </ol>
         </div>
         <div
