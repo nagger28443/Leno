@@ -30,6 +30,7 @@ const codeInlineRegex = /(`{1,2})(.*?)\1/
 const strongRegex = /\*{2}(?!\*)(.*?)\*{2}/
 const italicRegex = /\*(?!\*)(.*?)\*/
 const linkRegex = /<(https?:\/\/.*?)>/
+const customLinkRegex = /\[(.*?)\]\((https?:\/\/.*?)\)/
 const mailRegex = /<(.+?@.+?\..+?)>/
 const newLineRegex = /[\n\r]/
 
@@ -106,6 +107,10 @@ function handleInline(content) {
     .replace(strongRegex, '<strong>$1</strong>')
     .replace(italicRegex, '<i>$1</i>')
     .replace(linkRegex, '<a href="$1">$1</a>')
+    .replace(
+      customLinkRegex,
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="link">$1</a>',
+    )
     .replace(mailRegex, '<a href="mailto:$1">$1</a>')
     .replace(codeInlineRegex, '<code>$2</code>')
     .replace(newLineRegex, '')

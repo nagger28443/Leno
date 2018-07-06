@@ -41,7 +41,7 @@ class FullPage extends React.Component {
         <article style={{ paddingTop: '4rem' }}>
           <BlogHeader
             data={{
-              title: '(小结)React中实现离开页面确认提示',
+              title: 'React中实现离开页面确认提示',
               date: '2018-07-05',
               category: 'coding',
               labels: ['React', 'React-Router'],

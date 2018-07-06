@@ -11,9 +11,9 @@ import BlogHeader from '../commonComponents/blogHeader'
 const styles = {
   root: {
     background: '#ffffff',
-    padding: '4rem',
   },
   article: {
+    padding: '4rem',
     '&:after': {
       width: '100%',
       height: '4rem',
@@ -76,7 +76,7 @@ class Blog extends React.Component {
           style={{ height: this.isArticleCollapsed ? '50rem' : '' }}>
           <BlogHeader
             data={{
-              title: '(小结)React中实现离开页面确认提示',
+              title: 'React中实现离开页面确认提示',
               date: '2018-07-05',
               category: 'coding',
               labels: ['React', 'React-Router'],
