@@ -1,13 +1,11 @@
 import React from 'react'
 import injectSheet from 'react-jss'
-import { Link } from 'react-router-dom'
 import { Detail } from '../../styledComponents'
 // import NoContent from '../commonComponents/noContent'
 import BlogListItem from '../commonComponents/blogListItem'
 import { get } from '../../util/http'
 import { fail } from '../../util/utils'
 import Paging from '../commonComponents/paging'
-import { NOT_FOUND } from '../../constants'
 
 const styles = {
   // root: {
@@ -21,26 +19,26 @@ const styles = {
   },
 }
 
-class Category extends React.Component {
+class SearchResult extends React.Component {
   state = {
     list: [],
     curPage: 1,
+    param: '',
   }
   data = []
 
   parsePath = pathname => {
-    // 全部分类或某个分类
-    const match =
-      /^\/category\/*$/.exec(pathname) || /^\/category\/+([\d\w]+)(?:[/\s])*$/.exec(pathname)
-    return match ? { category: match[1] } : NOT_FOUND
+    const match = /^\/search\/+([\d\w]+)(?:[/\s])*$/.exec(pathname)
+    return match ? match[1] : null
   }
 
   loadPage = () => {
     document.documentElement.scrollIntoView()
     const { pathname } = this.props.location
     const param = this.parsePath(pathname)
-    if (param === NOT_FOUND) {
-      this.props.history.push('/404')
+    // '/search'重定向至'/archive'
+    if (!param) {
+      this.props.history.push('/archive')
       return
     }
     this.data = [
@@ -70,14 +68,14 @@ class Category extends React.Component {
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-05-01', id: 4 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-02-01', id: 5 },
     ]
-    get('/category', param)
+    get(`/search/${param}`)
       .then(resp => {
         console.log(resp)
       })
       .catch(err => {
         fail(err)
       })
-    this.setState({ list: this.data.slice(0, 10) })
+    this.setState({ list: this.data.slice(0, 10), param })
   }
 
   componentDidMount() {
@@ -119,13 +117,7 @@ class Category extends React.Component {
       <Detail>
         {/* <NoContent /> */}
         <div className={classes.checkAll}>
-          <span>当前分类：xxxx</span>&nbsp;&nbsp;
-          <Link
-            to="/category"
-            className="link "
-            style={{ display: this.props.location.pathname === '/category' ? 'none' : 'inline' }}>
-            查看全部
-          </Link>
+          <span>搜索关键字：{this.state.param}</span>
         </div>
         <div className={classes.root}>
           {list.map(item => <BlogListItem data={item} key={item.id} />)}
@@ -139,4 +131,4 @@ class Category extends React.Component {
     )
   }
 }
-export default injectSheet(styles)(Category)
+export default injectSheet(styles)(SearchResult)

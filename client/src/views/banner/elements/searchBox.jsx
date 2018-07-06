@@ -1,7 +1,6 @@
 import React from 'react'
 import injectSheet from 'react-jss'
-import { observer } from 'mobx-react'
-import { observable, action } from 'mobx'
+import { inject } from 'mobx-react'
 
 const styles = {
   searchBox: {
@@ -22,42 +21,66 @@ const styles = {
       background: 'linear-gradient(to right,#d4d2d2,#f5f5f5)',
     },
   },
+  warning: {
+    color: 'red',
+    fontSize: 'small',
+    marginLeft: '1.6rem',
+  },
 }
 
-@observer
+@inject('appStore')
 class SearchBox extends React.Component {
-  @observable isInputCollapsed = true
-  inputValue = ''
-  input = null
-
-  handleInputBlur = () => {
-    setTimeout(
-      action(() => {
-        this.isInputCollapsed = true
-      }),
-      100,
-    )
+  state = {
+    isInputCollapsed: true,
+    warning: '',
   }
 
-  @action
+  handleInputBlur = () => {
+    setTimeout(() => {
+      this.setState({ isInputCollapsed: true })
+    }, 100)
+  }
+
   toggleInputCollapse = () => {
-    this.isInputCollapsed = !this.isInputCollapsed
-    if (!this.isInputCollapsed) {
+    const isInputCollapsed = !this.state.isInputCollapsed
+    this.setState({ isInputCollapsed })
+    if (!isInputCollapsed) {
       this.input.focus()
     }
   }
-  @action
   handleSearch = e => {
-    this.inputValue = e.target.value
+    const text = e.target.value.trim()
+    console.log(text)
+    if (text.length === 0) {
+      this.setState({
+        warning: '请输入搜索内容!',
+      })
+      setTimeout(() => {
+        this.setState({
+          warning: '',
+        })
+      }, 2000)
+      return
+    }
+    // 搜索方法,回调后跳转
+    e.target.value = ''
+    this.setState({ isInputCollapsed: true })
+    this.props.appStore.history.push('/search')
+  }
+  handleKeyEnter = e => {
     if (e.key === 'Enter') {
-      e.target.value = ''
-      this.isInputCollapsed = true
+      this.handleSearch(e)
     }
   }
   render() {
     const { classes } = this.props
     return (
       <div className={classes.searchBox}>
+        <div
+          className={classes.warning}
+          style={{ display: this.state.warning.length ? 'block' : 'none' }}>
+          {this.state.warning}
+        </div>
         <span className="icon-search plain-link" onClick={this.toggleInputCollapse} />
         <input
           type="text"
@@ -66,9 +89,9 @@ class SearchBox extends React.Component {
           }}
           onBlur={this.handleInputBlur}
           placeholder="搜索标题和标签"
-          onKeyPress={this.handleSearch}
+          onKeyPress={this.handleKeyEnter}
           className={classes.searchInput}
-          style={{ width: this.isInputCollapsed ? 0 : '80%' }}
+          style={{ width: this.state.isInputCollapsed ? 0 : '80%' }}
         />
       </div>
     )
