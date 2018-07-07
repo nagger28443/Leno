@@ -1,4 +1,4 @@
-const ip = require('ip')
+// const ip = require('ip')
 const path = require('path')
 const webpack = require('webpack')
 const webpackMerge = require('webpack-merge')
@@ -6,9 +6,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const webpackBaseConfig = require('./webpack.base.js')
-const { clientServerPort, serverHost, serverPort, projectName } = require('../projectConfig.js')
+// const { clientServerPort, serverHost, serverPort, projectName } = require('../projectConfig.js')
 
-const localIp = ip.address()
+// const localIp = ip.address()
 const isDev = process.env.NODE_ENV === 'development'
 
 const config = webpackMerge(webpackBaseConfig, {
@@ -49,9 +49,9 @@ if (isDev) {
   config.devServer = {
     /** 通过启动时的命令行注入 --hot */
     // hot: true,
-    host: 'localhost',
+    host: '127.0.0.1',
     disableHostCheck: true,
-    port: clientServerPort,
+    port: 7777,
     compress: true,
 
     overlay: {
@@ -61,10 +61,19 @@ if (isDev) {
     historyApiFallback: {
       index: '/asserts/index.html',
     },
-    proxy: {
-      '/api': `http://${localIp}:${clientServerPort}`,
-      [`/${projectName}`]: `http://${serverHost}:${serverPort}`,
-    },
+
+    // proxy: {
+    //   '/api': {
+    //     // 测试环境
+    //     target: `http://127.0.0.1:3000`, // 接口域名
+    //     changeOrigin: true, // 是否跨域
+    //     pathRewrite: {
+    //       '^/api': '', // 需要rewrite重写的,
+    //     },
+    //     secure: false,
+    //   },
+    // },
+
     quiet: false,
     noInfo: false,
     inline: true,
@@ -75,7 +84,6 @@ if (isDev) {
       ignored: path.join(__dirname, '../node_modules/'),
       aggregateTimeout: 500,
       poll: 100,
-    },
   }
 } else {
   config.mode = 'production'

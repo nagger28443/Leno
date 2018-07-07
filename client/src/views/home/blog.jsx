@@ -55,10 +55,7 @@ class Blog extends React.Component {
   }
 
   componentDidMount() {
-    get('/get', {
-      nick: 'Leno',
-      love: 'coding',
-    })
+    get('/')
       .then(resp => {
         console.log(resp)
       })

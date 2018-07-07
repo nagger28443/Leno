@@ -1,7 +1,7 @@
 {
-  "name": "next-ajax",
+  "name": "leno-backend",
   "version": "0.1.0",
-  "description": "Ajax 后台服务",
+  "description": "leno-backend",
   "main": "index.js",
   "scripts": {
     "start": "node app/index"
@@ -15,9 +15,33 @@
   "license": "ISC",
   "dependencies": {
     "koa": "^2.3.0",
-    "koa-bodyparser": "^4.2.0"
+    "koa-bodyparser": "^4.2.0",
+    "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "standard": "^10.0.3"
+    "standard": "^10.0.3",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-import": "^1.6.7",
+    "babel-plugin-mobx-deep-action": "^1.6.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "eslint": "^4.19.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-react": "^7.9.1",
+    "eslint-plugin-standard": "^3.0.1",
+    "webpack-cli": "^2.0.12",
+    "webpack-merge": "^4.1.2"
   }
 }
