@@ -1,16 +1,15 @@
 const fs = require('fs')
 
-var M = module.exports = {
+const M = {
   /**
    * 将 fs.readFile 包装成 Promise ，方便在 async/await 中使用
    */
-  readFile: function (path) {
+  readFile(path) {
     return new Promise((resolve, reject) => {
       fs.readFile(path, 'utf8', (err, content) => {
         if (err) {
           return reject(err)
         }
-
         resolve(content)
       })
     })
@@ -20,10 +19,10 @@ var M = module.exports = {
    * 处理请求，返回 JSON 格式
    */
   parse: (param, type) => {
-    var ret = {
+    const ret = {
       code: 0,
       result: param,
-      type
+      type,
     }
 
     M.log(`接受到的参数：${JSON.stringify(param)}`)
@@ -36,5 +35,7 @@ var M = module.exports = {
    */
   log: msg => {
     console.log(msg)
-  }
+  },
 }
+
+module.exports = M
