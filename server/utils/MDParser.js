@@ -240,4 +240,4 @@ function MDParser(md) {
   return devideIntoBlocks(md).map(generateHtml)
 }
 
-export default MDParser
+module.exports = MDParser
