@@ -42,11 +42,16 @@ const styles = {
     paddingBottom: '0.2rem',
   },
   container: {
+    height: '100%',
+    overflow: 'auto',
     '& ol': {
       paddingLeft: 0,
     },
     '& li': {
       listStyle: 'none',
+    },
+    '&::-webkit-scrollbar': {
+      display: 'none',
     },
   },
   catalogList: {
