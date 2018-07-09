@@ -84,6 +84,7 @@ if (isDev) {
       ignored: path.join(__dirname, '../node_modules/'),
       aggregateTimeout: 500,
       poll: 100,
+    },
   }
 } else {
   config.mode = 'production'
