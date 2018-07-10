@@ -1,5 +1,4 @@
 module.exports = {
-  parser: 'babel-eslint',
   extends: ['airbnb', 'prettier'],
   plugins: ['prettier'],
   rules: {
@@ -11,7 +10,6 @@ module.exports = {
         semi: false,
         trailingComma: 'all',
         bracketSpacing: true,
-        jsxBracketSameLine: true,
         printWidth: 100,
       },
     ],

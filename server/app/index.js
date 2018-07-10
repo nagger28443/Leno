@@ -1,5 +1,8 @@
 const Koa = require('koa')
 const Router = require('koa-router')
+const u = require('../utils/u')
+
+u.init()
 
 const app = new Koa()
 const router = new Router()

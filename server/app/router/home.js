@@ -1,67 +1,59 @@
 const Router = require('koa-router')
+const codes = require('../../constants/codes')
 
 const router = new Router()
-const util = require('../../utils/util')
+const u = require('../../utils/u')
 const MDParser = require('../../utils/MDParser')
 const path = require('path')
-const mongoose = require('mongoose')
-
-const blogSchema = mongoose.Schema({
-  title: String,
-  date: Date,
-  category: String,
-  labels: Array,
-  content: String,
-})
-const Blog = mongoose.model('Blog', blogSchema)
 
 router.get('/blogList', async ctx => {
-  const contentFile = await util.readFile(path.resolve(__dirname, '../blogs/3.md'))
-  const contentHtml = MDParser(contentFile)
-  console.log(contentHtml)
-  console.log(123)
+  // const contentFile = await util.readFile(path.resolve(__dirname, '../blogs/3.md'))
+  // const contentHtml = MDParser(contentFile)
+  // connection.connect()
+  // const sql = 'select * from blog'
+  // connection.query(sql, (err, res) => {
+  //   if (err) {
+  //     console.log(err.message)
+  //     return
+  //   }
+  //   console.log(res)
+  // })
 
-  mongoose.connect('mongodb://localhost/leno')
-  const db = mongoose.connection
-  db.on('error', () => {
-    console.log('db error')
-  })
-  db.once('open', () => {
-    const query = Blog.find()
-    query.then(doc => {
-      console.log(doc)
-    })
-    // const blog = new Blog({
-    //   title: 'React中实现离开页面确认提示',
-    //   date: Date.now(),
-    //   category: 'coding',
-    //   labels: ['React', 'React-Router'],
-    //   content: contentHtml,
-    // })
-    // blog.save(err => {
-    //   if (err) {
-    //     console.log(err)
-    //   }
-    // })
-  })
+  // connection.end()
 
-  ctx.body = '222'
+  console.log(ctx.query)
 })
 
 router.post('/blog', async ctx => {
-  mongoose.connect('mongodb://localhost/leno')
-  const db = mongoose.connection
-  db.on('error', () => {
-    console.log('db error')
-  })
-  db.once('open', () => {
-    console.log('open')
-  })
+  const { title, content, category, labels } = ctx.query
+  const gmt = new Date().toLocaleString()
 
+  await u
+    .dbInsert('blogs', { title, content, category, labels, gmt_create: gmt, gmt_modify: gmt })
+    .then(() => {
+      ctx.body = u.response(codes.SUCCESS)
+    })
+    .catch(err => {
+      console.log(err)
+    })
   // const contentFile = await util.readFile(path.resolve(__dirname, '../blogs/3.md'))
   // const contentHtml = MDParser(contentFile)
+})
 
-  ctx.body = '222'
+router.get('/blog', async ctx => {
+  const { title, date } = ctx.query
+  console.log(date, date)
+
+  await u
+    .dbQuery('blogs', { title, date })
+    .then(() => {
+      ctx.body = u.response(codes.SUCCESS)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  // const contentFile = await util.readFile(path.resolve(__dirname, '../blogs/3.md'))
+  // const contentHtml = MDParser(contentFile)
 })
 
 module.exports = router
