@@ -4,9 +4,9 @@ import { action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Detail } from '../../styledComponents'
 import article from '../../blogs/2.md'
-import MDParser from '../../util/MDParser'
 import { get } from '../../util/http'
 import BlogHeader from '../commonComponents/blogHeader'
+import { fail } from '../../util/utils'
 
 const styles = {}
 
@@ -17,43 +17,62 @@ class FullPage extends React.Component {
   constructor(props) {
     super(props)
     store = props.appStore
+    this.state = {
+      data: {
+        labels: '',
+      },
+    }
   }
 
+  pathDecode = path => /^\/+blog\/+(\d{4}\/+\d{2}\/+\d{2})\/+(.+)$/.exec(path)
   getNameFromPath = path => /.*\/(.+?)\/*$/.exec(path)[1]
 
   @action
   componentDidMount() {
     document.documentElement.scrollIntoView()
+    const { pathname } = this.props.location
+    const pathParams = this.pathDecode(pathname)
+    if (!pathParams) {
+      return
+    }
+    const date = pathParams[1].split(/\/+/).join('-')
+    const title = pathParams[2]
 
-    get('/blog/2').then(resp => {
-      console.log(resp)
+    get('/blog', {
+      date,
+      title,
     })
+      .then(
+        action(resp => {
+          store.blogContent = resp.data.content
+          this.setState({
+            data: resp.data,
+          })
+        }),
+      )
+      .catch(err => {
+        fail(err)
+      })
 
     // const { pathname } = this.props.location
     // const name = this.getNameFromPath(pathname)
     // getBlogByName
     // console.log(name)
 
-    store.blogContent = MDParser(article)
     // console.log(store.blogContent)
     // ajax成功回调
     // this.generateAnchors(store.blogContent)
   }
 
   render() {
+    const { data } = this.state
     return (
       <Detail style={{ paddingTop: 0 }}>
         <article style={{ paddingTop: '4rem' }}>
-          <BlogHeader
-            data={{
-              // title: 'React中实现离开页面确认提示',
-              title: '进化模拟器',
-              date: '2018-07-05',
-              category: 'coding',
-              labels: ['React', 'React-Router'],
-            }}
-          />
-          {store.blogContent}
+          <BlogHeader data={data} />
+          {/* eslint-disable */}
+          <div dangerouslySetInnerHTML={{ __html: data.content }} /> 
+          {/* eslint-enable */}
         </article>
       </Detail>
     )

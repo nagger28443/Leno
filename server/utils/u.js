@@ -2,7 +2,8 @@ const fs = require('fs')
 const mysql = require('mysql')
 const codes = require('../constants/codes')
 
-const connection = mysql.createConnection({
+const pool = mysql.createPool({
+  connectionLimit: 100,
   host: 'localhost',
   user: 'root',
   password: '',
@@ -27,41 +28,30 @@ const u = {
   // insert into databse with promise
   dbInsert: (table, data) =>
     new Promise((resolve, reject) => {
-      connection.connect()
-      const sql = `INSERT INTO ${table} (${Object.keys(data).join(',')}) VALUES (${Object.values(
-        data,
-      )
-        .map(item => `'${item}'`)
-        .join(',')})`
-      connection.query(sql, (err, res) => {
+      const query = `INSERT INTO ${table} SET ?`
+      pool.query(query, data, (err, res) => {
         if (err) {
           reject(err)
         }
         resolve(res)
       })
-    }).finally(() => {
-      connection.end()
     }),
+  // .finally(() => {
+  //   connection.end()
+  // }),
   // query from databse with promise
-  dbQuery: (table, params, sql) =>
+  dbQuery: query =>
     new Promise((resolve, reject) => {
-      connection.connect()
-      const query =
-        sql ||
-        `SELECT * FROM ${table} WHERE ${Object.keys(params)
-          .map(key => `${key}=${params[key]}`)
-          .join(' AND ')}`
-      // SELECT * FROM blogs WHERE title='title' AND date_format(gmt_create,'%Y-%m-%d')='2018-07-10'
-      console.log(query)
-      connection.query(query, (err, res) => {
+      pool.query(query, (err, res) => {
         if (err) {
           reject(err)
         }
         resolve(res)
       })
-    }).finally(() => {
-      connection.end()
     }),
+  // .finally(() => {
+  //   connection.end()
+  // }),
   /**
    * 将 fs.readFile 包装成 Promise ，方便在 async/await 中使用
    */
@@ -81,6 +71,20 @@ const u = {
     ...code,
     data,
   }),
+
+  // 全局错误处理
+  errHandler: async (ctx, next) => {
+    try {
+      ctx.set('Access-Control-Allow-Origin', '*')
+      await next()
+    } catch (err) {
+      // handle
+      // if (ctx.response.status === 404) {
+      //   ctx.body = '无记录'
+      // }
+      console.log(123, err)
+    }
+  },
 
   /**
    * 简易的日志方法

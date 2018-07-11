@@ -45,13 +45,12 @@ class Category extends React.Component {
     }
     this.data = [
       {
-        title:
-          'mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记',
+        title: 'React中实现离开页面确认提示',
         readCount: 12,
         commentCount: 11,
         date: '2018-06-01',
         id: 1,
-        link: `/blog/2018/06/01/mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记mobx踩坑记`,
+        link: `/blog/2018/07/11/React中实现离开页面确认提示`,
       },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 22 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 23 },

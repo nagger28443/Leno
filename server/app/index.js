@@ -7,16 +7,9 @@ u.init()
 const app = new Koa()
 const router = new Router()
 
-app.on('error', err => {
-  console.log(111111111111111111111111111111111111111111111111111)
-})
 router.use('', require('./router').routes())
 
-app.use(async (ctx, next) => {
-  ctx.set('Access-Control-Allow-Origin', '*')
-  next()
-})
-
+app.use(u.errHandler)
 app.use(router.routes())
 
 app.listen(3000, () => {

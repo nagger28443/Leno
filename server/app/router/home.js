@@ -30,33 +30,38 @@ router.get('/blogList', async ctx => {
 })
 
 router.post('/blog', async ctx => {
-  const { title, content, category, labels } = ctx.query
+  const { title, category, labels } = ctx.query
   const gmt = new Date().toLocaleString()
-
+  const date = new Date().toLocaleDateString()
+  // todo
+  const contentFile = await u.readFile(path.resolve(__dirname, '../blogs/3.md'))
+  const content = MDParser(contentFile)
+  // todo
   await u
-    .dbInsert('blogs', { title, content, category, labels, gmt_create: gmt, gmt_modify: gmt })
+    .dbInsert('blogs', { title, content, category, labels, date, gmt_create: gmt, gmt_modify: gmt })
     .then(() => {
       ctx.body = u.response(codes.SUCCESS)
     })
-    .catch(err => {
-      console.log(err)
-    })
-  // const contentFile = await util.readFile(path.resolve(__dirname, '../blogs/3.md'))
-  // const contentHtml = MDParser(contentFile)
 })
 
 router.get('/blog', async ctx => {
   const { title, date } = ctx.query
-  console.log(date, date)
+  const query = {
+    sql: `SELECT title,content,date,category,labels FROM blogs where title=? AND date=?`,
+    values: [title, date],
+  }
 
-  await u
-    .dbQuery('blogs', { title, date })
-    .then(() => {
-      ctx.body = u.response(codes.SUCCESS)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+  await u.dbQuery(query).then(res => {
+    if (res.length > 0) {
+      ctx.body = u.response(codes.SUCCESS, {
+        ...res[0],
+        date: res[0].date.toLocaleDateString(),
+      })
+    } else {
+      ctx.throw(404)
+    }
+  })
+
   // const contentFile = await util.readFile(path.resolve(__dirname, '../blogs/3.md'))
   // const contentHtml = MDParser(contentFile)
 })

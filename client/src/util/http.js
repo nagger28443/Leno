@@ -14,7 +14,7 @@ export const get = (url, params) =>
   new Promise((resolve, reject) => {
     axios.get(parseUrl(url, params)).then(resp => {
       const { data } = resp
-      if (data.code === 20000) {
+      if (data.code === 1) {
         resolve(data)
       } else if (data.code === 20010) {
         // redirect
@@ -28,7 +28,7 @@ export const post = (url, postData) =>
   new Promise((resolve, reject) => {
     axios.post(url, postData).then(resp => {
       const { data } = resp
-      if (data.code === 20000) {
+      if (data.code === 1) {
         resolve(data)
       } else {
         reject(data)
@@ -39,7 +39,7 @@ export const dele = (url, params) =>
   new Promise((resolve, reject) => {
     axios.delete(parseUrl(url, params)).then(resp => {
       const { data } = resp
-      if (data.code === 20000) {
+      if (data.code === 1) {
         resolve(data)
       } else {
         reject(data)
@@ -51,7 +51,7 @@ export const put = (url, postData) =>
   new Promise((resolve, reject) => {
     axios.put(url, postData).then(resp => {
       const { data } = resp
-      if (data.code === 20000) {
+      if (data.code === 1) {
         resolve(data)
       } else {
         reject(data)

@@ -99,6 +99,7 @@ const TABS = {
   catalog: '文章目录',
   categoryArchive: '分类·归档',
 }
+const anchorRegex = /<(h[23])\sid=(.*?)>.*?<\/\1>/g
 
 let prevPath = ''
 let store
@@ -159,25 +160,28 @@ class RightBar extends React.Component {
     return null
   }
   contentFormatter = data => {
+    // const ids = anchorRegex.exec(data)
+    let arr
     const t = []
     let ele
-    data.forEach(item => {
-      if (item.type === 'h2' || (item.type === 'h3' && t.length === 0)) {
-        ele = document.getElementById(item.props.id)
+    while ((arr = anchorRegex.exec(data)) !== null) {
+      const tag = arr[1]
+      const id = arr[2]
+      if (tag === 'h2' || t.length === 0) {
+        ele = document.getElementById(id)
         t.push({
-          title: item.props.id,
+          title: id,
           offset: ele ? ele.offsetTop : 0,
           children: [],
         })
-      } else if (item.type === 'h3') {
-        ele = document.getElementById(item.props.id)
+      } else if (tag === 'h3') {
+        ele = document.getElementById(id)
         f.lastEle(t).children.push({
-          title: item.props.id,
+          title: id,
           offset: ele ? ele.offsetTop : 0,
         })
       }
-    })
-    console.log(t)
+    }
     return t
   }
   handleScrollTo = e => {
@@ -187,8 +191,11 @@ class RightBar extends React.Component {
       behavior: 'smooth',
     })
   }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.anchors.length === 0 && store.blogContent.length !== 0) {
+  componentDidUpdate() {
+    // 如何用更好的的方式解决这个问题, 当前方式太蹩脚 todo
+    if (!this.gotAnchors && store.blogContent.length !== 0) {
+      console.log(123)
+      this.gotAnchors = true
       this.setState({ //eslint-disable-line
         anchors: this.contentFormatter(store.blogContent),
       })

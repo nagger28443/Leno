@@ -8,7 +8,7 @@ class AppStore {
     window.addEventListener('scroll', _.debounce(this.handleScroll(), 50), false)
   }
 
-  @observable blogContent = []
+  @observable blogContent = ''
   history = null
 
   @observable bannerType = this.getBannerType()

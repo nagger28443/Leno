@@ -29,7 +29,7 @@ const BlogHeader = ({ classes, data }) => (
       </span>
       <span>
         标签：
-        {data.labels.map((item, index, record) => (
+        {data.labels.split(',').map((item, index, record) => (
           <Link to="/label/React" className="link" key={item}>
             {item}
             {index === record.length - 1 ? '' : '，'}

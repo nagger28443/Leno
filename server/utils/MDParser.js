@@ -237,7 +237,9 @@ function generateHtml(block) {
   }
 }
 function MDParser(md) {
-  return devideIntoBlocks(md).map(generateHtml)
+  return devideIntoBlocks(md)
+    .map(generateHtml)
+    .join('')
 }
 
 module.exports = MDParser
