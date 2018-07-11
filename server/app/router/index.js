@@ -1,6 +1,8 @@
-const Koa = require('koa')
+const Router = require('koa-router')
 
-const app = new Koa()
+const router = new Router()
 
-app.use('', require('./home'))
-// app.use('/admin', require('./admin'))
+router.use('', require('./home').routes())
+router.use('/admin', require('./admin').routes())
+
+module.exports = router

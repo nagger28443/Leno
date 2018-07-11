@@ -21,7 +21,12 @@ router.get('/blogList', async ctx => {
 
   // connection.end()
 
-  console.log(ctx.query)
+  throw new Error('11111111111111')
+
+  ctx.body = {
+    code: 20000,
+    data: 123,
+  }
 })
 
 router.post('/blog', async ctx => {

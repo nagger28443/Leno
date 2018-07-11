@@ -123,7 +123,7 @@ class Archive extends React.Component {
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-05-01', id: 4 },
       { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-02-01', id: 5 },
     ]
-    get('/demo', params)
+    get('/blogList', { x: undefined })
       .then(resp => {
         console.log(resp)
       })
