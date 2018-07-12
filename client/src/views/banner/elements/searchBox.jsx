@@ -1,6 +1,6 @@
 import React from 'react'
 import injectSheet from 'react-jss'
-import { inject } from 'mobx-react'
+import { withRouter } from 'react-router-dom'
 
 const styles = {
   searchBox: {
@@ -28,7 +28,6 @@ const styles = {
   },
 }
 
-@inject('appStore')
 class SearchBox extends React.Component {
   state = {
     isInputCollapsed: true,
@@ -65,7 +64,7 @@ class SearchBox extends React.Component {
     // 搜索方法,回调后跳转
     e.target.value = ''
     this.setState({ isInputCollapsed: true })
-    this.props.appStore.history.push('/search')
+    this.props.history.push('/search')
   }
   handleKeyEnter = e => {
     if (e.key === 'Enter') {
@@ -98,4 +97,4 @@ class SearchBox extends React.Component {
   }
 }
 
-export default injectSheet(styles)(SearchBox)
+export default injectSheet(styles)(withRouter(SearchBox))
