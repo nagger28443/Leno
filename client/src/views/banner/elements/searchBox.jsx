@@ -1,6 +1,9 @@
 import React from 'react'
 import injectSheet from 'react-jss'
 import { inject } from 'mobx-react'
+import { withRouter } from 'react-router-dom'
+import { get } from '../../../util/http'
+import { fail } from '../../../util/utils'
 
 const styles = {
   searchBox: {
@@ -50,7 +53,7 @@ class SearchBox extends React.Component {
   }
   handleSearch = e => {
     const text = e.target.value.trim()
-    console.log(text)
+    e.target.value = ''
     if (text.length === 0) {
       this.setState({
         warning: '请输入搜索内容!',
@@ -62,10 +65,18 @@ class SearchBox extends React.Component {
       }, 2000)
       return
     }
-    // 搜索方法,回调后跳转
-    e.target.value = ''
-    this.setState({ isInputCollapsed: true })
-    this.props.appStore.history.push('/search')
+
+    get('/blog/list', {
+      search: text,
+    })
+      .then(resp => {
+        this.setState({ isInputCollapsed: true })
+        this.props.history.push('/search')
+        console.log(resp)
+      })
+      .catch(err => {
+        fail(err)
+      })
   }
   handleKeyEnter = e => {
     if (e.key === 'Enter') {
@@ -98,4 +109,4 @@ class SearchBox extends React.Component {
   }
 }
 
-export default injectSheet(styles)(SearchBox)
+export default injectSheet(styles)(withRouter(SearchBox))
