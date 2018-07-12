@@ -1,45 +1,71 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react'
 import { Link } from 'react-router-dom'
-import injectSheet from 'react-jss'
+import _ from 'lodash'
 import Links from './elements/links'
 import SearchBox from './elements/searchBox'
 import Menu from './elements/menu'
 import Statistics from './elements/statistics'
-import { SIDEBAR } from '../../constants'
 
-const styles = {
-  sidebar: {
-    float: 'left',
-    // margin: 'auto',
-    // textAlign: 'center',
-  },
-  topbar: {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-}
-const Banner = inject('appStore')(
-  observer(({ classes, appStore }) => (
-    <aside className={`banner ${appStore.bannerType}`} style={{ ...appStore.bannerStyle }}>
-      <div className={appStore.bannerType === SIDEBAR ? classes.sidebar : classes.topbar}>
+class Banner extends React.Component {
+  state = {
+    isBannerCollapsed: false,
+    isTopbar: false,
+  }
+
+  componentDidMount() {
+    window.addEventListener('scroll', _.throttle(this.handleScroll(), 50), false)
+  }
+  handleScroll = () => {
+    let prevY = 0
+    return () => {
+      const { isTopbar, isBannerCollapsed } = this.state
+      const curY = window.pageYOffset
+      const down = curY - prevY > 0
+
+      prevY = curY
+
+      if (!isTopbar) return
+      if (down && !isBannerCollapsed) {
+        this.setState({
+          isBannerCollapsed: true,
+        })
+      } else if (!down && isBannerCollapsed) {
+        this.setState({
+          isBannerCollapsed: false,
+        })
+      }
+    }
+  }
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const isTopbar = window.matchMedia(`(max-width: 1200px)`).matches
+    if (isTopbar !== prevState.isTopbar) {
+      return {
+        isTopbar,
+      }
+    }
+    return null
+  }
+  render() {
+    const { isBannerCollapsed, isTopbar } = this.state
+    return (
+      <aside
+        className={isTopbar ? 'banner' : 'bar-inside'}
+        style={isTopbar ? { height: isBannerCollapsed ? 0 : '100vh' } : {}}>
         <h1>
           <Link to="/" className="plain-link">
             EVO
           </Link>
         </h1>
         <Menu />
-        <div style={appStore.bannerType === SIDEBAR ? {} : { display: 'none' }}>
+        <div className="leftbar-extra">
           <Links />
           <p>如人饮水，冷暖自知。</p>
           <Statistics />
           <SearchBox />
         </div>
-      </div>
-    </aside>
-  )),
-)
+      </aside>
+    )
+  }
+}
 
-export default injectSheet(styles)(Banner)
+export default Banner

@@ -12,8 +12,8 @@ const pool = mysql.createPool({
 })
 
 const u = {
-  // finally polyfill
   init: () => {
+    // finally polyfill
     Promise.prototype.finally = function(callback) { //eslint-disable-line
       const P = this.constructor
       return this.then(
@@ -82,7 +82,7 @@ const u = {
       // if (ctx.response.status === 404) {
       //   ctx.body = '无记录'
       // }
-      console.log(123, err)
+      console.log(err)
     }
   },
 

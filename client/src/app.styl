@@ -18,30 +18,19 @@ a
   margin: auto
   max-width: 100rem
 
-.banner 
-  background-color: #f5f5f5 
-  z-index: 10
-
-.sidebar
+.rightbar,.leftbar
   width: 20%
   max-width: 22rem
   min-width: 16rem
   height: 100vh
-  transition: margin-top 0.8s cubic-bezier(0,.5,.7,1.36)
-  padding: 2rem
-  background: linear-gradient(to bottom,#f2f2f2,#f5f5f5 2rem)
-
-.topbar
+  position: relative
+.leftbar
+  z-index: 10
+.banner,.bar-inside
   position: fixed
   top: 0
-  min-height: 3.5rem
-  max-height: 6rem
-  padding: 0 8rem 0 4rem
-  width: 100vw 
-  overflow: hidden
-  transition: height 1s ease-in-out
-  display: flex
-  align-items: center
+  padding: 2rem
+  background: linear-gradient(to bottom,#f2f2f2,#f5f5f5 2rem)
 
 article
   wordBreak: break-word
@@ -105,6 +94,26 @@ article
 @media (max-width: 1200px)
   #root
     display block
+  .leftbar,.banner
+    min-height: 3.5rem
+    max-height: 6rem
+    width: 100%
+  .banner
+    padding: 0 8rem 0 4rem
+    overflow: hidden
+    transition: height 1s ease-in-out
+    display: flex
+    align-items: center
+    align-items: center
+    justify-content: space-between
+  .leftbar-extra
+    display: none
+  .bar-inside
+    top: 3.5rem
+@media (max-width: 960px)
+  .rightbar
+    display: none
+
 
 @font-face {
   font-family: 'icomoon';

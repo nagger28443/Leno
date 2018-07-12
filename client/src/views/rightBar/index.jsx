@@ -30,6 +30,7 @@ const data2 = {
 const styles = {
   tabHeader: {
     marginBottom: '1rem',
+    marginTop: '0.4rem',
     textAlign: 'center',
     fontSize: 'smaller',
   },
@@ -145,7 +146,7 @@ class RightBar extends React.Component {
     })
   }
   componentDidMount() {
-    window.addEventListener('scroll', _.debounce(this.updateAnchor, 100), false)
+    window.addEventListener('scroll', _.throttle(this.updateAnchor, 50), false)
     prevPath = window.location.pathname
   }
   static getDerivedStateFromProps() {
@@ -194,7 +195,6 @@ class RightBar extends React.Component {
   componentDidUpdate() {
     // 如何用更好的的方式解决这个问题, 当前方式太蹩脚 todo
     if (!this.gotAnchors && store.blogContent.length !== 0) {
-      console.log(123)
       this.gotAnchors = true
       this.setState({ //eslint-disable-line
         anchors: this.contentFormatter(store.blogContent),
@@ -205,7 +205,7 @@ class RightBar extends React.Component {
     const { classes } = this.props
     const { curTab, isCatalogVisible } = this.state
     return (
-      <aside className="sidebar" style={{ ...store.rightBarStyle }}>
+      <aside className="bar-inside">
         <div className={classes.tabHeader}>
           <span
             className={`plain-link ${classes.tabTittle} ${

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
-import { inject, observer } from 'mobx-react'
 import injectSheet from 'react-jss'
+import _ from 'lodash'
 import Banner from './banner'
 import Home from './home'
 import Archive from './archive'
@@ -9,7 +9,6 @@ import Labels from './labels'
 import Category from './category'
 import About from './about'
 import Page404 from './page404'
-import { TOPBAR, SIDEBAR } from '../constants'
 import FullPage from './fullpage'
 import RightBar from './rightBar'
 import SearchResult from './search'
@@ -36,26 +35,36 @@ const styles = {
   },
 }
 
-@inject('appStore')
-@observer
 class App extends React.Component {
-  componentDidMount() {
-    this.props.appStore.history = this.props.history
+  state = {
+    isTopbar: window.matchMedia(`(max-width: 1200px)`).matches,
   }
+  componentDidMount() {
+    window.addEventListener('resize', _.throttle(this.handleResize, 50), false)
+  }
+  handleResize = () => {
+    const isTopbar = window.matchMedia(`(max-width: 1200px)`).matches
+    if (isTopbar !== this.state.isTopbar) {
+      this.setState({ isTopbar })
+    }
+  }
+
   render() {
-    const { classes, appStore } = this.props
-    const TagInside = appStore.bannerType === SIDEBAR ? React.Fragment : 'div'
+    const { classes } = this.props
+    const { isTopbar } = this.state
+    const TagInside = isTopbar ? 'div' : React.Fragment
     return (
       <React.Fragment>
-        <div
+        {/* <div
           style={{
-            ...appStore.bannerStyle,
-            display: appStore.bannerType === TOPBAR ? 'block' : 'none',
+            display: isTopbar ? 'block' : 'none',
             minHeight: '3.5rem',
             maxHeight: '6rem',
           }}
-        />
-        <Banner />
+        /> */}
+        <div className="leftbar">
+          <Banner />
+        </div>
         <TagInside style={{ backgroundColor: '#f5f5f5', flex: 1, display: 'flex' }}>
           <div style={{ flex: 1 }}>
             <Switch>
@@ -69,7 +78,9 @@ class App extends React.Component {
               <Route key="404" component={Page404} />
             </Switch>
           </div>
-          <RightBar />
+          <div className="rightbar">
+            <RightBar />
+          </div>
         </TagInside>
         <div
           onClick={srcollToTop}

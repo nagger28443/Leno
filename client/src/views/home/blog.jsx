@@ -76,7 +76,7 @@ class Blog extends React.Component {
               title: 'React中实现离开页面确认提示',
               date: '2018-07-05',
               category: 'coding',
-              labels: ['React', 'React-Router'],
+              labels: 'React,React-Router',
             }}
           />
           {MDParser(article)}
