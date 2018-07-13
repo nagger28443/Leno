@@ -2,14 +2,14 @@ const Koa = require('koa')
 const Router = require('koa-router')
 const u = require('../utils/u')
 
-u.init()
-
 const app = new Koa()
 const router = new Router()
 
 router.use('', require('./router').routes())
 
 app.use(u.errHandler)
+app.use(u.init)
+app.use(u.logger)
 app.use(router.routes())
 
 app.listen(3000, () => {

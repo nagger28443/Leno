@@ -1,6 +1,6 @@
 const fs = require('fs')
 const mysql = require('mysql')
-const codes = require('../constants/codes')
+// const codes = require('../constants/codes')
 
 const pool = mysql.createPool({
   connectionLimit: 100,
@@ -12,7 +12,7 @@ const pool = mysql.createPool({
 })
 
 const u = {
-  init: () => {
+  init: async (ctx, next) => {
     // finally polyfill
     Promise.prototype.finally = function(callback) { //eslint-disable-line
       const P = this.constructor
@@ -24,25 +24,13 @@ const u = {
           }),
       )
     }
+    ctx.state.pool = pool
+    await next()
   },
-  // insert into databse with promise
-  dbInsert: (table, data) =>
-    new Promise((resolve, reject) => {
-      const query = `INSERT INTO ${table} SET ?`
-      pool.query(query, data, (err, res) => {
-        if (err) {
-          reject(err)
-        }
-        resolve(res)
-      })
-    }),
-  // .finally(() => {
-  //   connection.end()
-  // }),
   // query from databse with promise
-  dbQuery: query =>
+  dbQuery: (query, data) =>
     new Promise((resolve, reject) => {
-      pool.query(query, (err, res) => {
+      pool.query(query, data, (err, res) => {
         if (err) {
           reject(err)
         }
@@ -72,6 +60,21 @@ const u = {
     data,
   }),
 
+  dbParamsGenerator: (ctx, checkArr) => {
+    const params = {}
+    checkArr.forEach(key => {
+      if (!u.isEmpty(ctx.query[key])) {
+        params[key] = ctx.qeury[key]
+      }
+    })
+    return params
+  },
+
+  isEmpty: param => {
+    if (typeof param === 'string' || Array.isArray(param)) return param.length === 0
+    return !param
+  },
+
   // 全局错误处理
   errHandler: async (ctx, next) => {
     try {
@@ -84,6 +87,12 @@ const u = {
       // }
       console.log(err)
     }
+  },
+  logger: async (ctx, next) => {
+    const start = Date.now()
+    await next()
+    const ms = Date.now() - start
+    u.log(`${ctx.method} ${decodeURIComponent(ctx.url)} - ${ms}ms`)
   },
 
   /**

@@ -29,7 +29,7 @@ const Item = ({ classes, data }) => (
     <div className={classes.footer}>
       <span>{data.date}</span>
       <span>阅读数：{data.readCount}</span>
-      <span>评论数：{data.commentCount}</span>
+      {/* <span>评论数：{data.commentCount}</span> */}
     </div>
   </div>
 )
