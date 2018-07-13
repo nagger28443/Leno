@@ -1,8 +1,6 @@
 import React from 'react'
 import injectSheet from 'react-jss'
 import { withRouter } from 'react-router-dom'
-import { get } from '../../../util/http'
-import { fail } from '../../../util/utils'
 
 const styles = {
   searchBox: {
@@ -63,18 +61,8 @@ class SearchBox extends React.Component {
       }, 2000)
       return
     }
-
-    get('/blog/list', {
-      search: text,
-    })
-      .then(resp => {
-        this.setState({ isInputCollapsed: true })
-        this.props.history.push('/search')
-        console.log(resp)
-      })
-      .catch(err => {
-        fail(err)
-      })
+    this.props.history.push(`/search/${text}`)
+    this.setState({ isInputCollapsed: true })
   }
   handleKeyEnter = e => {
     if (e.key === 'Enter') {

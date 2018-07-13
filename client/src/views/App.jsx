@@ -74,7 +74,7 @@ class App extends React.Component {
               <Route path="/label" key="/label" component={Labels} />
               <Route path="/about" key="/about" component={About} />
               <Route path="/blog" key="/fullpage" component={FullPage} />
-              <Route path="/search" key="/search" component={SearchResult} />
+              <Route path="/search/:params" key="/search" component={SearchResult} />
               <Route key="404" component={Page404} />
             </Switch>
           </div>
