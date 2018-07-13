@@ -24,40 +24,31 @@ class SearchResult extends React.Component {
     list: [],
     curPage: 1,
     params: '',
+    totalCount: 0,
   }
   data = []
 
-  loadPage = ({ pageNum = 1, pageSize = 10 }) => {
+  loadPage = ({ params, page = 1 }) => {
     document.documentElement.scrollIntoView()
-    const { params } = this.props.match.params
     get('/blog/list', {
       search: params,
-      pageSize,
-      pageNum,
+      page,
     })
       .then(resp => {
         this.setState({
-          list: resp.data,
+          list: resp.data.result,
+          params,
+          totalCount: resp.data.totalCount,
         })
       })
       .catch(err => {
         fail(err)
       })
-    this.data = [
-      {
-        title: 'mobx踩坑记mobx踩坑记m',
-        readCount: 12,
-        date: '2018-06-01',
-        id: 1,
-        link: `/blog/2018/06/01/mobx踩坑记m`,
-      },
-    ]
-
-    this.setState({ list: this.data.slice(0, 10), params })
   }
 
   componentDidMount() {
-    this.loadPage({})
+    const { params } = this.props.match.params
+    this.loadPage({ params })
   }
 
   handlePageChange = page => {
@@ -87,10 +78,15 @@ class SearchResult extends React.Component {
         list: this.data.slice(10 * curPage - 10, 10 * curPage),
       })
     }
+    const curParams = this.props.match.params.params
+    const prevParams = prevProps.match.params.params
+    if (curParams !== prevParams) {
+      this.loadPage({ params: curParams })
+    }
   }
   render() {
     const { classes } = this.props
-    const { curPage, list, params } = this.state
+    const { curPage, list, params, totalCount } = this.state
     return (
       <Detail>
         {/* <NoContent /> */}
@@ -100,11 +96,7 @@ class SearchResult extends React.Component {
         <div className={classes.root}>
           {list.map(item => <BlogListItem data={item} key={item.id} />)}
         </div>
-        <Paging
-          total={this.data.length}
-          curPage={curPage}
-          handlePageChange={this.handlePageChange}
-        />
+        <Paging total={totalCount} curPage={curPage} handlePageChange={this.handlePageChange} />
       </Detail>
     )
   }

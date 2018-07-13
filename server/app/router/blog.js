@@ -9,24 +9,52 @@ const router = new Router()
 
 // 获取博客列表, 返回id!!!!!!
 router.get('/list', async ctx => {
-  const { search, category, labels, archive, page, pageSize, hasDetail } = ctx.query
+  const { search, category, labels, archive, page, pageSize = 10, hasDetail = false } = ctx.query
+  const listSql = `SELECT id,title,DATE_FORMAT(date,'%Y-%m-%d') as date,category,labels,visit_cnt
+  as visitCount FROM blogs`
+  const countSql = `SELECT COUNT(id) as totalCount FROM blogs`
+  let where
+  let totalCount
+  if (page) {
+    where = `limit ${(page - 1) * pageSize},${page * pageSize}`
+  }
 
   // 搜索博客
-  // 分页!!!!!
   if (search) {
-    const sql = `SELECT title,DATE_FORMAT(date,'%Y-%m-%d') as date,category,labels,visit_cnt as visitCount FROM blogs 
-    WHERE title LIKE '%${search}%' || category LIKE '%${search}%' || labels LIKE '%${search}%'`
-    await u.dbQuery(sql).then(result => {
-      if (result.length === 0) {
-        ctx.body = u.response(codes.EMPTY_RESULT)
-      } else {
-        ctx.body = u.response(codes.SUCCESS, result)
-      }
+    where = `WHERE title LIKE '%${search}%' || category LIKE '%${search}%' || labels LIKE '%${search}%'
+     ORDER BY date DESC, visit_cnt DESC ${where}`
+
+    await u.dbQuery(`${countSql} ${where}`).then(result => {
+      ;[{ totalCount }] = result
     })
+    if (totalCount === 0) {
+      ctx.body = u.response(codes.EMPTY_RESULT)
+    } else {
+      await u.dbQuery(`${listSql} ${where}`).then(result => {
+        ctx.body = u.response(codes.SUCCESS, { result, totalCount })
+      })
+    }
+    return
   }
 
   // 获取某类目下博客列表
+  if (category) {
+    where = `WHERE category=? ORDER BY date DESC, visit_cnt DESC ${where}`
 
+    await u.dbQuery(`${countSql} ${where}`, [category]).then(result => {
+      ;[{ totalCount }] = result
+    })
+    if (totalCount === 0) {
+      ctx.body = u.response(codes.EMPTY_RESULT)
+    } else {
+      await u.dbQuery(`${listSql} ${where}`, [category]).then(result => {
+        ctx.body = u.response(codes.SUCCESS, { result, totalCount })
+      })
+    }
+    return
+  }
+
+  console.log(123)
   // 获取具有某标签的博客列表
 
   // 按归档日期获取博客列表
