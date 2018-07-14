@@ -7,6 +7,7 @@ import axios from 'axios'
 import App from './views/App'
 import appStore from './store/appStore'
 import labelStore from './store/banner/labelStore'
+import blogListStore from './store/blogList/blogListStore'
 import './app.styl'
 import Admin from './views/admin'
 
@@ -15,6 +16,7 @@ configure({ enforceActions: true })
 const stores = {
   appStore,
   labelStore,
+  blogListStore,
 }
 
 axios.interceptors.response.use(

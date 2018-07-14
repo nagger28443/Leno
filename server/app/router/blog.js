@@ -7,7 +7,7 @@ const path = require('path')
 
 const router = new Router()
 
-// 获取博客列表, 返回id!!!!!!
+// 获取博客列表
 router.get('/list', async ctx => {
   const { search, category, labels, archive, page, pageSize = 10, hasDetail = false } = ctx.query
   const listSql = `SELECT id,title,DATE_FORMAT(date,'%Y-%m-%d') as date,category,labels,visit_cnt
@@ -23,8 +23,7 @@ router.get('/list', async ctx => {
 
   // 搜索博客
   if (search) {
-    const param = search.toLowerCase()
-    const whereSql = `WHERE title LIKE '%${param}%' || category LIKE '%${param}%' || labels LIKE '%${param}%'`
+    const whereSql = `WHERE title LIKE '%${search}%' || category LIKE '%${search}%' || labels LIKE '%${search}%'`
 
     await u.dbQuery(`${countSql} ${whereSql}`).then(result => {
       ;[{ totalCount }] = result
@@ -41,16 +40,15 @@ router.get('/list', async ctx => {
 
   // 获取某类目下博客列表
   if (category) {
-    const param = category.toLowerCase()
     const whereSql = `WHERE category=? ${commonCond}`
 
-    await u.dbQuery(`${countSql} ${whereSql}`, [param]).then(result => {
+    await u.dbQuery(`${countSql} ${whereSql}`, [category]).then(result => {
       ;[{ totalCount }] = result
     })
     if (totalCount === 0) {
-      ctx.body = u.response(codes.EMPTY_RESULT)
+      ctx.body = u.response(codes.SUCCESS, { result: [], totalCount })
     } else {
-      await u.dbQuery(`${listSql} ${whereSql}`, [param]).then(result => {
+      await u.dbQuery(`${listSql} ${whereSql}`, [category]).then(result => {
         ctx.body = u.response(codes.SUCCESS, { result, totalCount })
       })
     }
@@ -58,15 +56,14 @@ router.get('/list', async ctx => {
   }
   // 获取具有某标签的博客列表
   if (labels) {
-    const params = category.toLowerCase().split(',')
-    const labelSql = params.map(() => `labels LIKE '%?%'`).join(' AND ')
+    const params = labels.split(',')
+    const labelSql = params.map(label => `labels LIKE '%${label}%'`).join(' AND ')
     const whereSql = `WHERE ${labelSql} ${commonCond}`
-
     await u.dbQuery(`${countSql} ${whereSql}`, params).then(result => {
       ;[{ totalCount }] = result
     })
     if (totalCount === 0) {
-      ctx.body = u.response(codes.EMPTY_RESULT)
+      ctx.body = u.response(codes.SUCCESS, { result: [], totalCount })
     } else {
       await u.dbQuery(`${listSql} ${whereSql}`, params).then(result => {
         ctx.body = u.response(codes.SUCCESS, { result, totalCount })
@@ -75,33 +72,25 @@ router.get('/list', async ctx => {
     return
   }
 
-  console.log(123)
-
   // 按归档日期获取博客列表
+  if (archive) {
+    const whereSql = `WHERE DATE_FORMAT(date,'%Y-%m')=? ${commonCond}`
+    console.log(whereSql)
 
+    await u.dbQuery(`${countSql} ${whereSql}`, [archive]).then(result => {
+      ;[{ totalCount }] = result
+    })
+    if (totalCount === 0) {
+      ctx.body = u.response(codes.SUCCESS, { result: [], totalCount })
+    } else {
+      await u.dbQuery(`${listSql} ${whereSql}`, [archive]).then(result => {
+        ctx.body = u.response(codes.SUCCESS, { result, totalCount })
+      })
+    }
+    return
+  }
   // 获取首页列表,待文章内容
-
-  // const { title, date } = ctx.query
-  // const query = {
-  //   sql: `SELECT title,content,date,category,labels FROM blogs where title=? AND date=?`,
-  //   values: [title, date],
-  // }
-
-  // await u.dbQuery(query).then(res => {
-  //   if (res.length > 0) {
-  //     ctx.body = u.response(codes.SUCCESS, {
-  //       ...res[0],
-  //       date: res[0].date.toLocaleDateString(),
-  //     })
-  //   } else {
-  //     ctx.throw(404)
-  //   }
-  // })
-
-  // ctx.body = {
-  //   code: 20000,
-  //   data: 123,
-  // }
+  console.log(123)
 })
 
 router.post('/', async ctx => {

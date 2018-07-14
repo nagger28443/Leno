@@ -1,12 +1,7 @@
-import React from 'react'
-import injectSheet from 'react-jss'
+import { React, injectSheet, _, get, fail, f } from 'src/commonExports' //eslint-disable-line
 import { Detail } from '../../styledComponents'
 import BlogListItem from '../commonComponents/blogListItem'
-import { get } from '../../util/http'
-import { fail } from '../../util/utils'
-import Paging from '../commonComponents/paging'
 import { NOT_FOUND } from '../../constants'
-import f from '../../util/f'
 
 const styles = {
   root: {
@@ -51,9 +46,10 @@ const styles = {
 class Archive extends React.Component {
   state = {
     archives: [],
-    curPage: 1,
+    query: '',
   }
-  data = []
+  totalCount = 0
+  curPage = 0
 
   dataFormat = data => {
     let preYear = null
@@ -96,73 +92,43 @@ class Archive extends React.Component {
       : NOT_FOUND
   }
 
-  componentDidMount() {
-    document.documentElement.scrollIntoView()
+  getData = () => {
     const { pathname } = this.props.location
-    const params = this.parsePath(pathname)
-    if (params === NOT_FOUND) {
+    const query = this.parsePath(pathname)
+    if (query === NOT_FOUND) {
       this.props.history.push('/404')
       return
     }
-    this.data = [
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-06-01', id: 1 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 22 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 23 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 24 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 21 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 26 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 28 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 33 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 32 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 34 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-13', id: 66 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-12', id: 9 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-08', id: 11 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2018-04-01', id: 2 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2017-04-01', id: 3 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-05-01', id: 4 },
-      { title: 'mobx踩坑记', readCount: 12, commentCount: 11, date: '2016-02-01', id: 5 },
-    ]
-    get('/blogList', { x: undefined })
+
+    this.setState({
+      query,
+    })
+    get('/blog/list', {
+      ...query,
+      page: ++this.curPage,
+    })
       .then(resp => {
-        console.log(resp)
+        this.totalCount = resp.totalCount
+        this.setState({
+          archives: [...this.state.archives, ...resp.result],
+        })
       })
       .catch(err => {
         fail(err)
       })
-    this.setState({ // eslint-disable-line
-      archives: this.dataFormat(this.data.slice(0, 10)),
-    })
   }
-  handlePageChange = page => {
+
+  componentDidMount() {
     document.documentElement.scrollIntoView()
-    const { history } = this.props
-    history.push({ state: { page } })
-    this.setState({
-      curPage: page,
-      archives: this.dataFormat(this.data.slice(10 * page - 10, 10 * page)),
-    })
+    this.scrollListener = _.throttle(this.handleScroll(), 500)
+    window.addEventListener('scroll', this.scrollListener, false)
+    this.getData()
   }
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { page } = nextProps.history.location.state || { page: 1 }
-    if (page !== prevState.curPage) {
-      return {
-        curPage: page,
-      }
-    }
-    return null
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.curPage !== this.state.curPage) {
-      const { curPage } = this.state
-      this.setState({ // eslint-disable-line
-        archives: this.data.slice(10 * curPage - 10, 10 * curPage),
-      })
-    }
-  }
+
   render() {
     const { classes } = this.props
-    const { curPage, archives } = this.state
+    const { archives, query } = this.state
+    console.log(query)
     return (
       <Detail>
         <div className={classes.root}>
@@ -178,11 +144,6 @@ class Archive extends React.Component {
             </div>
           ))}
         </div>
-        <Paging
-          total={this.data.length}
-          curPage={curPage}
-          handlePageChange={this.handlePageChange}
-        />
       </Detail>
     )
   }

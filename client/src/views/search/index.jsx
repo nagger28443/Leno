@@ -1,6 +1,6 @@
-import { React, injectSheet, _, get, fail, f } from 'src/commonExports' //eslint-disable-line
+import { React, injectSheet, _, get, fail, f, inject, observer, action} from 'src/commonExports' //eslint-disable-line
 import { Detail } from '../../styledComponents'
-import BlogListItem from '../commonComponents/blogListItem'
+import NomalList from './normal'
 
 const styles = {
   title: {
@@ -17,45 +17,52 @@ const styles = {
 const TITLE = {
   search: '搜索关键字',
   category: '当前类目',
-  label: '当前标签',
+  labels: '当前标签',
+  archive: '归档',
 }
-class BlogList extends React.Component {
-  state = {
-    data: [],
-    query: '',
-  }
-  totalCount = 0
-  curPage = 0
 
-  getData = () => {
+let store
+@inject('blogListStore')
+@observer
+class BlogList extends React.Component {
+  constructor(props) {
+    super(props)
+    store = props.blogListStore
+
+    const params = this.props.location.search
+    store.query = f.urlParamDecode(params)
+  }
+
+  @action
+  updateQuery = () => {
     const params = this.props.location.search
     const query = f.urlParamDecode(params)
     if (!query) {
       this.props.history.push('/404')
     }
-
-    this.setState({
-      query,
-    })
-    get('/blog/list', {
-      ...query,
-      page: ++this.curPage,
-    })
-      .then(resp => {
-        this.totalCount = resp.totalCount
-        this.setState({
-          data: [...this.state.data, ...resp.result],
-        })
-      })
-      .catch(err => {
-        fail(err)
-      })
+    store.query = query
   }
 
   componentDidMount() {
     document.documentElement.scrollIntoView()
-    window.addEventListener('scroll', _.throttle(this.handleScroll(), 500), false)
-    this.getData()
+    this.scrollListener = _.throttle(this.handleScroll(), 500)
+    window.addEventListener('scroll', this.scrollListener, false)
+
+    this.updateQuery()
+    store.getData()
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.scrollListener, false)
+    this.clearStore()
+  }
+  @action
+  clearStore = () => {
+    Object.assign(store, {
+      getData: null,
+      totalCount: 0,
+      query: '',
+      data: [],
+    })
   }
 
   handleScroll = () => {
@@ -65,12 +72,12 @@ class BlogList extends React.Component {
       const tmp = prevHeight
       prevHeight = curHeight
 
-      if (tmp > curHeight || this.state.data.length >= this.totalCount) return
+      if (tmp > curHeight || store.data.length >= store.totalCount) return
 
       const maxHeight = document.body.clientHeight
       const windowHeight = window.outerHeight
       if (maxHeight - curHeight - windowHeight < 200) {
-        this.getData({})
+        store.getData()
       }
     }
   }
@@ -80,13 +87,15 @@ class BlogList extends React.Component {
     const prevParams = prevProps.location.search
     if (!f.isEqual(curParams, prevParams)) {
       document.documentElement.scrollIntoView()
-      this.curPage = 0
-      this.getData()
+      this.clearStore()
+      this.updateQuery()
+      store.getData()
     }
   }
+
   render() {
     const { classes } = this.props
-    const { data, query } = this.state
+    const { data, query } = store
     const title = Object.keys(query)[0]
     return (
       <Detail>
@@ -97,10 +106,10 @@ class BlogList extends React.Component {
           无记录
         </div>
         <div style={{ display: data.length > 0 ? 'block' : 'none' }}>
-          {data.map(item => <BlogListItem data={item} key={item.id} />)}
+          <NomalList />
           <div className={classes.getMore}>
             {data.length < this.totalCount ? (
-              <span className="plain-link" onClick={this.getData}>
+              <span className="plain-link" onClick={store.getData}>
                 {'<<<加载更多>>>'}
               </span>
             ) : (

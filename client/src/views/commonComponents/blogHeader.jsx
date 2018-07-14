@@ -32,7 +32,7 @@ const BlogHeader = ({ classes, data }) => (
         {data.labels.split(',').map((item, index, record) => (
           /* eslint-disable */ 
           <React.Fragment key={index}>
-            <Link to="/label/React" className="link" key={item} style={{}}>
+            <Link to={`/list?labels=${item}`} className="link" key={item} style={{}}>
               {item}
             </Link>
             {index === record.length - 1 ? '' : '，'}
