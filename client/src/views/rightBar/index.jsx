@@ -83,14 +83,6 @@ const styles = {
       content: 'counter(first) "." counter(second) "."',
     },
   },
-  // expanded: {},
-  // folded: {
-  //   '& ol': {
-  //     transition: 'height 0.5s',
-  //     height: 0,
-  //     overflow: 'hidden',
-  //   },
-  // },
   activeAnchor: {
     color: 'red',
   },

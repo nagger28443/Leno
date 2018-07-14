@@ -23,17 +23,21 @@ const BlogHeader = ({ classes, data }) => (
       <span>发表于：{data.date}</span>
       <span>
         分类：
-        <Link to="/category/coding" className="link">
+        <Link to={`/list?category=${data.category}`} className="link">
           {data.category}
         </Link>
       </span>
       <span>
         标签：
         {data.labels.split(',').map((item, index, record) => (
-          <Link to="/label/React" className="link" key={item}>
-            {item}
+          /* eslint-disable */ 
+          <React.Fragment key={index}>
+            <Link to="/label/React" className="link" key={item} style={{}}>
+              {item}
+            </Link>
             {index === record.length - 1 ? '' : '，'}
-          </Link>
+          </React.Fragment>
+          /* eslint-enable */
         ))}
       </span>
     </p>

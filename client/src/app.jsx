@@ -3,6 +3,7 @@ import ReactDom from 'react-dom'
 import { Provider } from 'mobx-react'
 import { configure } from 'mobx'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import axios from 'axios'
 import App from './views/App'
 import appStore from './store/appStore'
 import labelStore from './store/banner/labelStore'
@@ -15,6 +16,13 @@ const stores = {
   appStore,
   labelStore,
 }
+
+axios.interceptors.response.use(
+  resp => resp.data,
+  error => {
+    Promise.reject(error)
+  },
+)
 
 const render = Component => {
   ReactDom.render(

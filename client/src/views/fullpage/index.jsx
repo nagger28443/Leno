@@ -44,24 +44,15 @@ class FullPage extends React.Component {
     })
       .then(
         action(resp => {
-          store.blogContent = resp.data.content
+          store.blogContent = resp.content
           this.setState({
-            data: resp.data,
+            data: resp,
           })
         }),
       )
       .catch(err => {
         fail(err)
       })
-
-    // const { pathname } = this.props.location
-    // const name = this.getNameFromPath(pathname)
-    // getBlogByName
-    // console.log(name)
-
-    // console.log(store.blogContent)
-    // ajax成功回调
-    // this.generateAnchors(store.blogContent)
   }
 
   render() {

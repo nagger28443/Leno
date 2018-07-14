@@ -21,17 +21,24 @@ const styles = {
   },
 }
 
-const Item = ({ classes, data }) => (
-  <div className={classes.root}>
-    <Link to={`${data.link}`} className="plain-link">
-      <p className={classes.title}>{data.title}</p>
-    </Link>
-    <div className={classes.footer}>
-      <span>{data.date}</span>
-      <span>阅读数：{data.visitCount}</span>
-      {/* <span>评论数：{data.commentCount}</span> */}
-    </div>
-  </div>
-)
-
+class Item extends React.Component {
+  handleClick = () => {}
+  getPath = data => `${data.date.split('-').join('/')}/${data.title}`
+  render() {
+    const { classes, data } = this.props
+    const path = this.getPath(data)
+    return (
+      <div className={classes.root}>
+        <Link to={`/blog/${path}`} className="plain-link">
+          <p className={classes.title}>{data.title}</p>
+        </Link>
+        <div className={classes.footer}>
+          <span>{data.date}</span>
+          <span>阅读数：{data.visitCount}</span>
+          {/* <span>评论数：{data.commentCount}</span> */}
+        </div>
+      </div>
+    )
+  }
+}
 export default injectSheet(styles)(Item)

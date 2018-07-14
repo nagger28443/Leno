@@ -61,7 +61,7 @@ class SearchBox extends React.Component {
       }, 2000)
       return
     }
-    this.props.history.push(`/search/${text}`)
+    this.props.history.push(`/list?search=${text}`)
     this.setState({ isInputCollapsed: true })
   }
   handleKeyEnter = e => {

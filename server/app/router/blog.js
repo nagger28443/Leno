@@ -13,24 +13,26 @@ router.get('/list', async ctx => {
   const listSql = `SELECT id,title,DATE_FORMAT(date,'%Y-%m-%d') as date,category,labels,visit_cnt
   as visitCount FROM blogs`
   const countSql = `SELECT COUNT(id) as totalCount FROM blogs`
-  let where
+  const orderSql = `ORDER BY date DESC, visit_cnt DESC`
+  let pageSql = ''
   let totalCount
   if (page) {
-    where = `limit ${(page - 1) * pageSize},${page * pageSize}`
+    pageSql = `limit ${(page - 1) * pageSize},${page * pageSize}`
   }
+  const commonCond = `${orderSql} ${pageSql}`
 
   // 搜索博客
   if (search) {
-    where = `WHERE title LIKE '%${search}%' || category LIKE '%${search}%' || labels LIKE '%${search}%'
-     ORDER BY date DESC, visit_cnt DESC ${where}`
+    const param = search.toLowerCase()
+    const whereSql = `WHERE title LIKE '%${param}%' || category LIKE '%${param}%' || labels LIKE '%${param}%'`
 
-    await u.dbQuery(`${countSql} ${where}`).then(result => {
+    await u.dbQuery(`${countSql} ${whereSql}`).then(result => {
       ;[{ totalCount }] = result
     })
     if (totalCount === 0) {
-      ctx.body = u.response(codes.EMPTY_RESULT)
+      ctx.body = u.response(codes.SUCCESS, { result: [], totalCount })
     } else {
-      await u.dbQuery(`${listSql} ${where}`).then(result => {
+      await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`).then(result => {
         ctx.body = u.response(codes.SUCCESS, { result, totalCount })
       })
     }
@@ -39,15 +41,34 @@ router.get('/list', async ctx => {
 
   // 获取某类目下博客列表
   if (category) {
-    where = `WHERE category=? ORDER BY date DESC, visit_cnt DESC ${where}`
+    const param = category.toLowerCase()
+    const whereSql = `WHERE category=? ${commonCond}`
 
-    await u.dbQuery(`${countSql} ${where}`, [category]).then(result => {
+    await u.dbQuery(`${countSql} ${whereSql}`, [param]).then(result => {
       ;[{ totalCount }] = result
     })
     if (totalCount === 0) {
       ctx.body = u.response(codes.EMPTY_RESULT)
     } else {
-      await u.dbQuery(`${listSql} ${where}`, [category]).then(result => {
+      await u.dbQuery(`${listSql} ${whereSql}`, [param]).then(result => {
+        ctx.body = u.response(codes.SUCCESS, { result, totalCount })
+      })
+    }
+    return
+  }
+  // 获取具有某标签的博客列表
+  if (labels) {
+    const params = category.toLowerCase().split(',')
+    const labelSql = params.map(() => `labels LIKE '%?%'`).join(' AND ')
+    const whereSql = `WHERE ${labelSql} ${commonCond}`
+
+    await u.dbQuery(`${countSql} ${whereSql}`, params).then(result => {
+      ;[{ totalCount }] = result
+    })
+    if (totalCount === 0) {
+      ctx.body = u.response(codes.EMPTY_RESULT)
+    } else {
+      await u.dbQuery(`${listSql} ${whereSql}`, params).then(result => {
         ctx.body = u.response(codes.SUCCESS, { result, totalCount })
       })
     }
@@ -55,7 +76,6 @@ router.get('/list', async ctx => {
   }
 
   console.log(123)
-  // 获取具有某标签的博客列表
 
   // 按归档日期获取博客列表
 

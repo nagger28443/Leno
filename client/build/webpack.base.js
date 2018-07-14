@@ -95,6 +95,9 @@ module.exports = {
     modules: [path.join(__dirname, '../node_modules')],
     mainFields: ['jsnext:main', 'browser', 'main'],
     extensions: ['.js', '.jsx'],
+    alias: {
+      src: path.join(process.cwd(), './src'),
+    },
   },
   node: {
     fs: 'empty',

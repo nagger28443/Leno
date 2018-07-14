@@ -1,44 +1,50 @@
-import React from 'react'
-import injectSheet from 'react-jss'
+import { React, injectSheet, _, get, fail, f } from 'src/commonExports' //eslint-disable-line
 import { Detail } from '../../styledComponents'
-// import NoContent from '../commonComponents/noContent'
 import BlogListItem from '../commonComponents/blogListItem'
-import { get } from '../../util/http'
-import { fail } from '../../util/utils'
-import Paging from '../commonComponents/paging'
 
 const styles = {
-  // root: {
-  //   position: 'relative',
-  //   paddingLeft: '2rem',
-  // },
-  checkAll: {
+  title: {
     position: 'absolute',
     right: '3rem',
     top: '2rem',
   },
+  getMore: {
+    textAlign: 'center',
+    margin: ['1rem', 0],
+    fontSize: 'small',
+  },
 }
-
-class SearchResult extends React.Component {
+const TITLE = {
+  search: '搜索关键字',
+  category: '当前类目',
+  label: '当前标签',
+}
+class BlogList extends React.Component {
   state = {
-    list: [],
-    curPage: 1,
-    params: '',
-    totalCount: 0,
+    data: [],
+    query: '',
   }
-  data = []
+  totalCount = 0
+  curPage = 0
 
-  loadPage = ({ params, page = 1 }) => {
-    document.documentElement.scrollIntoView()
+  getData = () => {
+    const params = this.props.location.search
+    const query = f.urlParamDecode(params)
+    if (!query) {
+      this.props.history.push('/404')
+    }
+
+    this.setState({
+      query,
+    })
     get('/blog/list', {
-      search: params,
-      page,
+      ...query,
+      page: ++this.curPage,
     })
       .then(resp => {
+        this.totalCount = resp.totalCount
         this.setState({
-          list: resp.data.result,
-          params,
-          totalCount: resp.data.totalCount,
+          data: [...this.state.data, ...resp.result],
         })
       })
       .catch(err => {
@@ -47,58 +53,63 @@ class SearchResult extends React.Component {
   }
 
   componentDidMount() {
-    const { params } = this.props.match.params
-    this.loadPage({ params })
-  }
-
-  handlePageChange = page => {
     document.documentElement.scrollIntoView()
-    const { history } = this.props
-    history.push({ state: { page } })
-    this.setState({
-      curPage: page,
-      list: this.data.slice(10 * page - 10, 10 * page),
-    })
+    window.addEventListener('scroll', _.throttle(this.handleScroll(), 500), false)
+    this.getData()
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { page } = nextProps.history.location.state || { page: 1 }
-    if (page !== prevState.curPage) {
-      return {
-        curPage: page,
+  handleScroll = () => {
+    let prevHeight = 0
+    return () => {
+      const curHeight = window.pageYOffset
+      const tmp = prevHeight
+      prevHeight = curHeight
+
+      if (tmp > curHeight || this.state.data.length >= this.totalCount) return
+
+      const maxHeight = document.body.clientHeight
+      const windowHeight = window.outerHeight
+      if (maxHeight - curHeight - windowHeight < 200) {
+        this.getData({})
       }
     }
-    return null
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.curPage !== this.state.curPage) {
-      const { curPage } = this.state
-      this.setState({ // eslint-disable-line
-        list: this.data.slice(10 * curPage - 10, 10 * curPage),
-      })
-    }
-    const curParams = this.props.match.params.params
-    const prevParams = prevProps.match.params.params
-    if (curParams !== prevParams) {
-      this.loadPage({ params: curParams })
+  componentDidUpdate(prevProps) {
+    const curParams = this.props.location.search
+    const prevParams = prevProps.location.search
+    if (!f.isEqual(curParams, prevParams)) {
+      document.documentElement.scrollIntoView()
+      this.curPage = 0
+      this.getData()
     }
   }
   render() {
     const { classes } = this.props
-    const { curPage, list, params, totalCount } = this.state
+    const { data, query } = this.state
+    const title = Object.keys(query)[0]
     return (
       <Detail>
-        {/* <NoContent /> */}
-        <div className={classes.checkAll}>
-          <span>搜索关键字：{params.replace(' ', ',')}</span>
+        <div className={classes.title}>
+          <span>{`${TITLE[title]}：${query[title]}`}</span>
         </div>
-        <div className={classes.root}>
-          {list.map(item => <BlogListItem data={item} key={item.id} />)}
+        <div style={{ display: data.length === 0 ? 'block' : 'none', textAlign: 'center' }}>
+          无记录
         </div>
-        <Paging total={totalCount} curPage={curPage} handlePageChange={this.handlePageChange} />
+        <div style={{ display: data.length > 0 ? 'block' : 'none' }}>
+          {data.map(item => <BlogListItem data={item} key={item.id} />)}
+          <div className={classes.getMore}>
+            {data.length < this.totalCount ? (
+              <span className="plain-link" onClick={this.getData}>
+                {'<<<加载更多>>>'}
+              </span>
+            ) : (
+              '没有更多了'
+            )}
+          </div>
+        </div>
       </Detail>
     )
   }
 }
-export default injectSheet(styles)(SearchResult)
+export default injectSheet(styles)(BlogList)

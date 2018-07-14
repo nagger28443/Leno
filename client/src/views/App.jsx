@@ -5,13 +5,12 @@ import _ from 'lodash'
 import Banner from './banner'
 import Home from './home'
 import Archive from './archive'
-import Labels from './labels'
 import Category from './category'
 import About from './about'
 import Page404 from './page404'
 import FullPage from './fullpage'
 import RightBar from './rightBar'
-import SearchResult from './search'
+import BlogLIst from './search'
 
 const srcollToTop = () => {
   document.documentElement.scrollIntoView()
@@ -66,15 +65,15 @@ class App extends React.Component {
           <Banner />
         </div>
         <TagInside style={{ backgroundColor: '#f5f5f5', flex: 1, display: 'flex' }}>
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1, maxWidth: '60rem' }}>
             <Switch>
               <Route path="/" exact key="/" component={Home} />
               <Route path="/archive" key="/archive" component={Archive} />
               <Route path="/category" key="/category" component={Category} />
-              <Route path="/label" key="/label" component={Labels} />
+              {/* <Route path="/label" key="/label" component={Labels} /> */}
               <Route path="/about" key="/about" component={About} />
-              <Route path="/blog" key="/fullpage" component={FullPage} />
-              <Route path="/search/:params" key="/search" component={SearchResult} />
+              <Route path="/blog" key="/blog" component={FullPage} />
+              <Route path="/list" key="/list" component={BlogLIst} />
               <Route key="404" component={Page404} />
             </Switch>
           </div>
