@@ -3,14 +3,12 @@ import { Route, Switch } from 'react-router-dom'
 import injectSheet from 'react-jss'
 import _ from 'lodash'
 import Banner from './banner'
-import Home from './home'
-import Archive from './archive'
 import Category from './category'
 import About from './about'
 import Page404 from './page404'
 import FullPage from './fullpage'
 import RightBar from './rightBar'
-import BlogLIst from './search'
+import BlogList from './blogList'
 
 const srcollToTop = () => {
   document.documentElement.scrollIntoView()
@@ -54,26 +52,17 @@ class App extends React.Component {
     const TagInside = isTopbar ? 'div' : React.Fragment
     return (
       <React.Fragment>
-        {/* <div
-          style={{
-            display: isTopbar ? 'block' : 'none',
-            minHeight: '3.5rem',
-            maxHeight: '6rem',
-          }}
-        /> */}
         <div className="leftbar">
           <Banner />
         </div>
         <TagInside style={{ backgroundColor: '#f5f5f5', flex: 1, display: 'flex' }}>
           <div style={{ flex: 1, maxWidth: '60rem' }}>
             <Switch>
-              <Route path="/" exact key="/" component={Home} />
-              <Route path="/archive" key="/archive" component={Archive} />
+              <Route path="/" exact key="/" component={BlogList} />
               <Route path="/category" key="/category" component={Category} />
-              {/* <Route path="/label" key="/label" component={Labels} /> */}
               <Route path="/about" key="/about" component={About} />
               <Route path="/blog" key="/blog" component={FullPage} />
-              <Route path="/list" key="/list" component={BlogLIst} />
+              <Route path="/list" key="/list" component={BlogList} />
               <Route key="404" component={Page404} />
             </Switch>
           </div>

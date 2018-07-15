@@ -32,7 +32,7 @@ const Menu = inject('appStore', 'labelStore')(
         </Link>
       </li> */}
       <li className={classes.menuItem}>
-        <Link to="/archive" className="plain-link">
+        <Link to="/list?archive=all" className="plain-link">
           归档
         </Link>
       </li>
