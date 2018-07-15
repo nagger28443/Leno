@@ -44,12 +44,8 @@ const CardTemplate = ({ classes, data }) => (
     <header className={classes.title}>{data.title}</header>
     {data.content.map(item => (
       <p key={item.key} className={classes.item}>
-        <Link
-          to={item.path}
-          replace
-          style={{ width: item.count ? '80%' : '100%' }}
-          className={`plain-link ${classes.link}`}>
-          {item.title}
+        <Link to={item.link} replace className={`plain-link ${classes.link}`}>
+          {item.name}
         </Link>
         <span className={classes.count}>{item.count}</span>
       </p>

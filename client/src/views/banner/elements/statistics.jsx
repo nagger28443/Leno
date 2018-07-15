@@ -1,6 +1,4 @@
-import React from 'react'
-import injectSheet from 'react-jss'
-import { Link } from 'react-router-dom'
+import { React, injectSheet, Link, get, fail} from 'src/commonExports' //eslint-disable-line
 
 const styles = {
   root: {
@@ -18,26 +16,40 @@ const styles = {
 }
 
 class Statistics extends React.Component {
-  componentDidMount() {}
+  state = {
+    data: {},
+  }
+  componentDidMount() {
+    get('/statistics')
+      .then(resp => {
+        this.setState({
+          data: resp,
+        })
+      })
+      .catch(err => {
+        fail(err)
+      })
+  }
   render() {
     const { classes } = this.props
+    const { data } = this.state
     return (
       <div className={classes.root}>
-        <Link to="/archive">
+        <Link to="/list?archive=all">
           <div className={`plain-link ${classes.item}`}>
-            <p>10</p>
+            <p>{data.blog}</p>
             <p>日志</p>
           </div>
         </Link>
         <Link to="/category">
           <div className={`plain-link ${classes.item}`}>
-            <p>12</p>
+            <p>{data.category}</p>
             <p>分类</p>
           </div>
         </Link>
         <Link to="#">
           <div className={`plain-link ${classes.item}`}>
-            <p>19</p>
+            <p>{data.label}</p>
             <p>标签</p>
           </div>
         </Link>

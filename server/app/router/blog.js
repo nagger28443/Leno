@@ -183,9 +183,6 @@ router.get('/', async ctx => {
   // 增加访问次数
   const sql2 = `UPDATE blogs SET visit_cnt=visit_cnt+1 WHERE title=? AND date=?`
   u.dbQuery(sql2, [title, date])
-
-  // const contentFile = await util.readFile(path.resolve(__dirname, '../blogs/3.md'))
-  // const contentHtml = MDParser(contentFile)
 })
 
 module.exports = router

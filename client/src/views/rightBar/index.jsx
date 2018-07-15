@@ -3,30 +3,10 @@ import { inject, observer } from 'mobx-react'
 import injectSheet from 'react-jss'
 import _ from 'lodash'
 import CardTemplate from './cardTemplate'
-import { parsePath } from '../../util/utils'
+import { fail } from '../../util/utils'
 import f from '../../util/f'
+import { get } from '../../util/http'
 
-const data1 = {
-  title: '个人分类',
-  content: _.range(0, 5).map((item, index) => ({
-    title: '这是一个分类2222222222222222',
-    count: '5篇',
-    path: '/category/react',
-    key: index,
-  })),
-  all: '/category',
-}
-const data2 = {
-  title: '归档',
-  content: _.range(0, 5).map((item, index) => ({
-    title: `2017年8月2222222222222222`,
-    date: '2017-08',
-    count: '5篇',
-    path: parsePath({ type: 'archive', dateStr: '2017-05', title: '2017年8月2222222222222222' }),
-    key: index,
-  })),
-  all: '/archive',
-}
 const styles = {
   tabHeader: {
     marginBottom: '1rem',
@@ -108,6 +88,16 @@ class RightBar extends React.Component {
       parentAnchorId: '',
       childAnchorId: '',
       anchors: [],
+      categories: {
+        title: '分类',
+        all: '/category',
+        content: [],
+      },
+      archives: {
+        title: '归档',
+        all: '/list?archive=all',
+        content: [],
+      },
     }
   }
 
@@ -140,6 +130,42 @@ class RightBar extends React.Component {
   componentDidMount() {
     window.addEventListener('scroll', _.throttle(this.updateAnchor, 50), false)
     prevPath = window.location.pathname
+
+    get('/category/list', {
+      page: 1,
+      pageSize: 5,
+    })
+      .then(resp => {
+        const { categories } = this.state
+        categories.content = resp.result.map(item => ({
+          ...item,
+          link: `/list?category=${item.name}`,
+        }))
+        this.setState({
+          categories,
+        })
+      })
+      .catch(err => {
+        fail(err)
+      })
+    get('/archive/list', {
+      page: 1,
+      pageSize: 5,
+    })
+      .then(resp => {
+        const { archives } = this.state
+        archives.content = resp.result.map(item => ({
+          ...item,
+          name: item.date,
+          link: `/list?archive=${item.date}`,
+        }))
+        this.setState({
+          archives,
+        })
+      })
+      .catch(err => {
+        fail(err)
+      })
   }
   static getDerivedStateFromProps() {
     const { pathname } = window.location
@@ -195,7 +221,7 @@ class RightBar extends React.Component {
   }
   render() {
     const { classes } = this.props
-    const { curTab, isCatalogVisible } = this.state
+    const { curTab, isCatalogVisible, categories, archives } = this.state
     return (
       <aside className="bar-inside">
         <div className={classes.tabHeader}>
@@ -249,8 +275,8 @@ class RightBar extends React.Component {
         <div
           className={`${classes.container}`}
           style={{ display: curTab === TABS.categoryArchive ? 'block' : 'none' }}>
-          <CardTemplate data={data2} />
-          <CardTemplate data={data1} />
+          <CardTemplate data={categories} />
+          <CardTemplate data={archives} />
         </div>
       </aside>
     )
