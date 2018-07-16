@@ -14,11 +14,13 @@
   "author": "jero",
   "license": "ISC",
   "dependencies": {
+    "jsonwebtoken": "^8.3.0",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.4.0",
     "lodash": "^4.17.10",
-    "mysql": "^2.15.0"
+    "mysql": "^2.15.0",
+    "redis": "^2.8.0"
   },
   "devDependencies": {
     "eslint": "^4.19.0",

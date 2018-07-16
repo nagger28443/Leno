@@ -16,6 +16,8 @@ const styles = {
     margin: 'auto',
     display: 'flex',
     justifyContent: 'center',
+    width: '80vw',
+    minWidth: '60rem',
     maxWidth: '100rem',
     minHeight: '40rem',
     marginTop: '1.2rem',
@@ -24,6 +26,12 @@ const styles = {
     flex: 1,
     background: '#fff',
     marginLeft: '0.2rem',
+  },
+  leftbar: {
+    width: '15%',
+    maxWidth: '16rem',
+    minWidth: '12rem',
+    background: '#fff',
   },
 }
 
@@ -36,7 +44,7 @@ class Management extends React.Component {
       <div className={classes.root}>
         <Topbar />
         <div className={classes.bottom}>
-          <Leftbar />
+          <Leftbar clazz={classes.leftbar} />
           <div className={classes.content}>
             <Switch>
               <Route path={`${path}/blog`} key="/blog" component={Blog} />

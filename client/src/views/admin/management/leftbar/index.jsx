@@ -1,19 +1,14 @@
 import { React, injectSheet,inject, observer, get } from 'src/commonExports' //eslint-disable-line
 
 const styles = {
-  root: {
-    width: '15%',
-    maxWidth: '16rem',
-    minWidth: '12rem',
-    background: '#fff',
-  },
+  root: {},
 }
 
 class Leftbar extends React.Component {
   componentDidMount() {}
   render() {
-    const { classes } = this.props
-    return <sider className={classes.root}>leftbar</sider>
+    const { clazz, root } = this.props
+    return <sider className={`${clazz} ${root}`}>leftbar</sider>
   }
 }
 
