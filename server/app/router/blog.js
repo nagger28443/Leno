@@ -87,7 +87,7 @@ const getBlogByArchive = async ({ ctx, archive, countSql, listSql, commonCond })
 const getHomeBlogs = async ({ ctx, countSql, commonCond }) => {
   let totalCount
   const listSql = `SELECT id,title,DATE_FORMAT(date,'%Y-%m-%d') as date,category,labels,visit_cnt
-  as visitCount,content FROM blogs`
+  as visitCount,content FROM blog`
 
   await u.dbQuery(`${countSql}`).then(result => {
     ;[{ totalCount }] = result
@@ -102,10 +102,10 @@ const getHomeBlogs = async ({ ctx, countSql, commonCond }) => {
 }
 // 获取博客列表
 router.get('/list', async ctx => {
-  const { search, category, labels, archive, page, pageSize = 10, hasDetail = false } = ctx.query
+  const { search, category, labels, archive, page, pageSize = 20, hasDetail = false } = ctx.query
   const listSql = `SELECT id,title,DATE_FORMAT(date,'%Y-%m-%d') as date,category,labels,visit_cnt
-  as visitCount FROM blogs`
-  const countSql = `SELECT COUNT(id) as totalCount FROM blogs`
+  as visitCount FROM blog`
+  const countSql = `SELECT COUNT(id) as totalCount FROM blog`
   const orderSql = `ORDER BY date DESC, visit_cnt DESC`
   let pageSql = ''
   if (page) {
@@ -151,7 +151,7 @@ router.post('/', async ctx => {
   // todo
   // 以及更新category,labels,archive表
   await u
-    .dbQuery('INSERT INTO blogs SET ?', {
+    .dbQuery('INSERT INTO blog SET ?', {
       title,
       content,
       category,
@@ -168,7 +168,7 @@ router.post('/', async ctx => {
 router.get('/', async ctx => {
   const { title, date } = ctx.query
 
-  const sql1 = `SELECT title,content,date,category,labels,visit_cnt as visitCount FROM blogs where title=? AND date=?`
+  const sql1 = `SELECT title,content,date,category,labels,visit_cnt as visitCount FROM blog where title=? AND date=?`
   await u.dbQuery(sql1, [title, date]).then(res => {
     if (res.length > 0) {
       ctx.body = u.response(codes.SUCCESS, {
@@ -181,7 +181,7 @@ router.get('/', async ctx => {
   })
 
   // 增加访问次数
-  const sql2 = `UPDATE blogs SET visit_cnt=visit_cnt+1 WHERE title=? AND date=?`
+  const sql2 = `UPDATE blog SET visit_cnt=visit_cnt+1 WHERE title=? AND date=?`
   u.dbQuery(sql2, [title, date])
 })
 

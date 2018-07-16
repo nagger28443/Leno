@@ -32,7 +32,7 @@ a
   background: linear-gradient(to bottom,#f2f2f2,#f5f5f5 2rem)
 
 article
-  wordBreak: break-word
+  word-break: break-word
   position: relative
   transition: height 0.3s
   overflow: hidden
@@ -46,6 +46,8 @@ article
     text-overflow: clip;
     white-space: pre-wrap;
     background: #55555512
+    padding: 0.5rem 0
+    line-height: 1.5
   blockquote
     padding: 0.4rem 0
     position relative
@@ -72,6 +74,8 @@ article
     border-radius: 0.05rem;
   li
     line-height: 1.7
+  pre,code
+    font-family: Consolas,Courier,monospace
 
 .link, .plain-link
   display: inline-block

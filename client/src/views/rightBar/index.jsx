@@ -128,7 +128,8 @@ class RightBar extends React.Component {
     })
   }
   componentDidMount() {
-    window.addEventListener('scroll', _.throttle(this.updateAnchor, 50), false)
+    this.scrollListener = _.throttle(this.updateAnchor, 50)
+    window.addEventListener('scroll', this.scrollListener, false)
     prevPath = window.location.pathname
 
     get('/category/list', {
@@ -166,6 +167,9 @@ class RightBar extends React.Component {
       .catch(err => {
         fail(err)
       })
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.scrollListener)
   }
   static getDerivedStateFromProps() {
     const { pathname } = window.location

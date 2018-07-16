@@ -13,7 +13,11 @@ class Banner extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', _.throttle(this.handleScroll(), 50), false)
+    this.scrollListener = _.throttle(this.handleScroll(), 50)
+    window.addEventListener('scroll', this.scrollListener, false)
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.scrollListener)
   }
   handleScroll = () => {
     let prevY = 0

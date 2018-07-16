@@ -45,11 +45,13 @@ class Blog extends React.Component {
     })
     if (!isArticleCollapsed) {
       window.scrollTo({
-        top: e.target.parentElement.offsetTop,
+        top: this.findParentArticle(e.target).offsetTop,
         behavior: 'smooth',
       })
     }
   }
+  findParentArticle = ele =>
+    ele.tagName.toLowerCase() === 'article' ? ele : this.findParentArticle(ele.parentElement)
 
   render() {
     const { classes, data } = this.props

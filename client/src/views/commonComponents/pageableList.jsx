@@ -2,11 +2,7 @@ import React from 'react'
 import injectSheet from 'react-jss'
 import { Detail } from '../../styledComponents'
 import BlogListItem from '../commonComponents/blogListItem'
-import { get } from '../../util/http'
-import { fail } from '../../util/utils'
 import Paging from '../commonComponents/paging'
-import { NOT_FOUND } from '../../constants'
-import f from '../../util/f'
 
 const styles = {
   root: {

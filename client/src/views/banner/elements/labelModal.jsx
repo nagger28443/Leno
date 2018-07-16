@@ -1,7 +1,4 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { inject, observer } from 'mobx-react'
-import injectSheet from 'react-jss'
+import { React, injectSheet, inject, observer, action, Link, get, fail } from 'src/commonExports' //eslint-disable-line
 
 const styles = {
   root: {
@@ -47,47 +44,48 @@ const styles = {
   },
 }
 
-const LabelModal = inject('appStore', 'labelStore')(
-  observer(({ labelStore, classes }) => (
-    <div
-      className={classes.root}
-      style={{ ...labelStore.style }}
-      // style={{ display: labelStore.isLabelModalVisible ? 'block' : 'none' }}
-      onClick={labelStore.hideLabelModal}>
-      <div className={classes.labels}>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
-        <Link to="/label" onClick={labelStore.hideLabelModal} className={classes.label}>
-          123
-        </Link>
+@inject('labelStore')
+@observer
+class LabelModal extends React.Component {
+  state = {
+    labels: [],
+  }
+  componentDidMount() {
+    get('/label/list')
+      .then(
+        action(resp => {
+          this.setState({
+            labels: resp.result,
+          })
+        }),
+      )
+      .catch(err => {
+        fail(err)
+      })
+  }
+  render() {
+    const { labelStore, classes } = this.props
+    const { isLabelModalVisible, hideLabelModal } = labelStore
+    const { labels } = this.state
+    return (
+      <div
+        className={classes.root}
+        style={{ transform: isLabelModalVisible ? 'scale(1)' : 'scale(0)' }}
+        onClick={hideLabelModal}>
+        <div className={classes.labels}>
+          {labels.map(label => (
+            <Link
+              to={`/list?labels=${label.name}`}
+              key={label.id}
+              onClick={hideLabelModal}
+              className={classes.label}>
+              {label.name}({label.count})
+            </Link>
+          ))}
+        </div>
       </div>
-    </div>
-  )),
-)
+    )
+  }
+}
 
 export default injectSheet(styles)(LabelModal)

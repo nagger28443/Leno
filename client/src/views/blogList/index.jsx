@@ -52,9 +52,10 @@ class BlogList extends React.Component {
 
   @action
   updateQuery = () => {
+    this.clearCache()
     const { pathname } = this.props.location
     if (pathname === '/') {
-      store.query = { hasDetail: true }
+      store.query = { hasDetail: true, pageSize: 10 }
       return
     }
     const params = this.props.location.search
@@ -78,13 +79,14 @@ class BlogList extends React.Component {
   }
   componentWillUnmount() {
     window.removeEventListener('scroll', this.scrollListener, false)
-    this.clearStore()
+    this.clearCache()
   }
   @action
-  clearStore = () => {
+  clearCache = () => {
+    this.curPage = 0
     Object.assign(store, {
       totalCount: 0,
-      query: '',
+      query: {},
       data: [],
     })
   }
@@ -130,7 +132,6 @@ class BlogList extends React.Component {
     } else {
       content = <NomalList />
     }
-
     return (
       <Tag>
         <div className={classes.title} style={{ display: query.hasDetail ? 'none' : 'block' }}>

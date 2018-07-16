@@ -35,9 +35,17 @@ const styles = {
 class App extends React.Component {
   state = {
     isTopbar: window.matchMedia(`(max-width: 1200px)`).matches,
+    isAtTop: true,
   }
   componentDidMount() {
-    window.addEventListener('resize', _.throttle(this.handleResize, 50), false)
+    this.resizeListener = _.throttle(this.handleResize, 50)
+    this.scrollListener = _.throttle(this.handleScroll, 1000)
+    window.addEventListener('resize', this.resizeListener, false)
+    window.addEventListener('scroll', this.scrollListener, false)
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeListener)
+    window.removeEventListener('scorll', this.scrollListener)
   }
   handleResize = () => {
     const isTopbar = window.matchMedia(`(max-width: 1200px)`).matches
@@ -45,10 +53,15 @@ class App extends React.Component {
       this.setState({ isTopbar })
     }
   }
+  handleScroll = () => {
+    this.setState({
+      isAtTop: window.pageYOffset === 0,
+    })
+  }
 
   render() {
     const { classes } = this.props
-    const { isTopbar } = this.state
+    const { isTopbar, isAtTop } = this.state
     const TagInside = isTopbar ? 'div' : React.Fragment
     return (
       <React.Fragment>
@@ -74,7 +87,7 @@ class App extends React.Component {
           onClick={srcollToTop}
           className={classes.toTop}
           title="返回顶部"
-          style={{ display: window.pageYOffset > 0 ? 'block' : 'none' }}
+          style={{ display: isAtTop ? 'none' : 'block' }}
         />
       </React.Fragment>
     )
