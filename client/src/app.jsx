@@ -19,6 +19,13 @@ const stores = {
   blogListStore,
 }
 
+axios.interceptors.request.use(config => {
+  const c = config
+  c.withCredentials = true
+  console.log(c)
+  return c
+})
+
 axios.interceptors.response.use(
   resp => resp.data,
   error => {

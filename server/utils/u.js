@@ -108,7 +108,9 @@ const u = {
   // 全局错误处理
   errHandler: async (ctx, next) => {
     try {
-      ctx.set('Access-Control-Allow-Origin', '*')
+      ctx.set('Access-Control-Allow-Origin', ctx.request.header.origin)
+      ctx.set('Access-Control-Allow-Credentials', true)
+      ctx.set('Access-Control-Allow-Headers', 'Content-Type')
       await next()
     } catch (err) {
       // handle

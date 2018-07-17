@@ -7,7 +7,6 @@ const parseUrl = (url, params = {}) => {
   const strParams = Object.keys(params)
     .map(key => `${key}=${params[key]}`)
     .join('&')
-  console.log(strParams)
   return strParams ? `${apiBaseUrl}${url}?${strParams}` : `${apiBaseUrl}${url}`
 }
 

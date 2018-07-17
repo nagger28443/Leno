@@ -1,5 +1,4 @@
-import React from 'react'
-import { post } from '../../util/http'
+import { React, injectSheet, inject, observer, action, Link, get, post, fail } from 'src/commonExports' //eslint-disable-line
 
 class Login extends React.Component {
   name = ''
@@ -10,14 +9,22 @@ class Login extends React.Component {
   handlePasswordChange = e => {
     this.password = e.target.value.trim()
   }
-  handleSubmit = e => {
-    e.preventDefault()
+  handleSubmit = () => {
     post('/admin/login', { name: this.name, password: this.password })
       .then(() => {
-        this.props.history.replace('/admin')
+        this.props.history.push('/admin')
+        console.log(document.cookie)
       })
       .catch(err => {
-        console.log(err)
+        if (err.code === 2101) {
+          // 用户名或密码错误
+          console.log('密码错误')
+        } else if (err.code === 2110) {
+          // frozen
+          console.log('账户冻结')
+        } else {
+          fail(err)
+        }
       })
   }
 

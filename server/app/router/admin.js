@@ -36,7 +36,9 @@ router.post('/login', async ctx => {
       ctx.body = u.response(codes.PASSWORD_OR_USER_INVALID)
       return
     }
-    ctx.cookies.set('token', JSON.stringify(tku.tokenGenerator()))
+    const token = tku.tokenGenerator()
+    await ctx.cookies.set('token', token)
+    console.log(ctx.request)
     ctx.body = u.response(codes.SUCCESS)
   })
 })

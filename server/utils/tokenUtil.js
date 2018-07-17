@@ -4,7 +4,7 @@ const { TOKEN_INVALID } = require('../constants/codes')
 
 const tku = {}
 
-tku.tokenGenerator = () => jwt.sign({ expiresIn: 60 * 60 }, secret)
+tku.tokenGenerator = () => Buffer.from(jwt.sign({ expiresIn: 60 * 60 }, secret)).toString('base64')
 
 const checkToken = token =>
   new Promise((resolve, reject) => {
