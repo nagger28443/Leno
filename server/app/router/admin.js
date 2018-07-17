@@ -1,25 +1,44 @@
 const Router = require('koa-router')
 const u = require('../../utils/u')
 const codes = require('../../constants/codes')
+const tku = require('../../utils/tokenUtil')
+const { LOGIN_MAX_FAIL_TIMES, ACCOUNT_FREEZE_TIME } = require('../../constants')
 
 const router = new Router()
 
+// 登录
 router.post('/login', async ctx => {
-  let total
-  await u.dbQuery('SELECT COUNT(id) as total FROM archive').then(result => {
-    ;[{ total }] = result
+  const { name, password } = ctx.request.body
+  console.log(ctx.request.body)
+
+  const sql = 'SELECT password AS pwd FROM user WHERE name=?'
+  await u.dbQuery(sql, [name]).then(async result => {
+    const { redisClient } = ctx.state
+
+    // 账户是否冻结
+    const freezeTime = (await redisClient.getAsync('accountFreezeTime')) || 0
+    if (Date.now() / 1000 < freezeTime) {
+      ctx.body = u.response(codes.ACCOUNR_BEING_FROZEN)
+      return
+    }
+
+    // 登录失败, 更新失败次数, 若超过最大连续失败次数冻结账户并将失败次数清零
+    if (result.length === 0 || result[0].pwd !== u.passwordEncrypt(password)) {
+      const loginFailedCount = (await redisClient.getAsync('loginFailedCount')) || 0
+      if (Number(loginFailedCount) + 1 >= LOGIN_MAX_FAIL_TIMES) {
+        redisClient.set('loginFailedCount', 0)
+        redisClient.set('accountFreezeTime', Date.now() / 1000 + ACCOUNT_FREEZE_TIME)
+        ctx.body = u.response(codes.ACCOUNR_BEING_FROZEN)
+        return
+      }
+
+      redisClient.set('loginFailedCount', Number(loginFailedCount) + 1)
+      ctx.body = u.response(codes.PASSWORD_OR_USER_INVALID)
+      return
+    }
+    ctx.cookies.set('token', JSON.stringify(tku.tokenGenerator()))
+    ctx.body = u.response(codes.SUCCESS)
   })
-  if (total === 0) {
-    ctx.body = u.response(codes.SUCCESS, { result: [], total })
-  } else {
-    const { page = 1, pageSize = 10 } = ctx.query
-    const sql = `SELECT id,date,count FROM archive ORDER BY count DESC ${
-      page ? `LIMIT ${(page - 1) * pageSize},${pageSize}` : ``
-    }`
-    await u.dbQuery(sql).then(result => {
-      ctx.body = u.response(codes.SUCCESS, { result, total })
-    })
-  }
 })
 
 module.exports = router

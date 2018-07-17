@@ -2,6 +2,7 @@ const Koa = require('koa')
 const Router = require('koa-router')
 const u = require('../utils/u')
 const tku = require('../utils/tokenUtil')
+const bodyParser = require('koa-bodyparser')
 
 const app = new Koa()
 const router = new Router()
@@ -12,6 +13,13 @@ app.use(u.errHandler)
 app.use(u.init)
 app.use(u.logger)
 app.use(tku.checkToken)
+app.use(
+  bodyParser({
+    extendTypes: {
+      json: ['application/json'], // will parse application/x-javascript type body as a JSON string
+    },
+  }),
+)
 app.use(router.routes())
 
 app.listen(3000, () => {

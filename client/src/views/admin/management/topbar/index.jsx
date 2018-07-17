@@ -1,13 +1,13 @@
 import { React, injectSheet,inject, observer, get } from 'src/commonExports' //eslint-disable-line
 
 const styles = {
-  root: {
-    height: '4rem',
-    background: '#fff',
-  },
+  root: {},
   content: {
+    width: '80vw',
+    minWidth: '60rem',
     maxWidth: '100rem',
     margin: 'auto',
+    height: '100%',
     display: 'flex',
     alignItems: 'center',
   },
@@ -16,9 +16,9 @@ const styles = {
 class Topbar extends React.Component {
   componentDidMount() {}
   render() {
-    const { classes } = this.props
+    const { classes, clazz } = this.props
     return (
-      <header className={classes.root}>
+      <header className={`${classes.root} ${clazz}`}>
         <div className={classes.content}>
           <span>topbar</span>
         </div>

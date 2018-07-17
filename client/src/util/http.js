@@ -7,6 +7,7 @@ const parseUrl = (url, params = {}) => {
   const strParams = Object.keys(params)
     .map(key => `${key}=${params[key]}`)
     .join('&')
+  console.log(strParams)
   return strParams ? `${apiBaseUrl}${url}?${strParams}` : `${apiBaseUrl}${url}`
 }
 
@@ -23,7 +24,7 @@ export const get = (url, params) =>
 
 export const post = (url, postData) =>
   new Promise((resolve, reject) => {
-    axios.post(url, postData).then(resp => {
+    axios.post(parseUrl(url), postData).then(resp => {
       if (resp.code === 1) {
         resolve(resp.data)
       } else {

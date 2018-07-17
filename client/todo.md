@@ -1,7 +1,9 @@
-- 文章收起后滚动bug?
+<!-- - 文章收起后滚动bug? -->
 - 启动时检查数据库的可用性
 - 锚点,snapshot?
 - 原生js
+- 关于width 100%
+- history.replace,link
 
 - draft, is_deleted, stick_top, private
 

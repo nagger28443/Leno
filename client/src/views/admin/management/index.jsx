@@ -33,6 +33,10 @@ const styles = {
     minWidth: '12rem',
     background: '#fff',
   },
+  topbar: {
+    height: '4rem',
+    background: '#fff',
+  },
 }
 
 class Management extends React.Component {
@@ -42,7 +46,7 @@ class Management extends React.Component {
     const { classes } = this.props
     return (
       <div className={classes.root}>
-        <Topbar />
+        <Topbar clazz={classes.topbar} />
         <div className={classes.bottom}>
           <Leftbar clazz={classes.leftbar} />
           <div className={classes.content}>

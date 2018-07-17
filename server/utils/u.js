@@ -1,5 +1,9 @@
 const fs = require('fs')
 const mysql = require('mysql')
+const redis = require('redis')
+const { salt } = require('../config')
+const crypto = require('crypto')
+
 // const codes = require('../constants/codes')
 
 const pool = mysql.createPool({
@@ -10,6 +14,7 @@ const pool = mysql.createPool({
   port: '3306',
   database: 'leno',
 })
+const redisClient = redis.createClient()
 
 const u = {
   init: async (ctx, next) => {
@@ -25,6 +30,16 @@ const u = {
       )
     }
     ctx.state.pool = pool
+    redisClient.getAsync = key =>
+      new Promise((resolve, reject) => {
+        redisClient.get(key, (err, res) => {
+          if (err) {
+            reject(err)
+          }
+          resolve(res)
+        })
+      })
+    ctx.state.redisClient = redisClient
     await next()
   },
   // query from databse with promise
@@ -75,6 +90,21 @@ const u = {
     return !param
   },
 
+  passwordEncrypt: pwd => {
+    const hash = crypto.createHash('md5')
+    hash.update(`${hash}${pwd}`)
+    hash.update(`${hash}${salt}`)
+    return hash.digest('hex')
+  },
+
+  getLoginFailedCount: async () => {
+    const count = await redisClient.getAsync('loginFailedCount')
+    return count || 0
+  },
+  setLoginFailedCount: async count => {
+    redisClient.set('loginFailedCount', count)
+  },
+
   // 全局错误处理
   errHandler: async (ctx, next) => {
     try {
@@ -102,5 +132,27 @@ const u = {
     console.log(msg)
   },
 }
+
+redisClient.getAsync = key =>
+  new Promise((resolve, reject) => {
+    redisClient.get(key, (err, res) => {
+      if (err) {
+        reject(err)
+      }
+      resolve(res)
+    })
+  })
+const ff = async () => {
+  redisClient.set('token', JSON.stringify({ aaa: 10 }))
+  redisClient
+    .getAsync('token')
+    .then(res => {
+      console.log(res)
+    })
+    .catch(() => {
+      console.log(123)
+    })
+}
+ff()
 
 module.exports = u
