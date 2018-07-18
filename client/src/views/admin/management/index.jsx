@@ -2,7 +2,8 @@ import { React, injectSheet,inject, observer, get } from 'src/commonExports' //e
 import { Switch, Route } from 'react-router-dom'
 import Topbar from './topbar'
 import Leftbar from './leftbar'
-import Blog from './blog'
+import BlogEditor from './blog/blogEditor'
+import BlogList from './blog/blogList'
 import Category from './category'
 import Label from './label'
 import Statistics from './statistics'
@@ -51,7 +52,9 @@ class Management extends React.Component {
           <Leftbar clazz={classes.leftbar} />
           <div className={classes.content}>
             <Switch>
-              <Route path={`${path}/blog`} key="/blog" component={Blog} />
+              <Route path={`${path}/blog/edit`} key="/blog/edit" component={BlogEditor} />
+              <Route path={`${path}/blog/list`} key="/blog/list" component={BlogList} />
+
               <Route path={`${path}/category`} key="/category" component={Category} />
               <Route path={`${path}/label`} key="/label" component={Label} />
               <Route key="/statistics" component={Statistics} />
