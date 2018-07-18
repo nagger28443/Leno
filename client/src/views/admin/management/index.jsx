@@ -27,6 +27,7 @@ const styles = {
     flex: 1,
     background: '#fff',
     marginLeft: '0.2rem',
+    padding: '1rem',
   },
   leftbar: {
     width: '15%',

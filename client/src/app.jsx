@@ -8,6 +8,7 @@ import App from './views/App'
 import appStore from './store/appStore'
 import labelStore from './store/banner/labelStore'
 import blogListStore from './store/blogList/blogListStore'
+import blogEditorStore from './store/admin/management/blogEditorStore'
 import './app.styl'
 import Admin from './views/admin'
 import { serverHost, serverPort } from '../projectConfig'
@@ -18,6 +19,7 @@ const stores = {
   appStore,
   labelStore,
   blogListStore,
+  blogEditorStore,
 }
 
 axios.interceptors.request.use(config => {
