@@ -5,6 +5,8 @@
 - 关于width 100%
 - history.replace,link
 
+- cookie跨域
+- options请求,204
 - draft, is_deleted, stick_top, private
 
 - 前端功能完成后, 后端实现

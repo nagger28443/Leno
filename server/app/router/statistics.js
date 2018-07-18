@@ -6,13 +6,12 @@ const router = new Router()
 
 router.get('/', async ctx => {
   const sql = `SELECT name,count FROM statistics`
-  await u.dbQuery(sql).then(result => {
-    const res = {}
-    result.forEach(item => {
-      res[item.name] = item.count
-    })
-    ctx.body = u.response(codes.SUCCESS, res)
+  const res = await u.dbQuery(sql)
+  const result = {}
+  res.forEach(item => {
+    result[item.name] = item.count
   })
+  ctx.body = u.response(codes.SUCCESS, result)
 })
 
 module.exports = router

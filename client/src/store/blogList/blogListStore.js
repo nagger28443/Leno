@@ -2,7 +2,7 @@ import { observable } from 'mobx'
 
 class BlogListStore {
   getData = null
-  totalCount = 0
+  total = 0
   @observable query = {}
   @observable data = []
 }

@@ -5,10 +5,7 @@ const codes = require('../../constants/codes')
 const router = new Router()
 
 router.get('/list', async ctx => {
-  let total
-  await u.dbQuery('SELECT COUNT(id) as total FROM category').then(result => {
-    ;[{ total }] = result
-  })
+  const [{ total }] = await u.dbQuery('SELECT COUNT(id) as total FROM category')
   if (total === 0) {
     ctx.body = u.response(codes.SUCCESS, { result: [], total })
   } else {
@@ -16,9 +13,8 @@ router.get('/list', async ctx => {
     const sql = `SELECT id,name,count FROM category ORDER BY count DESC ${
       page ? `LIMIT ${(page - 1) * pageSize},${pageSize}` : ``
     }`
-    await u.dbQuery(sql).then(result => {
-      ctx.body = u.response(codes.SUCCESS, { result, total })
-    })
+    const result = await u.dbQuery(sql)
+    ctx.body = u.response(codes.SUCCESS, { result, total })
   }
 })
 

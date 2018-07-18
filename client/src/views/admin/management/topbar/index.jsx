@@ -10,7 +10,10 @@ const styles = {
     height: '100%',
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
+  left: {},
+  right: {},
 }
 
 class Topbar extends React.Component {
@@ -20,7 +23,11 @@ class Topbar extends React.Component {
     return (
       <header className={`${classes.root} ${clazz}`}>
         <div className={classes.content}>
-          <span>topbar</span>
+          <span className={classes.left}>管理中心</span>
+          <div className={classes.right}>
+            <span>Greetings!</span>
+            <span className="plain-link">退出</span>
+          </div>
         </div>
       </header>
     )

@@ -12,14 +12,9 @@ router.use('', require('./router').routes())
 app.use(u.errHandler)
 app.use(u.init)
 app.use(u.logger)
+app.use(bodyParser())
 app.use(tku.checkToken)
-app.use(
-  bodyParser({
-    extendTypes: {
-      json: ['application/json'], // will parse application/x-javascript type body as a JSON string
-    },
-  }),
-)
+
 app.use(router.routes())
 
 app.listen(3000, () => {

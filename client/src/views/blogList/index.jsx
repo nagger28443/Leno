@@ -41,7 +41,7 @@ class BlogList extends React.Component {
     })
       .then(
         action(resp => {
-          store.totalCount = resp.totalCount
+          store.total = resp.total
           store.data = [...store.data, ...resp.result]
         }),
       )
@@ -85,7 +85,7 @@ class BlogList extends React.Component {
   clearCache = () => {
     this.curPage = 0
     Object.assign(store, {
-      totalCount: 0,
+      total: 0,
       query: {},
       data: [],
     })
@@ -98,7 +98,7 @@ class BlogList extends React.Component {
       const tmp = prevHeight
       prevHeight = curHeight
 
-      if (tmp > curHeight || store.data.length >= store.totalCount) return
+      if (tmp > curHeight || store.data.length >= store.total) return
 
       const maxHeight = document.body.clientHeight
       const windowHeight = window.outerHeight
@@ -143,7 +143,7 @@ class BlogList extends React.Component {
         <div style={{ display: data.length > 0 ? 'block' : 'none' }}>
           {content}
           <div className={classes.getMore}>
-            {data.length < this.totalCount ? (
+            {data.length < this.total ? (
               <span className="plain-link" onClick={store.getData}>
                 {'<<<加载更多>>>'}
               </span>

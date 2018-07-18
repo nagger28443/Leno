@@ -10,6 +10,7 @@ import labelStore from './store/banner/labelStore'
 import blogListStore from './store/blogList/blogListStore'
 import './app.styl'
 import Admin from './views/admin'
+import { serverHost, serverPort } from '../projectConfig'
 
 configure({ enforceActions: true })
 
@@ -21,15 +22,33 @@ const stores = {
 
 axios.interceptors.request.use(config => {
   const c = config
-  c.withCredentials = true
-  console.log(c)
+  // c.withCredentials = true
+  const { token } = window.sessionStorage
+
+  if (
+    token &&
+    token.length > 0 &&
+    config.url.startsWith(`http://${serverHost}:${serverPort}/admin`)
+  ) {
+    c.headers.token = window.sessionStorage.token || ''
+  }
   return c
 })
 
 axios.interceptors.response.use(
-  resp => resp.data,
+  resp => {
+    const { token } = resp.data
+    if (token) {
+      window.sessionStorage.token = resp.data.token
+    }
+    return resp.data
+  },
   error => {
-    Promise.reject(error)
+    if (error.response.status === 403) {
+      window.location.href = '/admin/login'
+    } else {
+      Promise.reject(error)
+    }
   },
 )
 

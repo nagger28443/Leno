@@ -3,8 +3,7 @@ const mysql = require('mysql')
 const redis = require('redis')
 const { salt } = require('../config')
 const crypto = require('crypto')
-
-// const codes = require('../constants/codes')
+const codes = require('../constants/codes')
 
 const pool = mysql.createPool({
   connectionLimit: 100,
@@ -15,6 +14,7 @@ const pool = mysql.createPool({
   database: 'leno',
 })
 const redisClient = redis.createClient()
+let context
 
 const u = {
   init: async (ctx, next) => {
@@ -30,6 +30,7 @@ const u = {
       )
     }
     ctx.state.pool = pool
+    context = ctx
     redisClient.getAsync = key =>
       new Promise((resolve, reject) => {
         redisClient.get(key, (err, res) => {
@@ -70,11 +71,14 @@ const u = {
   },
 
   // 请求返回格式化
-  response: (code, data = {}) => ({
-    ...code,
-    data,
-  }),
-
+  response: (code, data = {}) => {
+    const resp = { ...code, data }
+    const { token } = context.state
+    if (token && code === codes.SUCCESS) {
+      resp.token = token
+    }
+    return resp
+  },
   dbParamsGenerator: (ctx, checkArr) => {
     const params = {}
     checkArr.forEach(key => {
@@ -113,11 +117,11 @@ const u = {
       ctx.set('Access-Control-Allow-Headers', 'Content-Type')
       await next()
     } catch (err) {
-      // handle
-      // if (ctx.response.status === 404) {
-      //   ctx.body = '无记录'
-      // }
-      console.log(err)
+      if (err.status) {
+        ctx.response.status = err.status
+      } else {
+        console.log(err)
+      }
     }
   },
   logger: async (ctx, next) => {
@@ -134,27 +138,5 @@ const u = {
     console.log(msg)
   },
 }
-
-redisClient.getAsync = key =>
-  new Promise((resolve, reject) => {
-    redisClient.get(key, (err, res) => {
-      if (err) {
-        reject(err)
-      }
-      resolve(res)
-    })
-  })
-const ff = async () => {
-  redisClient.set('token', JSON.stringify({ aaa: 10 }))
-  redisClient
-    .getAsync('token')
-    .then(res => {
-      console.log(res)
-    })
-    .catch(() => {
-      console.log(123)
-    })
-}
-ff()
 
 module.exports = u
