@@ -2,7 +2,7 @@ import { React, injectSheet,inject, observer, get, action } from 'src/commonExpo
 
 const styles = {
   label: {
-    margin: [0, '0.3rem'],
+    marginRight: '0.6rem',
     cursor: 'pointer',
   },
 }

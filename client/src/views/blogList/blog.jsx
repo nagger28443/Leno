@@ -8,6 +8,7 @@ const styles = {
   },
   article: {
     padding: '4rem',
+    paddingBottom: '11rem',
     '&:after': {
       width: '100%',
       height: '4rem',

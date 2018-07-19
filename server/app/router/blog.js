@@ -115,27 +115,6 @@ router.get('/list', async ctx => {
   }
 })
 
-router.post('/', async ctx => {
-  const { title, category, labels } = ctx.query
-  const gmt = new Date().toLocaleString()
-  const date = new Date().toLocaleDateString()
-  // todo
-  const contentFile = await u.readFile(path.resolve(__dirname, '../blogs/3.md'))
-  const content = MDParser(contentFile)
-  // todo
-  // 以及更新category,labels,archive表
-  await u.dbQuery('INSERT INTO blog SET ?', {
-    title,
-    content,
-    category,
-    labels,
-    date,
-    gmt_create: gmt,
-    gmt_modify: gmt,
-  })
-  ctx.body = u.response(codes.SUCCESS)
-})
-
 router.get('/', async ctx => {
   const { title, date } = ctx.query
 
@@ -153,6 +132,30 @@ router.get('/', async ctx => {
   // 增加访问次数
   const sql2 = `UPDATE blog SET visit_cnt=visit_cnt+1 WHERE title=? AND date=?`
   u.dbQuery(sql2, [title, date])
+})
+
+router.post('/', async ctx => {
+  const { title, category, labels, content } = ctx.request.body
+  if ([title, category, content].some(item => u.isEmpty(item))) {
+    const { message } = codes.INSURFICIENT_PARAMS
+    u.response({ ...codes.INSURFICIENT_PARAMS, message: `${message}:title,category,content` })
+    return
+  }
+  const contentHTMLStr = MDParser(content)
+  const gmt = new Date().toLocaleString()
+  const date = new Date().toLocaleDateString()
+
+  // 以及更新category,labels,archive表
+  await u.dbQuery('INSERT INTO blog SET ?', {
+    title,
+    content: contentHTMLStr,
+    category,
+    labels,
+    date,
+    gmt_create: gmt,
+    gmt_modify: gmt,
+  })
+  ctx.body = u.response(codes.SUCCESS)
 })
 
 module.exports = router

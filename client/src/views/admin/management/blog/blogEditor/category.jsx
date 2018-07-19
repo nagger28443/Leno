@@ -67,12 +67,10 @@ class Category extends React.Component {
 
   componentDidMount() {
     this.fetchCategories()
-    // this.setState({ categories })
   }
   render() {
     const { classes } = this.props
     const { categories, isDropdownVisible } = this.state
-    console.log(store.x)
 
     return (
       <div>

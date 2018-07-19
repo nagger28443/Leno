@@ -1,6 +1,8 @@
-import { React, injectSheet,inject, observer, get } from 'src/commonExports' //eslint-disable-line
+import { React, injectSheet,inject, observer, get, post, put, fail } from 'src/commonExports' //eslint-disable-line
 import Labels from './labels'
 import Category from './category'
+import PrivateSwitch from './privateSwitch'
+import Button from '../../../../commonComponents/button'
 import blog from '../../../../../blogs/2.md'
 
 const styles = {
@@ -22,8 +24,33 @@ const styles = {
     cursor: 'pointer',
   },
 }
+
+let store
+@inject('blogEditorStore')
+@observer
 class BlogEditor extends React.Component {
-  state = {}
+  constructor(props) {
+    super(props)
+    store = props.blogEditorStore
+    this.title = ''
+    this.content = ''
+    this.state = {}
+  }
+
+  handleTitleChange = e => {
+    this.title = e.target.value
+  }
+  handleContentChange = e => {
+    this.content = e.target.value
+  }
+
+  postBlog = () => {
+    const { title, content } = this
+    const { labels, category, isPrivate } = store
+    post('/blog', { title, content, labels: labels.join(','), category, isPrivate }).catch(err => {
+      fail(err)
+    })
+  }
 
   componentDidMount() {}
   render() {
@@ -36,6 +63,7 @@ class BlogEditor extends React.Component {
             type="text"
             placeholder="请输入文章标题"
             className={`input-box ${classes.title}`}
+            onChange={this.handleTitleChange}
           />
         </div>
         <div className={classes.row}>
@@ -45,6 +73,7 @@ class BlogEditor extends React.Component {
             required
             className={`input-box ${classes.content}`}
             defaultValue={blog}
+            onChange={this.handleContentChange}
           />
         </div>
         <div style={{ fontSize: 'small' }}>
@@ -54,10 +83,15 @@ class BlogEditor extends React.Component {
           <div className={classes.row}>
             <Category />
           </div>
-          <div className={classes.row}>分类</div>
-          <div className={classes.row}>私密</div>
+          <div className={classes.row}>
+            <PrivateSwitch />
+          </div>
+          <div className={classes.row}>
+            <span style={{ visibility: 'hidden' }}>提交按钮：</span>
+            <Button style={{ marginRight: '0.5rem' }} text="发表博客" onClick={this.postBlog} />
+            <Button text="保存草稿" onClick={this.saveDraft} />
+          </div>
         </div>
-        <div className={classes.row}>按钮</div>
       </div>
     )
   }
