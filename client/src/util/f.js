@@ -13,6 +13,8 @@ const f = {
 
   lastEle: arr => (Array.isArray(arr) ? arr[arr.length - 1] : undefined),
 
+  getRuleName: rule => Object.keys(rule).find(item => item !== 'message'),
+
   // url参数查询decode, search, category, labels, archive...
   urlParamDecode: params => {
     const match = /^\?(\w+)=(.+)$/.exec(params)

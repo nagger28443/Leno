@@ -4,6 +4,7 @@
 - 原生js
 - 关于width 100%
 - history.replace,link
+- message-component
 
 - cookie跨域
 - options请求,204

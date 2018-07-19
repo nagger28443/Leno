@@ -77,6 +77,7 @@ const u = {
     if (token && code === codes.SUCCESS) {
       resp.token = token
     }
+    console.log(resp)
     return resp
   },
   dbParamsGenerator: (ctx, checkArr) => {

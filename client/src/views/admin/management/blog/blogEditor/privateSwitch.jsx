@@ -50,11 +50,11 @@ class Category extends React.Component {
         <div
           className={classes.switchContainer}
           onClick={this.handleSwitch}
-          style={{ background: isPrivate ? '#d1d5da' : '#7ED321' }}>
+          style={{ background: isPrivate ? '#7ED321' : '#d1d5da' }}>
           <div
             className={classes.switch}
             style={{
-              left: isPrivate ? '0.2rem' : '1.1rem',
+              left: isPrivate ? '1.1rem' : '0.2rem',
             }}
           />
         </div>

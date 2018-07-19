@@ -3,6 +3,8 @@ import Labels from './labels'
 import Category from './category'
 import PrivateSwitch from './privateSwitch'
 import Button from '../../../../commonComponents/button'
+import Input from '../../../../commonComponents/input'
+import TextArea from '../../../../commonComponents/textarea'
 import blog from '../../../../../blogs/2.md'
 
 const styles = {
@@ -32,20 +34,31 @@ class BlogEditor extends React.Component {
   constructor(props) {
     super(props)
     store = props.blogEditorStore
+    this.titleInput = {}
+    this.contentInput = {}
     this.title = ''
     this.content = ''
     this.state = {}
   }
 
-  handleTitleChange = e => {
-    this.title = e.target.value
+  handleTitleChange = value => {
+    this.title = value
   }
-  handleContentChange = e => {
-    this.content = e.target.value
+  handleContentChange = value => {
+    this.content = value
   }
 
   postBlog = () => {
     const { title, content } = this
+
+    if (
+      !this.titleInput.validate(title) ||
+      !this.contentInput.validate(content) ||
+      store.category.length === 0
+    ) {
+      return
+    }
+
     const { labels, category, isPrivate } = store
     post('/blog', { title, content, labels: labels.join(','), category, isPrivate }).catch(err => {
       fail(err)
@@ -55,25 +68,33 @@ class BlogEditor extends React.Component {
   componentDidMount() {}
   render() {
     const { classes } = this.props
-    // const { } = this.state
+    const { title } = store
     return (
       <div className={classes.root}>
         <div className={classes.row}>
-          <input
-            type="text"
-            placeholder="请输入文章标题"
-            className={`input-box ${classes.title}`}
+          <Input
+            bridge={this.titleInput}
+            rules={[
+              { max: 50, message: '标题长度不能超过50' },
+              { min: 2, message: '标题长度不能小于2' },
+            ]}
+            className={classes.title}
             onChange={this.handleTitleChange}
+            defaultValue={title}
+            placeholder="请输入文章标题"
           />
         </div>
         <div className={classes.row}>
-          <textarea
-            cols="30"
-            rows="10"
-            required
-            className={`input-box ${classes.content}`}
+          <TextArea
+            bridge={this.contentInput}
+            rules={[
+              { required: true, message: '内容不能为空' },
+              { max: 20000, message: '标题长度不能超过20000字' },
+            ]}
+            className={classes.content}
             defaultValue={blog}
             onChange={this.handleContentChange}
+            placeholder="请输入文章内容"
           />
         </div>
         <div style={{ fontSize: 'small' }}>
