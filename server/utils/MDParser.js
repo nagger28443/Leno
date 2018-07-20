@@ -138,7 +138,7 @@ function handleNestedBlock(content) {
   let res = null
   return (
     content
-      .map(line => {
+      .map((line) => {
         let tmp = ''
         let tag
         const deltLine = handleInline(line)
@@ -169,7 +169,7 @@ function handleNestedBlock(content) {
 
           tagStack.pop()
           return `</blockquote>${handleBlockQuoteLine(res[3])}`
-        } else if (lastTag && lastTag.includes('blockquote')) {
+        } if (lastTag && lastTag.includes('blockquote')) {
           while (tagStack.length > 0 && tagStack[tagStack.length - 1].includes('blockquote')) {
             tmp += '</blockquote>'
             tagStack.pop()
@@ -226,9 +226,9 @@ function generateHtml(block) {
     case TAGS.codeBlockTab:
       return `<pre className="code-block-tab">${content.join('\n')}</pre>`
     case TAGS.thinLine:
-      return `<hr className="thin-line" />`
+      return '<hr className="thin-line" />'
     case TAGS.thickLine:
-      return `<hr className="thick-line" />` // 段落处理?标题内处理?
+      return '<hr className="thick-line" />' // 段落处理?标题内处理?
     case TAGS.nest:
       return `<div>${handleNestedBlock(content)}</div>`
     default: {

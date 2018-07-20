@@ -43,6 +43,7 @@ const styles = {
 
 class Management extends React.Component {
   componentDidMount() {}
+
   render() {
     const { path } = this.props.match
     const { classes } = this.props

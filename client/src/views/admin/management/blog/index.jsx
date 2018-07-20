@@ -6,6 +6,7 @@ const styles = {}
 
 class Blog extends React.Component {
   componentDidMount() {}
+
   render() {
     const { path } = this.props.match
     return (

@@ -1,18 +1,11 @@
 module.exports = {
-  extends: ['airbnb', 'prettier'],
-  plugins: ['prettier'],
+  extends: ['airbnb'],
+  env: {
+    node: true,
+    commonjs: true,
+    es6: true
+  },
   rules: {
-    // prettier 配置用于自动化格式代码
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-        semi: false,
-        trailingComma: 'all',
-        bracketSpacing: true,
-        printWidth: 100,
-      },
-    ],
     // 一个函数的复杂性不超过 10，所有分支、循环、回调加在一起，在一个函数里不超过 10 个
     // "complexity": [2, 10],
     // 一个函数的嵌套不能超过 4 层，多个 for 循环，深层的 if-else，这些都是罪恶之源
@@ -31,8 +24,6 @@ module.exports = {
     'no-case-declarations': 0,
     'no-cond-assign': 0,
     'no-console': 0,
-  },
-  env: {
-    browser: true,
+    "react/destructuring-assignment":0
   },
 }

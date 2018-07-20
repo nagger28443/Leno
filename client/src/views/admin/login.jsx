@@ -2,13 +2,17 @@ import { React, injectSheet, inject, observer, action, Link, get, post, fail } f
 
 class Login extends React.Component {
   name = ''
+
   password = ''
+
   handleNameChange = e => {
     this.name = e.target.value.trim()
   }
+
   handlePasswordChange = e => {
     this.password = e.target.value.trim()
   }
+
   handleSubmit = () => {
     post('/admin/login', { name: this.name, password: this.password })
       .then(() => {

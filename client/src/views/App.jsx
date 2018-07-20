@@ -10,7 +10,7 @@ import FullPage from './fullpage'
 import RightBar from './rightBar'
 import BlogList from './blogList'
 
-const srcollToTop = () => {
+const scrollToTop = () => {
   document.documentElement.scrollIntoView()
 }
 const styles = {
@@ -34,25 +34,29 @@ const styles = {
 
 class App extends React.Component {
   state = {
-    isTopbar: window.matchMedia(`(max-width: 1200px)`).matches,
+    isTopbar: window.matchMedia('(max-width: 1200px)').matches,
     isAtTop: true,
   }
+
   componentDidMount() {
     this.resizeListener = _.throttle(this.handleResize, 50)
     this.scrollListener = _.throttle(this.handleScroll, 1000)
     window.addEventListener('resize', this.resizeListener, false)
     window.addEventListener('scroll', this.scrollListener, false)
   }
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeListener)
     window.removeEventListener('scorll', this.scrollListener)
   }
+
   handleResize = () => {
-    const isTopbar = window.matchMedia(`(max-width: 1200px)`).matches
+    const isTopbar = window.matchMedia('(max-width: 1200px)').matches
     if (isTopbar !== this.state.isTopbar) {
       this.setState({ isTopbar })
     }
   }
+
   handleScroll = () => {
     this.setState({
       isAtTop: window.pageYOffset === 0,
@@ -84,7 +88,7 @@ class App extends React.Component {
           </div>
         </TagInside>
         <div
-          onClick={srcollToTop}
+          onClick={scrollToTop}
           className={classes.toTop}
           title="返回顶部"
           style={{ display: isAtTop ? 'none' : 'block' }}

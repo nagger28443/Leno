@@ -7,6 +7,7 @@ class LabelStore {
   showLabelModal = () => {
     this.isLabelModalVisible = true
   }
+
   @action
   hideLabelModal = () => {
     this.isLabelModalVisible = false

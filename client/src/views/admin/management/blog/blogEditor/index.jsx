@@ -44,6 +44,7 @@ class BlogEditor extends React.Component {
   handleTitleChange = value => {
     this.title = value
   }
+
   handleContentChange = value => {
     this.content = value
   }
@@ -52,20 +53,23 @@ class BlogEditor extends React.Component {
     const { title, content } = this
 
     if (
-      !this.titleInput.validate(title) ||
-      !this.contentInput.validate(content) ||
-      store.category.length === 0
+      !this.titleInput.validate(title)
+      || !this.contentInput.validate(content)
+      || store.category.length === 0
     ) {
       return
     }
 
     const { labels, category, isPrivate } = store
-    post('/blog', { title, content, labels: labels.join(','), category, isPrivate }).catch(err => {
+    post('/blog', {
+      title, content, labels: labels.join(','), category, isPrivate,
+    }).catch(err => {
       fail(err)
     })
   }
 
   componentDidMount() {}
+
   render() {
     const { classes } = this.props
     const { title } = store

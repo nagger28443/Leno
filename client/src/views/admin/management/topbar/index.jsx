@@ -18,6 +18,7 @@ const styles = {
 
 class Topbar extends React.Component {
   componentDidMount() {}
+
   render() {
     const { classes, clazz } = this.props
     return (

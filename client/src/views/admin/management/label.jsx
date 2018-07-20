@@ -2,6 +2,7 @@ import { React, injectSheet,inject, observer, get } from 'src/commonExports' //e
 
 class Label extends React.Component {
   componentDidMount() {}
+
   render() {
     return <div>Label</div>
   }

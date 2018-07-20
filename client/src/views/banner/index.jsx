@@ -16,9 +16,11 @@ class Banner extends React.Component {
     this.scrollListener = _.throttle(this.handleScroll(), 50)
     window.addEventListener('scroll', this.scrollListener, false)
   }
+
   componentWillUnmount() {
     window.removeEventListener('scroll', this.scrollListener)
   }
+
   handleScroll = () => {
     let prevY = 0
     return () => {
@@ -40,8 +42,9 @@ class Banner extends React.Component {
       }
     }
   }
+
   static getDerivedStateFromProps(nextProps, prevState) {
-    const isTopbar = window.matchMedia(`(max-width: 1200px)`).matches
+    const isTopbar = window.matchMedia('(max-width: 1200px)').matches
     if (isTopbar !== prevState.isTopbar) {
       return {
         isTopbar,
@@ -49,12 +52,14 @@ class Banner extends React.Component {
     }
     return null
   }
+
   render() {
     const { isBannerCollapsed, isTopbar } = this.state
     return (
       <aside
         className={isTopbar ? 'banner' : 'bar-inside'}
-        style={isTopbar ? { height: isBannerCollapsed ? 0 : '100vh' } : {}}>
+        style={isTopbar ? { height: isBannerCollapsed ? 0 : '100vh' } : {}}
+      >
         <h1>
           <Link to="/" className="plain-link">
             EVO

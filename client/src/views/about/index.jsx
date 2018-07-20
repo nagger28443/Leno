@@ -9,14 +9,19 @@ class About extends React.Component {
   componentDidMount() {
     document.documentElement.scrollIntoView()
   }
+
   name = ''
+
   password = ''
+
   handleNameChange = e => {
     this.name = e.target.value
   }
+
   handlePasswordChange = e => {
     this.password = e.target.value
   }
+
   handleSubmit = () => {
     get('/login', { name: this.name, password: this.password })
       .then(resp => {
@@ -26,6 +31,7 @@ class About extends React.Component {
         console.log(err)
       })
   }
+
   render() {
     return (
       <Detail>

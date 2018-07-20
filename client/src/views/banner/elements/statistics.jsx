@@ -19,6 +19,7 @@ class Statistics extends React.Component {
   state = {
     data: {},
   }
+
   componentDidMount() {
     get('/statistics')
       .then(resp => {
@@ -30,6 +31,7 @@ class Statistics extends React.Component {
         fail(err)
       })
   }
+
   render() {
     const { classes } = this.props
     const { data } = this.state

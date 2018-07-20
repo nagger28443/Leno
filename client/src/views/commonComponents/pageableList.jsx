@@ -1,8 +1,8 @@
 import React from 'react'
 import injectSheet from 'react-jss'
 import { Detail } from '../../styledComponents'
-import BlogListItem from '../commonComponents/blogListItem'
-import Paging from '../commonComponents/paging'
+import BlogListItem from './blogListItem'
+import Paging from './paging'
 
 const styles = {
   root: {
@@ -49,6 +49,7 @@ class Archive extends React.Component {
     archives: [],
     curPage: 1,
   }
+
   data = []
 
   handlePageChange = page => {
@@ -60,6 +61,7 @@ class Archive extends React.Component {
       archives: this.dataFormat(this.data.slice(10 * page - 10, 10 * page)),
     })
   }
+
   static getDerivedStateFromProps(nextProps, prevState) {
     const { page } = nextProps.history.location.state || { page: 1 }
     if (page !== prevState.curPage) {
@@ -69,6 +71,7 @@ class Archive extends React.Component {
     }
     return null
   }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.curPage !== this.state.curPage) {
       const { curPage } = this.state
@@ -77,6 +80,7 @@ class Archive extends React.Component {
       })
     }
   }
+
   render() {
     const { classes } = this.props
     const { curPage, archives } = this.state

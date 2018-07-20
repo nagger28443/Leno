@@ -7,7 +7,7 @@ const { LOGIN_MAX_FAIL_TIMES, ACCOUNT_FREEZE_TIME } = require('../../constants')
 const router = new Router()
 
 // 登录
-router.post('/login', async ctx => {
+router.post('/login', async (ctx) => {
   const { name, password } = ctx.request.body
   const sql = 'SELECT password AS pwd FROM user WHERE name=?'
 

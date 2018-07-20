@@ -6,6 +6,7 @@ const styles = {
 
 class Leftbar extends React.Component {
   componentDidMount() {}
+
   render() {
     const { clazz, root } = this.props
     return (

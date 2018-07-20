@@ -19,38 +19,44 @@ class TextArea extends React.Component {
   }
 
   handleRequired = (value, v, message) => {
+    const { isValid } = this.state
     if (!v) return true
-    if (value.length > 0 && !this.state.isValid) {
+    if (value.length > 0 && !isValid) {
       this.setState({ isValid: true })
       return true
-    } else if (value.length === 0) {
+    } if (value.length === 0) {
       this.setState({ isValid: false, helper: message })
       return false
     }
     return true
   }
+
   handleMax = (value, v, message) => {
+    const { isValid } = this.state
     if (typeof v !== 'number') return true
-    if (value.length <= v && !this.state.isValid) {
+    if (value.length <= v && !isValid) {
       this.setState({ isValid: true })
       return true
-    } else if (value.length > v) {
+    } if (value.length > v) {
       this.setState({ isValid: false, helper: message })
       return false
     }
     return true
   }
+
   handleMin = (value, v, message) => {
+    const { isValid } = this.state
     if (typeof v !== 'number') return true
-    if (value.length >= v && !this.state.isValid) {
+    if (value.length >= v && isValid) {
       this.setState({ isValid: true })
       return true
-    } else if (value.length < v) {
+    } if (value.length < v) {
       this.setState({ isValid: false, helper: message })
       return false
     }
     return true
   }
+
   validate = value => {
     const { rules } = this.props
     if (!Array.isArray(rules)) return
@@ -62,20 +68,27 @@ class TextArea extends React.Component {
     }
     return true //eslint-disable-line
   }
+
   handleValueChange = e => {
+    const { onChange } = this.props
     const { value } = e.target
     this.validate(value)
-    if (this.props.onChange) {
-      this.props.onChange(value)
+    if (onChange) {
+      onChange(value)
     }
   }
+
   componentDidMount() {
-    if (this.props.bridge) {
-      this.props.bridge.validate = this.validate
+    const { bridge } = this.props
+    if (bridge) {
+      bridge.validate = this.validate
     }
   }
+
   render() {
-    const { style, value, placeholder, className, defaultValue, disabled, rows, cols } = this.props
+    const {
+      style, value, placeholder, className, defaultValue, disabled, rows, cols,
+    } = this.props
     const { isValid, helper } = this.state
     return (
       <React.Fragment>

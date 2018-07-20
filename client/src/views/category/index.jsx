@@ -42,7 +42,8 @@ class Category extends React.Component {
           <Link
             to={`/list?category=${item.name}`}
             key={item.id}
-            className={`link ${classes.category}`}>
+            className={`link ${classes.category}`}
+          >
             {item.name}({item.count})
           </Link>
         ))}

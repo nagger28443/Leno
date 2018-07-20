@@ -171,7 +171,7 @@ function handleNestedBlock(content) {
 
           tagStack.pop()
           return `</blockquote>${handleBlockQuoteLine(res[3])}`
-        } else if (lastTag && lastTag.includes('blockquote')) {
+        } if (lastTag && lastTag.includes('blockquote')) {
           while (tagStack.length > 0 && tagStack[tagStack.length - 1].includes('blockquote')) {
             tmp += '</blockquote>'
             tagStack.pop()

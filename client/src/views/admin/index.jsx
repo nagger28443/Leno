@@ -5,6 +5,7 @@ import Management from './management'
 
 class Admin extends React.Component {
   componentDidMount() {}
+
   render() {
     return (
       <Switch>

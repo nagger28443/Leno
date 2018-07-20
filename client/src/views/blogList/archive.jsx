@@ -69,9 +69,11 @@ const dataFormat = data => {
 @inject('blogListStore')
 class Archive extends React.Component {
   data = []
+
   updateArchives = () => {
     this.data = dataFormat(this.props.blogListStore.data)
   }
+
   disposer = autorun(this.updateArchives)
 
   componentWillUnmount() {

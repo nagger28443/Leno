@@ -10,6 +10,7 @@ import { fail } from '../../util/utils'
 const styles = {}
 
 let store
+
 @inject('appStore')
 @observer
 class FullPage extends React.Component {
@@ -24,6 +25,7 @@ class FullPage extends React.Component {
   }
 
   pathDecode = path => /^\/+blog\/+(\d{4}\/+\d{2}\/+\d{2})\/+(.+)$/.exec(path)
+
   getNameFromPath = path => /.*\/(.+?)\/*$/.exec(path)[1]
 
   @action
@@ -61,7 +63,7 @@ class FullPage extends React.Component {
         <article style={{ paddingTop: '4rem' }}>
           <BlogHeader data={data} />
           {/* eslint-disable */}
-          <div dangerouslySetInnerHTML={{ __html: data.content }} /> 
+          <div dangerouslySetInnerHTML={{ __html: data.content }}/>
           {/* eslint-enable */}
         </article>
       </Detail>

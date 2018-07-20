@@ -28,9 +28,9 @@ axios.interceptors.request.use(config => {
   const { token } = window.sessionStorage
 
   if (
-    token &&
-    token.length > 0 &&
-    config.url.startsWith(`http://${serverHost}:${serverPort}/admin`)
+    token
+    && token.length > 0
+    && config.url.startsWith(`http://${serverHost}:${serverPort}/admin`)
   ) {
     c.headers.token = window.sessionStorage.token || ''
   }

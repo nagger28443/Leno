@@ -40,6 +40,7 @@ class Category extends React.Component {
   }
 
   componentDidMount() {}
+
   render() {
     const { classes } = this.props
     const { isPrivate } = store
@@ -50,7 +51,8 @@ class Category extends React.Component {
         <div
           className={classes.switchContainer}
           onClick={this.handleSwitch}
-          style={{ background: isPrivate ? '#7ED321' : '#d1d5da' }}>
+          style={{ background: isPrivate ? '#7ED321' : '#d1d5da' }}
+        >
           <div
             className={classes.switch}
             style={{

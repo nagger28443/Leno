@@ -50,6 +50,7 @@ class LabelModal extends React.Component {
   state = {
     labels: [],
   }
+
   componentDidMount() {
     get('/label/list')
       .then(
@@ -63,6 +64,7 @@ class LabelModal extends React.Component {
         fail(err)
       })
   }
+
   render() {
     const { labelStore, classes } = this.props
     const { isLabelModalVisible, hideLabelModal } = labelStore
@@ -71,14 +73,16 @@ class LabelModal extends React.Component {
       <div
         className={classes.root}
         style={{ transform: isLabelModalVisible ? 'scale(1)' : 'scale(0)' }}
-        onClick={hideLabelModal}>
+        onClick={hideLabelModal}
+      >
         <div className={classes.labels}>
           {labels.map(label => (
             <Link
               to={`/list?labels=${label.name}`}
               key={label.id}
               onClick={hideLabelModal}
-              className={classes.label}>
+              className={classes.label}
+            >
               {label.name}({label.count})
             </Link>
           ))}

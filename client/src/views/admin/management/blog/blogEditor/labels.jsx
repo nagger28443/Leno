@@ -26,6 +26,7 @@ class Labels extends React.Component {
     const index = e.target.getAttribute('index')
     store.labels.splice(index, 1)
   }
+
   showLabelInput = () => {
     this.setState(
       {
@@ -36,6 +37,7 @@ class Labels extends React.Component {
       },
     )
   }
+
   @action
   handleLabelConfirm = e => {
     const value = e.target.value.trim()
@@ -48,7 +50,9 @@ class Labels extends React.Component {
     }
     this.setState({ isLabelInputVisible: false })
   }
+
   componentDidMount() {}
+
   render() {
     const { classes } = this.props
     const { isLabelInputVisible } = this.state
@@ -63,7 +67,8 @@ class Labels extends React.Component {
               title="点击删除"
               index={index}
               key={label}
-              onClick={this.handleLabelRemove}>
+              onClick={this.handleLabelRemove}
+            >
               {label}
             </span>
           ))}
@@ -76,7 +81,8 @@ class Labels extends React.Component {
           <span
             className="link"
             onClick={this.showLabelInput}
-            style={{ marginLeft: '0.3rem', display: labels.length < 6 ? 'inline-block' : 'none' }}>
+            style={{ marginLeft: '0.3rem', display: labels.length < 6 ? 'inline-block' : 'none' }}
+          >
             添加
           </span>
         </span>

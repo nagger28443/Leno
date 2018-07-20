@@ -77,10 +77,12 @@ class BlogList extends React.Component {
     this.updateQuery()
     this.getData()
   }
+
   componentWillUnmount() {
     window.removeEventListener('scroll', this.scrollListener, false)
     this.clearCache()
   }
+
   @action
   clearCache = () => {
     this.curPage = 0

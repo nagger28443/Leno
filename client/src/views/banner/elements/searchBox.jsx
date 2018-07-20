@@ -41,12 +41,13 @@ class SearchBox extends React.Component {
   }
 
   toggleInputCollapse = () => {
-    const isInputCollapsed = !this.state.isInputCollapsed
+    const { isInputCollapsed } = !this.state
     this.setState({ isInputCollapsed })
     if (!isInputCollapsed) {
       this.input.focus()
     }
   }
+
   handleSearch = e => {
     const text = e.target.value.trim()
     e.target.value = ''
@@ -64,18 +65,21 @@ class SearchBox extends React.Component {
     this.props.history.push(`/list?search=${text}`)
     this.setState({ isInputCollapsed: true })
   }
+
   handleKeyEnter = e => {
     if (e.key === 'Enter') {
       this.handleSearch(e)
     }
   }
+
   render() {
     const { classes } = this.props
     return (
       <div className={classes.searchBox}>
         <div
           className={classes.warning}
-          style={{ display: this.state.warning.length ? 'block' : 'none' }}>
+          style={{ display: this.state.warning.length ? 'block' : 'none' }}
+        >
           {this.state.warning}
         </div>
         <span className="icon-search plain-link" onClick={this.toggleInputCollapse} />

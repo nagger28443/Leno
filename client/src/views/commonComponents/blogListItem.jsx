@@ -23,7 +23,9 @@ const styles = {
 
 class Item extends React.Component {
   handleClick = () => {}
+
   getPath = data => `${data.date.split('-').join('/')}/${data.title}`
+
   render() {
     const { classes, data } = this.props
     const path = this.getPath(data)

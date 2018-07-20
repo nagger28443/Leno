@@ -21,7 +21,9 @@ const styles = {
   },
 }
 
-const Button = ({ classes, style, text, onClick }) => (
+const Button = ({
+  classes, style, text, onClick,
+}) => (
   <div className={`plain-link ${classes.container}`} style={style} onClick={onClick}>
     <span style={{ verticalAlign: 'middle' }}>{text}</span>
   </div>

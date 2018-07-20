@@ -51,8 +51,8 @@ class Blog extends React.Component {
       })
     }
   }
-  findParentArticle = ele =>
-    ele.tagName.toLowerCase() === 'article' ? ele : this.findParentArticle(ele.parentElement)
+
+  findParentArticle = ele => (ele.tagName.toLowerCase() === 'article' ? ele : this.findParentArticle(ele.parentElement))
 
   render() {
     const { classes, data } = this.props

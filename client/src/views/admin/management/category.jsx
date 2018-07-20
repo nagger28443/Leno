@@ -2,6 +2,7 @@ import { React, injectSheet,inject, observer, get } from 'src/commonExports' //e
 
 class Category extends React.Component {
   componentDidMount() {}
+
   render() {
     return <div>Category</div>
   }

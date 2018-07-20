@@ -33,14 +33,17 @@ class Category extends React.Component {
       isDropdownVisible: false,
     }
   }
+
   handleInputFocus = () => {
     this.setState({ isDropdownVisible: true })
   }
+
   handleInputBlur = () => {
     setTimeout(() => {
       this.setState({ isDropdownVisible: false })
     }, 100)
   }
+
   @action
   handleInputChange = e => {
     const value = e.target.value.trim()
@@ -49,6 +52,7 @@ class Category extends React.Component {
     const categories = this.allCategories.filter(c => inputRegex.test(c.name))
     this.setState({ categories })
   }
+
   @action
   handleInputConfirm = e => {
     store.category = e.target.innerText
@@ -68,6 +72,7 @@ class Category extends React.Component {
   componentDidMount() {
     this.fetchCategories()
   }
+
   render() {
     const { classes } = this.props
     const { categories, isDropdownVisible } = this.state
@@ -89,7 +94,8 @@ class Category extends React.Component {
             />
             <div
               className={`input-box ${classes.dropdown}`}
-              style={{ display: isDropdownVisible ? 'block' : 'none' }}>
+              style={{ display: isDropdownVisible ? 'block' : 'none' }}
+            >
               {categories.map(c => (
                 <div className={classes.category} key={c.id} onClick={this.handleInputConfirm}>
                   {c.name}

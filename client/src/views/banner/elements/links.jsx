@@ -7,7 +7,8 @@ const Links = () => (
       href="https://github.com/nagger28443"
       target="_blank"
       rel="noopener noreferrer"
-      style={{ textDecoration: 'none', marginRight: '1rem' }}>
+      style={{ textDecoration: 'none', marginRight: '1rem' }}
+    >
       <span className="icon-github" />
     </a>
     <a
@@ -15,7 +16,8 @@ const Links = () => (
       href="https://github.com/nagger28443"
       target="_blank"
       rel="noopener noreferrer"
-      style={{ textDecoration: 'none', marginRight: '1rem' }}>
+      style={{ textDecoration: 'none', marginRight: '1rem' }}
+    >
       <span className="icon-github" />
     </a>
     <a
@@ -23,7 +25,8 @@ const Links = () => (
       href="https://github.com/nagger28443"
       target="_blank"
       rel="noopener noreferrer"
-      style={{ textDecoration: 'none', marginRight: '1rem' }}>
+      style={{ textDecoration: 'none', marginRight: '1rem' }}
+    >
       <span className="icon-github" />
     </a>
     <a
@@ -31,7 +34,8 @@ const Links = () => (
       href="https://github.com/nagger28443"
       target="_blank"
       rel="noopener noreferrer"
-      style={{ textDecoration: 'none', marginRight: '1rem' }}>
+      style={{ textDecoration: 'none', marginRight: '1rem' }}
+    >
       <span className="icon-github" />
     </a>
   </div>

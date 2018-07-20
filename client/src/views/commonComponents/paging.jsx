@@ -18,8 +18,11 @@ const styles = {
 
 class Paging extends React.Component {
   pageCount = 0
+
   state = { curPage: 1 }
+
   getCurpage = () => this.props.curPage || this.state.curPage
+
   goToPage = page => {
     this.props.handlePageChange(page)
     if (this.props.curPage !== undefined) {
@@ -28,12 +31,13 @@ class Paging extends React.Component {
       })
     }
   }
+
   checkPageInvalid = page => {
     const curPage = this.getCurpage()
     return (
-      (page === '<' && curPage === 1) ||
-      (page === '>' && curPage === this.pageCount) ||
-      Number(page) === curPage
+      (page === '<' && curPage === 1)
+      || (page === '>' && curPage === this.pageCount)
+      || Number(page) === curPage
     )
   }
 
@@ -60,7 +64,8 @@ class Paging extends React.Component {
         <span
           className={`${'plain-link'} ${classes.pageNO}`}
           style={{ cursor: curPage === 1 ? 'not-allowed' : 'pointer' }}
-          onClick={this.handlePageChange}>
+          onClick={this.handlePageChange}
+        >
           {'<'}
         </span>
         {/* eslint-disable */}
@@ -76,7 +81,8 @@ class Paging extends React.Component {
         <span
           className={`${'plain-link'} ${classes.pageNO}`}
           style={{ cursor: curPage === this.pageCount ? 'not-allowed' : 'pointer' }}
-          onClick={this.handlePageChange}>
+          onClick={this.handlePageChange}
+        >
           {'>'}
         </span>
       </div>

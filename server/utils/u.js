@@ -1,8 +1,8 @@
 const fs = require('fs')
 const mysql = require('mysql')
 const redis = require('redis')
-const { salt } = require('../config')
 const crypto = require('crypto')
+const { salt } = require('../config')
 const codes = require('../constants/codes')
 
 const pool = mysql.createPool({
@@ -23,36 +23,33 @@ const u = {
       const P = this.constructor
       return this.then(
         value => P.resolve(callback()).then(() => value),
-        reason =>
-          P.resolve(callback()).then(() => {
-            throw reason
-          }),
+        reason => P.resolve(callback()).then(() => {
+          throw reason
+        }),
       )
     }
     ctx.state.pool = pool
     context = ctx
-    redisClient.getAsync = key =>
-      new Promise((resolve, reject) => {
-        redisClient.get(key, (err, res) => {
-          if (err) {
-            reject(err)
-          }
-          resolve(res)
-        })
-      })
-    ctx.state.redisClient = redisClient
-    await next()
-  },
-  // query from databse with promise
-  dbQuery: (query, data) =>
-    new Promise((resolve, reject) => {
-      pool.query(query, data, (err, res) => {
+    redisClient.getAsync = key => new Promise((resolve, reject) => {
+      redisClient.get(key, (err, res) => {
         if (err) {
           reject(err)
         }
         resolve(res)
       })
-    }),
+    })
+    ctx.state.redisClient = redisClient
+    await next()
+  },
+  // query from databse with promise
+  dbQuery: (query, data) => new Promise((resolve, reject) => {
+    pool.query(query, data, (err, res) => {
+      if (err) {
+        reject(err)
+      }
+      resolve(res)
+    })
+  }),
   // .finally(() => {
   //   connection.end()
   // }),
@@ -77,12 +74,11 @@ const u = {
     if (token && code === codes.SUCCESS) {
       resp.token = token
     }
-    console.log(resp)
     return resp
   },
   dbParamsGenerator: (ctx, checkArr) => {
     const params = {}
-    checkArr.forEach(key => {
+    checkArr.forEach((key) => {
       if (!u.isEmpty(ctx.query[key])) {
         params[key] = ctx.qeury[key]
       }
@@ -90,12 +86,12 @@ const u = {
     return params
   },
 
-  isEmpty: param => {
+  isEmpty: (param) => {
     if (typeof param === 'string' || Array.isArray(param)) return param.length === 0
     return !param
   },
 
-  passwordEncrypt: pwd => {
+  passwordEncrypt: (pwd) => {
     const hash = crypto.createHash('md5')
     hash.update(`${hash}${pwd}`)
     hash.update(`${hash}${salt}`)
@@ -106,7 +102,7 @@ const u = {
     const count = await redisClient.getAsync('loginFailedCount')
     return count || 0
   },
-  setLoginFailedCount: async count => {
+  setLoginFailedCount: async (count) => {
     redisClient.set('loginFailedCount', count)
   },
 
@@ -135,7 +131,7 @@ const u = {
   /**
    * 简易的日志方法
    */
-  log: msg => {
+  log: (msg) => {
     console.log(msg)
   },
 }

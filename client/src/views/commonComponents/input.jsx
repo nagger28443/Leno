@@ -23,30 +23,32 @@ class Input extends React.Component {
     if (value.length > 0 && !this.state.isValid) {
       this.setState({ isValid: true })
       return true
-    } else if (value.length === 0) {
+    } if (value.length === 0) {
       this.setState({ isValid: false, helper: message })
       return false
     }
     return true
   }
+
   handleMax = (value, v, message) => {
     if (typeof v !== 'number') return true
     if (value.length <= v && !this.state.isValid) {
       this.setState({ isValid: true })
       return true
-    } else if (value.length > v) {
+    } if (value.length > v) {
       console.log(value)
       this.setState({ isValid: false, helper: message })
       return false
     }
     return true
   }
+
   handleMin = (value, v, message) => {
     if (typeof v !== 'number') return true
     if (value.length >= v && !this.state.isValid) {
       this.setState({ isValid: true })
       return true
-    } else if (value.length < v) {
+    } if (value.length < v) {
       this.setState({ isValid: false, helper: message })
       return false
     }
@@ -64,6 +66,7 @@ class Input extends React.Component {
     }
     return true//eslint-disable-line
   }
+
   handleValueChange = e => {
     const value = e.target.value.trim()
     this.validate(value)
@@ -71,13 +74,17 @@ class Input extends React.Component {
       this.props.onChange(value)
     }
   }
+
   componentDidMount() {
     if (this.props.bridge) {
       this.props.bridge.validate = this.validate
     }
   }
+
   render() {
-    const { style, value, placeholder, className, defaultValue, disabled } = this.props
+    const {
+      style, value, placeholder, className, defaultValue, disabled,
+    } = this.props
     const { isValid, helper } = this.state
     return (
       <React.Fragment>

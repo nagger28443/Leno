@@ -127,6 +127,7 @@ class RightBar extends React.Component {
       childAnchorId: prevId,
     })
   }
+
   componentDidMount() {
     this.scrollListener = _.throttle(this.updateAnchor, 50)
     window.addEventListener('scroll', this.scrollListener, false)
@@ -168,9 +169,11 @@ class RightBar extends React.Component {
         fail(err)
       })
   }
+
   componentWillUnmount() {
     window.removeEventListener('scroll', this.scrollListener)
   }
+
   static getDerivedStateFromProps() {
     const { pathname } = window.location
     const prev = prevPath
@@ -182,6 +185,7 @@ class RightBar extends React.Component {
     }
     return null
   }
+
   contentFormatter = data => {
     // const ids = anchorRegex.exec(data)
     let arr
@@ -207,6 +211,7 @@ class RightBar extends React.Component {
     }
     return t
   }
+
   handleScrollTo = e => {
     const id = e.target.innerText
     window.scrollTo({
@@ -214,6 +219,7 @@ class RightBar extends React.Component {
       behavior: 'smooth',
     })
   }
+
   componentDidUpdate() {
     // 如何用更好的的方式解决这个问题, 当前方式太蹩脚 todo
     if (!this.gotAnchors && store.blogContent.length !== 0) {
@@ -223,9 +229,12 @@ class RightBar extends React.Component {
       })
     }
   }
+
   render() {
     const { classes } = this.props
-    const { curTab, isCatalogVisible, categories, archives } = this.state
+    const {
+      curTab, isCatalogVisible, categories, archives, anchors, childAnchorId, parentAnchorId,
+    } = this.state
     return (
       <aside className="bar-inside">
         <div className={classes.tabHeader}>
@@ -234,39 +243,44 @@ class RightBar extends React.Component {
               curTab === TABS.catalog ? classes.active : ''
             }`}
             style={{ display: isCatalogVisible ? 'inline-block' : 'none' }}
-            onMouseEnter={this.switchTab}>
+            onMouseEnter={this.switchTab}
+          >
             {TABS.catalog}
           </span>
           <span
             className={`plain-link ${classes.tabTittle} ${
               curTab === TABS.categoryArchive ? classes.active : ''
             }`}
-            onMouseEnter={this.switchTab}>
+            onMouseEnter={this.switchTab}
+          >
             {TABS.categoryArchive}
           </span>
         </div>
         <div
           className={`${classes.container} `}
-          style={{ display: curTab === TABS.catalog ? 'block' : 'none' }}>
+          style={{ display: curTab === TABS.catalog ? 'block' : 'none' }}
+        >
           <ol className={classes.catalogList}>
-            {store.blogContent.length &&
-              this.state.anchors.map(item => (
+            {store.blogContent.length
+              && anchors.map(item => (
                 <li key={item.title} className={classes.firstLevelItem}>
                   <a
                     className={`link ${
-                      this.state.childAnchorId === item.title ? classes.active : ''
+                      childAnchorId === item.title ? classes.active : ''
                     }`}
-                    onClick={this.handleScrollTo}>
+                    onClick={this.handleScrollTo}
+                  >
                     {item.title}
                   </a>
-                  <ol style={{ height: this.state.parentAnchorId === item.title ? '100%' : 0 }}>
+                  <ol style={{ height: parentAnchorId === item.title ? '100%' : 0 }}>
                     {item.children.map(ele => (
                       <li key={ele.title} className={classes.secondLevelItem}>
                         <a
                           className={`link ${
-                            this.state.childAnchorId === ele.title ? classes.active : ''
+                            childAnchorId === ele.title ? classes.active : ''
                           }`}
-                          onClick={this.handleScrollTo}>
+                          onClick={this.handleScrollTo}
+                        >
                           {ele.title}
                         </a>
                       </li>
@@ -278,7 +292,8 @@ class RightBar extends React.Component {
         </div>
         <div
           className={`${classes.container}`}
-          style={{ display: curTab === TABS.categoryArchive ? 'block' : 'none' }}>
+          style={{ display: curTab === TABS.categoryArchive ? 'block' : 'none' }}
+        >
           <CardTemplate data={categories} />
           <CardTemplate data={archives} />
         </div>
