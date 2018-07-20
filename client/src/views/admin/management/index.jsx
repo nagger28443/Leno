@@ -15,6 +15,7 @@ const styles = {
   },
   bottom: {
     margin: 'auto',
+    marginBottom: '5rem',
     display: 'flex',
     justifyContent: 'center',
     width: '80vw',
@@ -28,6 +29,7 @@ const styles = {
     background: '#fff',
     marginLeft: '0.2rem',
     padding: '1rem',
+    paddingBottom: '5rem',
   },
   leftbar: {
     width: '15%',

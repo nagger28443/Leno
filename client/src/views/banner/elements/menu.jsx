@@ -23,32 +23,30 @@ const styles = {
   },
 }
 
-const Menu = inject('labelStore')(
-  observer(({ labelStore, classes }) => (
-    <ul className={classes.menu}>
-      <li className={classes.menuItem}>
-        <Link to="/list?archive=all" className="plain-link">
+const Menu = inject('labelStore')(observer(({ labelStore, classes }) => (
+  <ul className={classes.menu}>
+    <li className={classes.menuItem}>
+      <Link to="/list?archive=all" className="plain-link">
           归档
-        </Link>
-      </li>
-      <li className={classes.menuItem}>
-        <Link to="/category" className="plain-link">
+      </Link>
+    </li>
+    <li className={classes.menuItem}>
+      <Link to="/category" className="plain-link">
           分类
-        </Link>
-      </li>
-      <li className={classes.menuItem}>
-        <span className="plain-link" onClick={labelStore.showLabelModal}>
+      </Link>
+    </li>
+    <li className={classes.menuItem}>
+      <span className="plain-link" onClick={labelStore.showLabelModal}>
           标签
-        </span>
-      </li>
-      <li className={classes.menuItem}>
-        <Link to="/about" className="plain-link">
+      </span>
+    </li>
+    <li className={classes.menuItem}>
+      <Link to="/about" className="plain-link">
           关于
-        </Link>
-      </li>
-      <LabelModal />
-    </ul>
-  )),
-)
+      </Link>
+    </li>
+    <LabelModal />
+  </ul>
+)))
 
 export default injectSheet(styles)(Menu)

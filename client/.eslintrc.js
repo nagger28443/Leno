@@ -30,7 +30,8 @@ module.exports = {
     "arrow-parens":0,
     "react/jsx-one-expression-per-line":0,
     "react/button-has-type":0,
-    "react/destructuring-assignment":0
+    "react/destructuring-assignment":0,
+    "no-trailing-spaces":1
   },
   env: {
     browser: true,

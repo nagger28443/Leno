@@ -6,6 +6,8 @@ const MDParser = require('../../utils/MDParser')
 
 const router = new Router()
 
+// todo 参数校验
+
 const getPrivateBlogs = async ({
   ctx, countSql, listSql, commonCond,
 }) => {
@@ -53,7 +55,7 @@ const getBlogByLabels = async ({
 }) => {
   const params = labels.split(',')
   const labelSql = params.map(label => `labels LIKE '%${label}%'`).join(' AND ')
-  const whereSql = `WHERE ${labelSql}`
+  const whereSql = `WHERE ${labelSql} ${!hasPrivate ? 'AND private=0' : ''} AND deleted=0`
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`, params)
   if (total === 0) {
     ctx.body = u.response(codes.SUCCESS, { result: [], total })
@@ -67,28 +69,26 @@ const getBlogByArchive = async ({
   ctx, archive, countSql, listSql, commonCond, hasPrivate,
 }) => {
   let whereSql = ''
-  if (/^\d{4}$/.test(archive)) {
-    whereSql = 'WHERE DATE_FORMAT(date,\'%Y\')=?'
-  } else if (/^\d{4}-\d{2}$/.test(archive)) {
-    whereSql = 'WHERE date=DATE_FORMAT(?,\'%Y-%m\')'
+  if (/^\d{4}$/.test(archive) || /^\d{4}-\d{2}$/.test(archive)) {
+    whereSql = `WHERE date like '${archive}%' ${!hasPrivate ? 'AND private=0' : ''} AND deleted=0`
   } else if (archive === 'all') {
-    whereSql = ''
+    whereSql = `WHERE deleted=0 ${!hasPrivate ? 'AND private=0' : ''}`
   } else {
     ctx.body = u.response(codes.SUCCESS, { result: [], total: 0 })
     return
   }
 
-  const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`, [archive])
+  const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
   if (total === 0) {
     ctx.body = u.response(codes.SUCCESS, { result: [], total })
   } else {
-    const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`, [archive])
+    const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
     ctx.body = u.response(codes.SUCCESS, { result, total })
   }
 }
 
 const getHomeBlogs = async ({ ctx, countSql, commonCond }) => {
-  const listSql = `SELECT id,title,DATE_FORMAT(date,'%Y-%m-%d') as date,category,labels,visit_cnt
+  const listSql = `SELECT id,title,date,category,labels,visit_cnt
   as visitCount,content,private as isPrivate FROM blog`
   const [{ total }] = await u.dbQuery(`${countSql}`)
   if (total === 0) {
@@ -115,8 +115,7 @@ router.get('/list', async (ctx) => {
     ctx.throw(403)
   }
 
-  const listSql = `SELECT id,title,DATE_FORMAT(date,'%Y-%m-%d') as date,category,labels,visit_cnt
-  as visitCount FROM blog`
+  const listSql = 'SELECT id,title,date,category,labels,visit_cnt as visitCount FROM blog'
   const countSql = 'SELECT COUNT(id) as total FROM blog'
   const orderSql = 'ORDER BY date DESC, visit_cnt DESC'
   const pageSql = page ? `limit ${(page - 1) * pageSize},${pageSize}` : ''
@@ -176,7 +175,7 @@ router.get('/', async (ctx) => {
   if (res.length > 0) {
     ctx.body = u.response(codes.SUCCESS, {
       ...res[0],
-      date: res[0].date.toLocaleDateString(),
+      date: res[0].date,
     })
   } else {
     ctx.throw(404)
@@ -187,6 +186,7 @@ router.get('/', async (ctx) => {
   u.dbQuery(sql2, [title, date])
 })
 
+// 发表文章
 router.post('/', async (ctx) => {
   const {
     title, category, labels = '', content, isPrivate = 0,
@@ -201,8 +201,12 @@ router.post('/', async (ctx) => {
   }
   const contentHTMLStr = MDParser(content)
   const gmt = new Date().toLocaleString()
-  const date = new Date().toLocaleDateString().slice(0, 7)
-  console.log(date)
+
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth() + 1
+  const day = now.getDate()
+  const date = `${year}-${month <= 9 ? 0 : ''}${month}-${day <= 9 ? 0 : ''}${day}`
 
   // 以及更新category,labels,archive表
   // 插入博客信息
@@ -219,12 +223,23 @@ router.post('/', async (ctx) => {
   ctx.body = u.response(codes.SUCCESS)
 
   // 更新category表
-  u.dbQuery('INSERT INTO category set name=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [
+  await u.dbQuery('INSERT INTO category set name=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [
     category,
   ])
 
   // 更新archive表
-  u.dbQuery('INSERT INTO archive set date=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [date])
+  await u.dbQuery('INSERT INTO archive set date=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [date.slice(0, 7)])
+
+  // 更新label表
+  await labels.split(',')
+    .forEach((label) => {
+      u.dbQuery(`INSERT INTO label set name='${label}',count=1 ON DUPLICATE KEY UPDATE count=count+1`)
+    })
+
+  // 更新statistics
+  u.dbQuery('update statistics set count=(select count(*) from category) where name=\'category\'')
+  u.dbQuery('update statistics set count=(select count(*) from label) where name=\'label\'')
+  u.dbQuery('update statistics set count=(select count(*) from blog) where name=\'blog\'')
 })
 
 module.exports = router

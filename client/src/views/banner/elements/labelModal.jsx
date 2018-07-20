@@ -53,13 +53,11 @@ class LabelModal extends React.Component {
 
   componentDidMount() {
     get('/label/list')
-      .then(
-        action(resp => {
-          this.setState({
-            labels: resp.result,
-          })
-        }),
-      )
+      .then(action(resp => {
+        this.setState({
+          labels: resp.result,
+        })
+      }))
       .catch(err => {
         fail(err)
       })

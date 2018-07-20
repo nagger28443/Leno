@@ -1,8 +1,8 @@
 const Koa = require('koa')
 const Router = require('koa-router')
+const bodyParser = require('koa-bodyparser')
 const u = require('../utils/u')
 const tku = require('../utils/tokenUtil')
-const bodyParser = require('koa-bodyparser')
 
 const app = new Koa()
 const router = new Router()
