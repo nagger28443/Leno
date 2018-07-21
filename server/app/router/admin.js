@@ -17,7 +17,7 @@ router.post('/login', async (ctx) => {
   // 账户是否冻结
   const freezeTime = (await redisClient.getAsync('accountFreezeTime')) || 0
   if (Date.now() / 1000 < freezeTime) {
-    ctx.body = u.response(codes.ACCOUNR_BEING_FROZEN)
+    ctx.body = u.response(ctx, codes.ACCOUNR_BEING_FROZEN)
     return
   }
 
@@ -27,18 +27,18 @@ router.post('/login', async (ctx) => {
     if (Number(loginFailedCount) + 1 >= LOGIN_MAX_FAIL_TIMES) {
       redisClient.set('loginFailedCount', 0)
       redisClient.set('accountFreezeTime', Date.now() / 1000 + ACCOUNT_FREEZE_TIME)
-      ctx.body = u.response(codes.ACCOUNR_BEING_FROZEN)
+      ctx.body = u.response(ctx, codes.ACCOUNR_BEING_FROZEN)
       return
     }
 
     redisClient.set('loginFailedCount', Number(loginFailedCount) + 1)
-    ctx.body = u.response(codes.PASSWORD_OR_USER_INVALID)
+    ctx.body = u.response(ctx, codes.PASSWORD_OR_USER_INVALID)
     return
   }
   const token = tku.tokenGenerator()
   ctx.state.token = token
   // ctx.cookies.set('token', token)
-  ctx.body = u.response(codes.SUCCESS)
+  ctx.body = u.response(ctx, codes.SUCCESS)
 })
 
 module.exports = router

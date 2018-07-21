@@ -14,7 +14,6 @@ const pool = mysql.createPool({
   database: 'leno',
 })
 const redisClient = redis.createClient()
-let context
 
 const u = {
   init: async (ctx, next) => {
@@ -28,8 +27,8 @@ const u = {
         }),
       )
     }
-    ctx.state.pool = pool
-    context = ctx
+
+    // promisify
     redisClient.getAsync = key => new Promise((resolve, reject) => {
       redisClient.get(key, (err, res) => {
         if (err) {
@@ -39,6 +38,10 @@ const u = {
       })
     })
     ctx.state.redisClient = redisClient
+
+    // 初始化stattistics
+    await u.updateStatistics()
+
     await next()
   },
   // query from databse with promise
@@ -50,6 +53,16 @@ const u = {
       resolve(res)
     })
   }),
+
+  // 更新统计数据
+  updateStatistics: async () => {
+    const categoryCnt = (await u.dbQuery('select count(id) as count from category'))[0].count
+    const labelCnt = (await u.dbQuery('select count(id)  as count from label'))[0].count
+    const blogCnt = (await u.dbQuery('select count(id)  as count from blog'))[0].count
+    redisClient.set('categoryCnt', categoryCnt)
+    redisClient.set('labelCnt', labelCnt)
+    redisClient.set('blogCnt', blogCnt)
+  },
   // .finally(() => {
   //   connection.end()
   // }),
@@ -68,9 +81,9 @@ const u = {
   },
 
   // 请求返回格式化
-  response: (code, data = {}) => {
+  response: (ctx, code, data = {}) => {
     const resp = { ...code, data }
-    const { token } = context.state
+    const { token } = ctx.state
     if (token && code === codes.SUCCESS) {
       resp.token = token
     }

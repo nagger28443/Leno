@@ -1,6 +1,5 @@
 const Router = require('koa-router')
 const codes = require('../../constants/codes')
-
 const u = require('../../utils/u')
 const MDParser = require('../../utils/MDParser')
 
@@ -14,10 +13,10 @@ const getPrivateBlogs = async ({
   const whereSql = 'WHERE private=1 AND deleted=0'
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
   if (total === 0) {
-    ctx.body = u.response(codes.SUCCESS, { result: [], total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
     const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
-    ctx.body = u.response(codes.SUCCESS, { result, total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
 }
 
@@ -30,10 +29,10 @@ const serachBlog = async ({
 
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
   if (total === 0) {
-    ctx.body = u.response(codes.SUCCESS, { result: [], total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
     const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
-    ctx.body = u.response(codes.SUCCESS, { result, total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
 }
 
@@ -43,10 +42,10 @@ const getBlogByCategory = async ({
   const whereSql = `WHERE category=?  ${!hasPrivate ? 'AND private=0' : ''} AND deleted=0`
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`, [category])
   if (total === 0) {
-    ctx.body = u.response(codes.SUCCESS, { result: [], total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
     const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`, [category])
-    ctx.body = u.response(codes.SUCCESS, { result, total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
 }
 
@@ -58,10 +57,10 @@ const getBlogByLabels = async ({
   const whereSql = `WHERE ${labelSql} ${!hasPrivate ? 'AND private=0' : ''} AND deleted=0`
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`, params)
   if (total === 0) {
-    ctx.body = u.response(codes.SUCCESS, { result: [], total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
     const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`, params)
-    ctx.body = u.response(codes.SUCCESS, { result, total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
 }
 
@@ -74,16 +73,16 @@ const getBlogByArchive = async ({
   } else if (archive === 'all') {
     whereSql = `WHERE deleted=0 ${!hasPrivate ? 'AND private=0' : ''}`
   } else {
-    ctx.body = u.response(codes.SUCCESS, { result: [], total: 0 })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total: 0 })
     return
   }
 
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
   if (total === 0) {
-    ctx.body = u.response(codes.SUCCESS, { result: [], total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
     const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
-    ctx.body = u.response(codes.SUCCESS, { result, total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
 }
 
@@ -92,10 +91,10 @@ const getHomeBlogs = async ({ ctx, countSql, commonCond }) => {
   as visitCount,content,private as isPrivate FROM blog`
   const [{ total }] = await u.dbQuery(`${countSql}`)
   if (total === 0) {
-    ctx.body = u.response(codes.SUCCESS, { result: [], total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
     const result = await u.dbQuery(`${listSql} ${commonCond}`)
-    ctx.body = u.response(codes.SUCCESS, { result, total })
+    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
 }
 // 获取博客列表
@@ -167,16 +166,14 @@ router.get('/list', async (ctx) => {
   }
 })
 
+// 获取博客内容
 router.get('/', async (ctx) => {
   const { title, date } = ctx.query
 
   const sql1 = 'SELECT title,content,date,category,labels,visit_cnt as visitCount FROM blog where title=? AND date=?'
   const res = await u.dbQuery(sql1, [title, date])
   if (res.length > 0) {
-    ctx.body = u.response(codes.SUCCESS, {
-      ...res[0],
-      date: res[0].date,
-    })
+    ctx.body = u.response(ctx, codes.SUCCESS, res[0])
   } else {
     ctx.throw(404)
   }
@@ -193,22 +190,20 @@ router.post('/', async (ctx) => {
   } = ctx.request.body
   if ([title, category, content].some(item => u.isEmpty(item))) {
     const { message } = codes.INSURFICIENT_PARAMS
-    ctx.body = u.response({
+    ctx.body = u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
       message: `${message}:title,category,content`,
     })
     return
   }
   const contentHTMLStr = MDParser(content)
-  const gmt = new Date().toLocaleString()
+  const gmt = new Date()
 
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = now.getMonth() + 1
-  const day = now.getDate()
+  const year = gmt.getFullYear()
+  const month = gmt.getMonth() + 1
+  const day = gmt.getDate()
   const date = `${year}-${month <= 9 ? 0 : ''}${month}-${day <= 9 ? 0 : ''}${day}`
 
-  // 以及更新category,labels,archive表
   // 插入博客信息
   await u.dbQuery('INSERT INTO blog SET ?', {
     title,
@@ -220,7 +215,7 @@ router.post('/', async (ctx) => {
     gmt_create: gmt,
     gmt_modify: gmt,
   })
-  ctx.body = u.response(codes.SUCCESS)
+  ctx.body = u.response(ctx, codes.SUCCESS)
 
   // 更新category表
   await u.dbQuery('INSERT INTO category set name=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [
@@ -237,9 +232,7 @@ router.post('/', async (ctx) => {
     })
 
   // 更新statistics
-  u.dbQuery('update statistics set count=(select count(*) from category) where name=\'category\'')
-  u.dbQuery('update statistics set count=(select count(*) from label) where name=\'label\'')
-  u.dbQuery('update statistics set count=(select count(*) from blog) where name=\'blog\'')
+  u.updateStatistics()
 })
 
 module.exports = router
