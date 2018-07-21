@@ -4,6 +4,9 @@ import _ from 'lodash'
 import { observable, action, autorun } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Link } from 'react-router-dom'
+import message from './views/commonComponents/message'
+import Button from './views/commonComponents/button'
+import Input from './views/commonComponents/input'
 import {
   get, post, put, dele,
 } from './util/http'
@@ -26,4 +29,7 @@ export {
   f,
   autorun,
   Link,
+  message,
+  Button,
+  Input,
 }

@@ -1,4 +1,5 @@
-import { React, injectSheet,inject, observer, get } from 'src/commonExports' //eslint-disable-line
+import { React, injectSheet,inject, observer, get, Link } from 'src/commonExports' //eslint-disable-line
+import Button from 'src/views/commonComponents/button.jsx' //eslint-disable-line
 
 const styles = {
   root: {},
@@ -26,6 +27,10 @@ class Topbar extends React.Component {
         <div className={classes.content}>
           <span className={classes.left}>管理中心</span>
           <div className={classes.right}>
+            <Button
+              text={<Link to="/admin/blog/edit/new" className="plain-link">写博客</Link>}
+              style={{ marginRight: 15 }}
+            />
             <span>Greetings!</span>
             <span className="plain-link">退出</span>
           </div>

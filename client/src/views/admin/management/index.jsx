@@ -5,7 +5,7 @@ import Leftbar from './leftbar'
 import BlogEditor from './blog/blogEditor'
 import BlogList from './blog/blogList'
 import Category from './category'
-import Label from './label'
+import Settings from './settings'
 import Statistics from './statistics'
 
 const styles = {
@@ -56,11 +56,11 @@ class Management extends React.Component {
           <Leftbar clazz={classes.leftbar} />
           <div className={classes.content}>
             <Switch>
-              <Route path={`${path}/blog/edit`} key="/blog/edit" component={BlogEditor} />
+              <Route path={`${path}/blog/edit/:id`} key="/blog/edit" component={BlogEditor} />
               <Route path={`${path}/blog/list`} key="/blog/list" component={BlogList} />
 
               <Route path={`${path}/category`} key="/category" component={Category} />
-              <Route path={`${path}/label`} key="/label" component={Label} />
+              <Route path={`${path}/settings`} key="/settings" component={Settings} />
               <Route key="/statistics" component={Statistics} />
             </Switch>
           </div>

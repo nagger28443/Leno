@@ -1,11 +1,11 @@
 import { React, injectSheet,inject, observer, get } from 'src/commonExports' //eslint-disable-line
 
-class Label extends React.Component {
+class Settings extends React.Component {
   componentDidMount() {}
 
   render() {
-    return <div>Label</div>
+    return <div>settings</div>
   }
 }
 
-export default Label
+export default Settings

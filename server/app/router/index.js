@@ -10,7 +10,7 @@ router.options('/*', async (ctx) => {
 })
 
 router.use('/blog', require('./blog').routes())
-router.use('/draft', require('./draft').routes())
+// router.use('/draft', require('./draft').routes())
 router.use('/category', require('./category').routes())
 router.use('/archive', require('./archive').routes())
 router.use('/label', require('./label').routes())
