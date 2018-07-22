@@ -1,4 +1,4 @@
-import { React, injectSheet, inject, observer, action, Link, get, post, fail } from 'src/commonExports' //eslint-disable-line
+import { React, post, fail } from 'src/commonExports'
 
 class Login extends React.Component {
   name = ''

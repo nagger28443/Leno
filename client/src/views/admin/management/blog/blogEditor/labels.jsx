@@ -1,4 +1,6 @@
-import { React, injectSheet,inject, observer, get, action } from 'src/commonExports' //eslint-disable-line
+import {
+  React, injectSheet, inject, observer, action,
+} from 'src/commonExports'
 
 const styles = {
   label: {

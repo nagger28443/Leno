@@ -50,8 +50,12 @@ axios.interceptors.response.use(
     if (error.response.status === 403) {
       window.location.href = '/admin/login'
     } else {
-      Promise.reject(error)
+      return {
+        code: error.response.status,
+        message: error.message,
+      }
     }
+    return null
   },
 )
 

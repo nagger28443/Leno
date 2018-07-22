@@ -59,14 +59,14 @@ class TextArea extends React.Component {
 
   validate = value => {
     const { rules } = this.props
-    if (!Array.isArray(rules)) return
+    if (!Array.isArray(rules)) return true
     for (let i = 0; i < rules.length; ++i) {
       const name = f.getRuleName(rules[i])
       if (!this.validators[name](value, rules[i][name], rules[i].message)) {
-        return false //eslint-disable-line
+        return false
       }
     }
-    return true //eslint-disable-line
+    return true
   }
 
   handleValueChange = e => {

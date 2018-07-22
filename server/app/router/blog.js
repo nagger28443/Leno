@@ -1,7 +1,7 @@
 const Router = require('koa-router')
-const codes = require('../../constants/codes')
-const u = require('../../utils/u')
-const MDParser = require('../../utils/MDParser')
+const codes = require('../constants/codes')
+const u = require('../utils/u')
+const MDParser = require('../utils/MDParser')
 
 const router = new Router()
 

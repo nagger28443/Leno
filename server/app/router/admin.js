@@ -1,8 +1,8 @@
 const Router = require('koa-router')
-const u = require('../../utils/u')
-const codes = require('../../constants/codes')
-const tku = require('../../utils/tokenUtil')
-const { LOGIN_MAX_FAIL_TIMES, ACCOUNT_FREEZE_TIME } = require('../../constants')
+const u = require('../utils/u')
+const codes = require('../constants/codes')
+const tku = require('../utils/tokenUtil')
+const { LOGIN_MAX_FAIL_TIMES, ACCOUNT_FREEZE_TIME } = require('../constants')
 
 const router = new Router()
 

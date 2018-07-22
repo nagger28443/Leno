@@ -1,3 +1,5 @@
+import { message } from 'src/echo'
+
 export function parsePath({ type, dateStr, title }) {
   const yy = dateStr.slice(0, 4)
   const mm = dateStr.slice(5, 7)
@@ -19,8 +21,9 @@ export function parsePath({ type, dateStr, title }) {
   return pathArr.join('/')
 }
 
-export function fail(err) {
-  console.trace(err)
+export function fail(err, callback = message.error) {
+  console.log(err)
+  if (!err.code || err.code > 1000) callback(err.message)
 }
 
 export const holder = 1

@@ -1,5 +1,7 @@
-import { React, injectSheet,inject, observer, get, Link } from 'src/commonExports' //eslint-disable-line
-import Button from 'src/views/commonComponents/button.jsx' //eslint-disable-line
+import {
+  React, injectSheet, Link,
+} from 'src/commonExports'
+import { Button } from 'src/echo'
 
 const styles = {
   root: {},

@@ -1,11 +1,12 @@
-import { React, injectSheet,inject, observer, get, post, put, fail, message } from 'src/commonExports' //eslint-disable-line
+import {
+  React, injectSheet, inject, observer, get, post, fail,
+} from 'src/commonExports'
+import { Button, Input } from 'src/echo'
+import TextArea from 'src/views/commonComponents/textarea'
+import blog from 'src/blogs/2.md'
 import Labels from './labels'
 import Category from './category'
 import PrivateSwitch from './privateSwitch'
-import Button from '../../../../commonComponents/button'
-import Input from '../../../../commonComponents/input'
-import TextArea from '../../../../commonComponents/textarea'
-import blog from '../../../../../blogs/2.md'
 
 const styles = {
   row: {
@@ -79,7 +80,6 @@ class BlogEditor extends React.Component {
   }
 
    saveDraft = async () => {
-     message.info('123123')
      // const { id, title, content } = this
      // const { category, labels, isPrivate } = store
      // const data = {

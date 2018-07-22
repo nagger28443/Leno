@@ -75,7 +75,7 @@ class Archive extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.curPage !== this.state.curPage) {
       const { curPage } = this.state
-      this.setState({ // eslint-disable-line
+      this.setState({
         archives: this.data.slice(10 * curPage - 10, 10 * curPage),
       })
     }

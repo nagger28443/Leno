@@ -1,4 +1,4 @@
-import { React, injectSheet,inject, observer, get } from 'src/commonExports' //eslint-disable-line
+import { React } from 'src/commonExports'
 
 class Settings extends React.Component {
   componentDidMount() {}

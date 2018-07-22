@@ -1,4 +1,6 @@
-import { React, injectSheet, _, get, fail, f, inject, observer, action} from 'src/commonExports' //eslint-disable-line
+import {
+  React, injectSheet, _, get, fail, f, inject, observer, action,
+} from 'src/commonExports'
 import { Detail } from '../../styledComponents'
 import NomalList from './normal'
 import Archive from './archive'

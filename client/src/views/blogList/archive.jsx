@@ -1,4 +1,6 @@
-import { React, injectSheet,inject, observer, autorun } from 'src/commonExports' //eslint-disable-line
+import {
+  React, injectSheet, inject, autorun,
+} from 'src/commonExports'
 import BlogListItem from '../commonComponents/blogListItem'
 
 const styles = {

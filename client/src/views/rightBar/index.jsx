@@ -224,7 +224,7 @@ class RightBar extends React.Component {
     // 如何用更好的的方式解决这个问题, 当前方式太蹩脚 todo
     if (!this.gotAnchors && store.blogContent.length !== 0) {
       this.gotAnchors = true
-      this.setState({ //eslint-disable-line
+      this.setState({
         anchors: this.contentFormatter(store.blogContent),
       })
     }

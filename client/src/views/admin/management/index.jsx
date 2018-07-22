@@ -1,4 +1,4 @@
-import { React, injectSheet,inject, observer, get } from 'src/commonExports' //eslint-disable-line
+import { React, injectSheet } from 'src/commonExports'
 import { Switch, Route } from 'react-router-dom'
 import Topbar from './topbar'
 import Leftbar from './leftbar'
@@ -28,7 +28,7 @@ const styles = {
     flex: 1,
     background: '#fff',
     marginLeft: '0.2rem',
-    padding: '1rem',
+    padding: '3rem',
     paddingBottom: '5rem',
   },
   leftbar: {

@@ -31,10 +31,18 @@ module.exports = {
     "react/jsx-one-expression-per-line":0,
     "react/button-has-type":0,
     "react/destructuring-assignment":0,
-    "no-trailing-spaces":1
+    "react/no-did-update-set-state":0
   },
   env: {
     browser: true,
     jest:true
   },
+  settings: {
+    'import/resolver': {
+      webpack:{
+        config: './build/webpack.base.js'
+      }
+
+    }
+  }
 }

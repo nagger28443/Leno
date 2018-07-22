@@ -12,7 +12,7 @@ const parseUrl = (url, params = {}) => {
 
 export const get = (url, params) => new Promise((resolve, reject) => {
   axios.get(parseUrl(url, params)).then(resp => {
-    if (resp.code === 1) {
+    if (resp && resp.code === 1) {
       resolve(resp.data)
     } else {
       reject(resp)
