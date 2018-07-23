@@ -1,7 +1,7 @@
 import {
-  React, injectSheet, fail,
+  React, injectSheet, fail, f, put,
 } from 'src/commonExports'
-import { Button } from 'src/echo'
+import { Button, Input } from 'src/echo'
 import { get } from 'src/util/http'
 
 
@@ -21,24 +21,24 @@ const styles = {
   category: {
     margin: '1rem',
   },
+  active: {
+    borderColor: 'red',
+  },
 }
 
-const STATUS = {
-  rename: Symbol('rename'),
-  dele: Symbol('delete'),
-}
 
 class Category extends React.Component {
   constructor(props) {
     super(props)
-    this.status = null
+    this.inputValue = ''
     this.state = {
       categories: [],
+      modifying: false,
+      curId: null,
     }
   }
 
-  componentDidMount() {
-    document.documentElement.scrollIntoView()
+  getCategories = () => {
     get('/category/list')
       .then(resp => {
         this.setState({
@@ -50,50 +50,86 @@ class Category extends React.Component {
       })
   }
 
+  componentDidMount() {
+    document.documentElement.scrollIntoView()
+    this.getCategories()
+  }
+
   toRename = () => {
-    this.status = STATUS.rename
+    const { modifying } = this.state
+    this.setState({
+      modifying: !modifying,
+    })
   }
 
-  toDelete = () => {
-    this.status = STATUS.dele
+  handleInputChange=value => {
+    this.inputValue = value
   }
 
-  handleDelete = (id) => {
-    console.log('delete', id)
-  }
+  // 逻辑有问题, todo
+  updateCategory = async () => {
+    if (!f.isEmpty(this.inputValue)) {
+      const res = window.confirm(`如果分类“${this.inputValue}”之前已存在，将会合并两个分类的文章。`)
+      if (!res) return
 
-  handleRename = (id) => {
-    console.log('rename', id)
+      const { curId } = this.state
+      await put('/category', { id: curId, name: this.inputValue })
+      this.getCategories()
+    }
+    this.setState({ curId: null })
   }
 
   handleClick = (e) => {
     const id = e.target.getAttribute('data-id')
-    if (this.status === STATUS.dele) {
-      this.handleDelete(id)
-    } else if (this.status === STATUS.rename) {
-      this.handleRename(id)
+    const { modifying } = this.state
+    if (modifying) {
+      this.setState({
+        curId: id,
+      })
     }
   }
 
   render() {
     const { classes } = this.props
-    const { categories } = this.state
+    const { categories, modifying, curId } = this.state
     return (
       <div>
         <div className={classes.header}>
-          <Button text="重命名" style={{ fontSize: 'smaller', marginRight: 10 }} onClick={this.toRename} />
-          <Button text="删除" style={{ fontSize: 'smaller' }} onClick={this.toDelete} />
+          <Button
+            text="重命名"
+            style={{
+              fontSize: 'smaller',
+              marginRight: 10,
+              backgroundColor: modifying ? '#6c757d' : '#fff',
+              color: modifying ? '#fff' : '#6c757d',
+            }}
+            onClick={this.toRename}
+          />
         </div>
         <hr className={classes.hr} />
         <div className={classes.content}>
           {categories.map(item => (
-            <span
-              data-id={item.id}
-              key={item.id}
-              className={`link ${classes.category}`}
-              onClick={this.handleClick}
-            >
-              {item.name}({item.count})
+            <span className={`plain-link ${classes.category}`}>
+              {
+                curId === String(item.id) && modifying
+                  ? (
+                    <Input
+                      autoFocus
+                      defaultValue={item.name}
+                      onBlur={this.updateCategory}
+                      onChange={this.handleInputChange}
+                    />
+                  )
+                  : (
+                    <span
+                      data-id={item.id}
+                      key={item.id}
+                      onClick={this.handleClick}
+                    >
+                      {item.name}({item.count})
+                    </span>
+                  )
+              }
             </span>
           ))}
         </div>

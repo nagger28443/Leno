@@ -1,4 +1,5 @@
 import { React, injectSheet, Link } from 'src/commonExports'
+import { withRouter } from 'react-router-dom'
 
 const styles = {
   root: {},
@@ -19,6 +20,9 @@ const styles = {
     '&:active': {
       opacity: 0.7,
     },
+  },
+  active: {
+    background: '#f5f5f5',
   },
 
 }
@@ -43,16 +47,37 @@ const menu = [
 ]
 
 class Leftbar extends React.Component {
-  componentDidMount() {}
+  state={
+    curPath: '',
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { pathname } = nextProps.location
+    const { curPath } = prevState
+    if (pathname !== curPath) {
+      return {
+        curPath: pathname,
+      }
+    }
+    return null
+  }
 
   render() {
     const { clazz, root, classes } = this.props
+    const { curPath } = this.state
     return (
       <sider className={`${clazz} ${root}`}>
         <div className={classes.title}>菜单</div>
         <nav className={classes.menuContainer}>
           {
-            menu.map(item => <Link to={item.link} className={classes.menu}>{item.title}</Link>)
+            menu.map(item => (
+              <Link
+                to={item.link}
+                className={`${classes.menu} ${curPath.startsWith(item.link) ? classes.active : ''}`}
+              >
+                {item.title}
+              </Link>
+            ))
           }
         </nav>
       </sider>
@@ -60,4 +85,4 @@ class Leftbar extends React.Component {
   }
 }
 
-export default injectSheet(styles)(Leftbar)
+export default withRouter(injectSheet(styles)(Leftbar))

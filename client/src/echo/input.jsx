@@ -75,6 +75,12 @@ class Input extends React.Component {
     }
   }
 
+  handleBlur = () => {
+    if (this.props.onBlur) {
+      this.props.onBlur()
+    }
+  }
+
   componentDidMount() {
     if (this.props.bridge) {
       this.props.bridge.validate = this.validate
@@ -83,7 +89,7 @@ class Input extends React.Component {
 
   render() {
     const {
-      style, value, placeholder, className, defaultValue, disabled,
+      style, value, placeholder, className, defaultValue, disabled, autoFocus,
     } = this.props
     const { isValid, helper } = this.state
     return (
@@ -92,10 +98,12 @@ class Input extends React.Component {
           className={`input-box ${isValid ? '' : 'warning'} ${className}`}
           placeholder={placeholder}
           onChange={this.handleValueChange}
+          onBlur={this.handleBlur}
           style={style}
           value={value}
           defaultValue={defaultValue}
           disabled={disabled}
+          autoFocus={autoFocus} //eslint-disable-line
         />
         <div className="helper" style={{ display: isValid ? 'none' : 'block' }}>
           {helper}

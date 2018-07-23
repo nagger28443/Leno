@@ -9,6 +9,12 @@ const f = {
     && Number(param) > 0
     && Number(param) < 13,
 
+  isEmpty: param => {
+    if (typeof param === 'string') return param.trim().length === 0
+    if (Array.isArray(param)) return param.length === 0
+    return !param
+  },
+
   lastEle: arr => (Array.isArray(arr) ? arr[arr.length - 1] : undefined),
 
   getRuleName: rule => Object.keys(rule).find(item => item !== 'message'),
