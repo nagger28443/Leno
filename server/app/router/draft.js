@@ -63,7 +63,6 @@ router.post('/', async (ctx) => {
     gmt_modify: gmt,
   })
 
-
   ctx.body = u.response(ctx, codes.SUCCESS)
 })
 
@@ -92,13 +91,13 @@ router.put('/', async (ctx) => {
     gmt_modify: gmt,
   })
 
-
   ctx.body = u.response(ctx, codes.SUCCESS)
 })
 
 router.del('/', async (ctx) => {
   const { id } = ctx.request.body
   if (!id) {
+    const { message } = codes.INSURFICIENT_PARAMS
     ctx.body = u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
       message: `${message}:id`,
@@ -111,7 +110,6 @@ router.del('/', async (ctx) => {
     deleted: 1,
     gmt_modify: gmt,
   })
-
 
   ctx.body = u.response(ctx, codes.SUCCESS)
 })

@@ -235,4 +235,57 @@ router.post('/', async (ctx) => {
   u.updateStatistics()
 })
 
+
+// 修改文章
+router.post('/', async (ctx) => {
+  const {
+    title, category, labels = '', content, isPrivate = 0,
+  } = ctx.request.body
+  if ([title, category, content].some(item => u.isEmpty(item))) {
+    const { message } = codes.INSURFICIENT_PARAMS
+    ctx.body = u.response(ctx, {
+      ...codes.INSURFICIENT_PARAMS,
+      message: `${message}:title,category,content`,
+    })
+    return
+  }
+  const contentHTMLStr = MDParser(content)
+  const gmt = new Date()
+
+  const year = gmt.getFullYear()
+  const month = gmt.getMonth() + 1
+  const day = gmt.getDate()
+  const date = `${year}-${month <= 9 ? 0 : ''}${month}-${day <= 9 ? 0 : ''}${day}`
+
+  // 插入博客信息
+  await u.dbQuery('INSERT INTO blog SET ?', {
+    title,
+    content: contentHTMLStr,
+    category,
+    labels,
+    date,
+    private: isPrivate,
+    gmt_create: gmt,
+    gmt_modify: gmt,
+  })
+  ctx.body = u.response(ctx, codes.SUCCESS)
+
+  // 更新category表
+  await u.dbQuery('INSERT INTO category set name=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [
+    category,
+  ])
+
+  // 更新archive表
+  await u.dbQuery('INSERT INTO archive set date=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [date.slice(0, 7)])
+
+  // 更新label表
+  await labels.split(',')
+    .forEach((label) => {
+      u.dbQuery(`INSERT INTO label set name='${label}',count=1 ON DUPLICATE KEY UPDATE count=count+1`)
+    })
+
+  // 更新statistics
+  u.updateStatistics()
+})
+
 module.exports = router

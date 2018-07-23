@@ -72,12 +72,15 @@ class BlogEditor extends React.Component {
 
 
   async componentDidMount() {
-    store.id = this.props.match.params.id
-    if (store.id !== 'new' && /^\d+$/.test(store.id)) {
-      const data = await get('/draft', { id: store.id })
-      runInAction(() => {
-        Object.assign(store, data, { labels: data.labels.split(',') })
-      })
+    const { id } = this.props.match.params
+    store.id = id
+    if (id === 'new' || /^\d+$/.test(id)) {
+      if (id !== 'new') {
+        const data = await get('/draft', { id })
+        runInAction(() => {
+          Object.assign(store, data, { labels: data.labels.split(',') })
+        })
+      }
     } else {
       this.props.history.push('/admin/404')
     }

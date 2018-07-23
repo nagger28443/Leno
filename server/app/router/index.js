@@ -3,8 +3,9 @@ const Router = require('koa-router')
 const router = new Router()
 
 router.options('/*', async (ctx) => {
-  ctx.set('Access-Control-Allow-Methods', ctx.method)
-  ctx.set('Access-Control-Allow-Origin', ctx.request.headers.origin)
+  const { headers } = ctx.request
+  ctx.set('Access-Control-Allow-Methods', headers['access-control-request-method'])
+  ctx.set('Access-Control-Allow-Origin', headers.origin)
   ctx.set('Access-Control-Allow-Headers', '*')
   ctx.status = 204
 })

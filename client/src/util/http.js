@@ -41,7 +41,7 @@ export const dele = (url, params) => new Promise((resolve, reject) => {
 })
 
 export const put = (url, postData) => new Promise((resolve, reject) => {
-  axios.put(url, postData).then(resp => {
+  axios.put(parseUrl(url), postData).then(resp => {
     if (resp.code === 1) {
       resolve(resp.data)
     } else {
