@@ -1,9 +1,8 @@
 import {
-  React, injectSheet, inject, observer, get, post, fail,
+  React, injectSheet, inject, observer, get, post, fail, put, action, runInAction,
 } from 'src/commonExports'
 import { Button, Input } from 'src/echo'
 import TextArea from 'src/views/commonComponents/textarea'
-import blog from 'src/blogs/2.md'
 import Labels from './labels'
 import Category from './category'
 import PrivateSwitch from './privateSwitch'
@@ -37,23 +36,23 @@ class BlogEditor extends React.Component {
     store = props.blogEditorStore
     this.titleInput = {}
     this.contentInput = {}
-    this.title = ''
-    this.content = ''
     this.state = {
       // isDraft: false,
     }
   }
 
+  @action
   handleTitleChange = value => {
-    this.title = value
+    store.title = value
   }
 
+  @action
   handleContentChange = value => {
-    this.content = value
+    store.content = value
   }
 
   postBlog = () => {
-    const { title, content } = this
+    const { title, content } = store
 
     if (
       !this.titleInput.validate(title)
@@ -71,34 +70,42 @@ class BlogEditor extends React.Component {
     })
   }
 
+
   async componentDidMount() {
-    this.id = this.props.match.params.id
-    if (this.id !== 'new' && /^\d+$/.test(this.id)) {
-      const data = await get('/draft', { id: this.id })
-      console.log(data)
+    store.id = this.props.match.params.id
+    if (store.id !== 'new' && /^\d+$/.test(store.id)) {
+      const data = await get('/draft', { id: store.id })
+      runInAction(() => {
+        Object.assign(store, data, { labels: data.labels.split(',') })
+      })
+    } else {
+      this.props.history.push('/admin/404')
     }
   }
 
    saveDraft = async () => {
-     // const { id, title, content } = this
-     // const { category, labels, isPrivate } = store
-     // const data = {
-     //   title,
-     //   content,
-     //   category,
-     //   labels: labels.join(','),
-     //   isPrivate,
-     // }
-     // if (id) {
-     //   const result = await put('/draft', { ...data, id })
-     // } else {
-     //   const result = await post('/draft', data)
-     // }
+     const {
+       id, title, content, category, labels, isPrivate,
+     } = store
+     const data = {
+       title,
+       content,
+       category,
+       labels: labels.join(','),
+       isPrivate,
+     }
+     if (id !== 'new') {
+       const result = await put('/draft', { ...data, id })
+       console.log(result)
+     } else {
+       const result = await post('/draft', data)
+       console.log(result)
+     }
    }
 
    render() {
      const { classes } = this.props
-     const { title } = store
+     const { title, content } = store
      return (
        <div className={classes.root}>
          <div className={classes.row}>
@@ -110,7 +117,7 @@ class BlogEditor extends React.Component {
              ]}
              className={classes.title}
              onChange={this.handleTitleChange}
-             defaultValue={title}
+             value={title}
              placeholder="请输入文章标题"
            />
          </div>
@@ -122,7 +129,7 @@ class BlogEditor extends React.Component {
                { max: 20000, message: '标题长度不能超过20000字' },
              ]}
              className={classes.content}
-             defaultValue={blog}
+             value={content}
              onChange={this.handleContentChange}
              placeholder="请输入文章内容"
            />
