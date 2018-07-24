@@ -5,7 +5,7 @@ import {
   observable, action, autorun, runInAction,
 } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 import {
   get, post, put, dele,
 } from './util/http'
@@ -29,4 +29,5 @@ export {
   autorun,
   Link,
   runInAction,
+  withRouter,
 }

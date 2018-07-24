@@ -1,13 +1,15 @@
 import { observable } from 'mobx'
 
 class BlogEditorStore {
-  @observable id = null
+  @observable blogId = null
+
+  @observable draftId = null
 
   @observable title = ''
 
   @observable content = ''
 
-  @observable labels = ['hha', 'huhu']
+  @observable labels = []
 
   @observable category = ''
 

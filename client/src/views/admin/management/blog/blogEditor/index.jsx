@@ -1,11 +1,12 @@
 import {
-  React, injectSheet, inject, observer, get, post, fail, put, action, runInAction,
+  React, injectSheet, inject, observer, get, post, put, action, runInAction, fail, dele,
 } from 'src/commonExports'
 import { Button, Input } from 'src/echo'
 import TextArea from 'src/views/commonComponents/textarea'
 import Labels from './labels'
 import Category from './category'
 import PrivateSwitch from './privateSwitch'
+import message from '../../../../../echo/message'
 
 const styles = {
   row: {
@@ -36,9 +37,7 @@ class BlogEditor extends React.Component {
     store = props.blogEditorStore
     this.titleInput = {}
     this.contentInput = {}
-    this.state = {
-      // isDraft: false,
-    }
+    this.state = {}
   }
 
   @action
@@ -51,7 +50,7 @@ class BlogEditor extends React.Component {
     store.content = value
   }
 
-  postBlog = () => {
+  postBlog = async () => {
     const { title, content } = store
 
     if (
@@ -62,33 +61,60 @@ class BlogEditor extends React.Component {
       return
     }
 
-    const { labels, category, isPrivate } = store
-    post('/blog', {
-      title, content, labels: labels.join(','), category, isPrivate,
-    }).catch(err => {
-      fail(err)
-    })
+    const {
+      labels, category, isPrivate, draftId,
+    } = store
+    try {
+      await post('/blog', {
+        title, content, labels: labels.join(','), category, isPrivate,
+      })
+      if (draftId) {
+        await dele('/draft', { id: draftId })
+      }
+
+      message.info('发表成功')
+      this.props.history.push('/admin/blog/list')
+    } catch (e) {
+      fail(e)
+    }
   }
 
-
+  @action
   async componentDidMount() {
     const { id } = this.props.match.params
-    store.id = id
-    if (id === 'new' || /^\d+$/.test(id)) {
-      if (id !== 'new') {
+    const { isDraft } = this.props
+    if (id === 'new') return
+    if (isDraft) {
+      try {
         const data = await get('/draft', { id })
         runInAction(() => {
+          store.draftId = id
           Object.assign(store, data, { labels: data.labels.split(',') })
         })
+      } catch (e) {
+        fail(e)
       }
     } else {
-      this.props.history.push('/admin/404')
+      store.blogId = id
     }
+  }
+
+  @action
+  componentWillUnmount() {
+    Object.assign(store, {
+      blogId: null,
+      draftId: null,
+      title: '',
+      content: '',
+      labels: [],
+      category: '',
+      isPrivate: false,
+    })
   }
 
    saveDraft = async () => {
      const {
-       id, title, content, category, labels, isPrivate,
+       draftId, title, content, category, labels, isPrivate,
      } = store
      const data = {
        title,
@@ -97,12 +123,19 @@ class BlogEditor extends React.Component {
        labels: labels.join(','),
        isPrivate,
      }
-     if (id !== 'new') {
-       const result = await put('/draft', { ...data, id })
-       console.log(result)
+     if (draftId && draftId !== 'new') {
+       try {
+         await put('/draft', { ...data, id: draftId })
+       } catch (e) {
+         fail(e)
+       }
      } else {
-       const result = await post('/draft', data)
-       console.log(result)
+       try {
+         const result = await post('/draft', data)
+         store.draftId = result.id
+       } catch (e) {
+         fail(e)
+       }
      }
    }
 

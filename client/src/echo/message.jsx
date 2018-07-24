@@ -39,10 +39,11 @@ class Message extends React.Component {
       prevBottom = gap
     }
     if (autoClose) {
-      setTimeout(this.handleClose, 30000)
+      setTimeout(this.handleClose, 3000)
     }
   }
 
+  // message位置不合理,前面的消息关闭后后面的消息还会向上移动,优化 todo
   handleClose = () => {
     body.removeChild(this.parent)
   }

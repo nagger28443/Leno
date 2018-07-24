@@ -1,5 +1,5 @@
 import {
-  React, injectSheet, fail, f, put,
+  React, injectSheet, fail, put,
 } from 'src/commonExports'
 import { Button, Input } from 'src/echo'
 import { get } from 'src/util/http'
@@ -30,6 +30,7 @@ const styles = {
 class Category extends React.Component {
   constructor(props) {
     super(props)
+    this.input = {}
     this.inputValue = ''
     this.state = {
       categories: [],
@@ -42,6 +43,7 @@ class Category extends React.Component {
     get('/category/list')
       .then(resp => {
         this.setState({
+          curId: null,
           categories: resp.result,
         })
       })
@@ -68,7 +70,7 @@ class Category extends React.Component {
 
   // 逻辑有问题, todo
   updateCategory = async () => {
-    if (!f.isEmpty(this.inputValue)) {
+    if (this.input.validate(this.inputValue)) {
       const res = window.confirm(`如果分类“${this.inputValue}”之前已存在，将会合并两个分类的文章。`)
       if (!res) return
 
@@ -76,13 +78,19 @@ class Category extends React.Component {
       await put('/category', { id: curId, name: this.inputValue })
       this.getCategories()
     }
-    this.setState({ curId: null })
+  }
+
+  handleCancel = () => {
+    this.setState({
+      curId: null,
+    })
   }
 
   handleClick = (e) => {
     const id = e.target.getAttribute('data-id')
     const { modifying } = this.state
     if (modifying) {
+      this.inputValue = this.state.categories.find(item => String(item.id) === id).name
       this.setState({
         curId: id,
       })
@@ -109,22 +117,39 @@ class Category extends React.Component {
         <hr className={classes.hr} />
         <div className={classes.content}>
           {categories.map(item => (
-            <span className={`plain-link ${classes.category}`}>
+            <span className={classes.category}>
               {
                 curId === String(item.id) && modifying
                   ? (
-                    <Input
-                      autoFocus
-                      defaultValue={item.name}
-                      onBlur={this.updateCategory}
-                      onChange={this.handleInputChange}
-                    />
+                    <span>
+                      <Input
+                        autoFocus
+                        bridge={this.input}
+                        defaultValue={item.name}
+                        rules={[
+                          { required: true, message: '分类名称不能为空' },
+                          { max: 20, message: '分类名称长度不可超过20' },
+                        ]}
+                        onChange={this.handleInputChange}
+                      />
+                      <Button
+                        text="保存"
+                        onClick={this.updateCategory}
+                        style={{ fontSize: 'smaller', marginLeft: 10 }}
+                      />
+                      <Button
+                        text="取消"
+                        onClick={this.handleCancel}
+                        style={{ fontSize: 'smaller', marginLeft: 10 }}
+                      />
+                    </span>
                   )
                   : (
                     <span
                       data-id={item.id}
                       key={item.id}
                       onClick={this.handleClick}
+                      className={modifying ? 'link' : 'plain-link '}
                     >
                       {item.name}({item.count})
                     </span>

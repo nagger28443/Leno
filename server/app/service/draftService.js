@@ -12,7 +12,7 @@ draftService.getDraftList = async (ctx) => {
   const orderSql = 'ORDER BY gmt_modify DESC, visit_cnt DESC'
   const pageSql = page ? `limit ${(page - 1) * pageSize},${pageSize}` : ''
   const commonCond = `${orderSql} ${pageSql}`
-  const whereSql = 'WHRERE deleted=0'
+  const whereSql = 'WHERE deleted=0'
 
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
   if (total === 0) {
@@ -38,7 +38,7 @@ draftService.getDraft = async (ctx) => {
 // 新建草稿
 draftService.addDraft = async (ctx) => {
   const {
-    title, category, labels = '', content,
+    title, category, labels = '', content, isPrivate = false,
   } = ctx.request.body
 
   // 是否缺少必需的参数
@@ -53,22 +53,23 @@ draftService.addDraft = async (ctx) => {
 
   // 插入博客信息
   const gmt = new Date()
-  await u.dbQuery('INSERT INTO draft SET ?', {
+  const res = await u.dbQuery('INSERT INTO draft SET ?', {
     title,
     content,
     category,
     labels,
+    private: isPrivate,
     gmt_create: gmt,
     gmt_modify: gmt,
   })
 
-  ctx.body = u.response(ctx, codes.SUCCESS)
+  ctx.body = u.response(ctx, codes.SUCCESS, { id: res.insertId })
 }
 
 // 修改草稿
 draftService.updateDraft = async (ctx) => {
   const {
-    id, title, category, labels = '', content,
+    id, title, category, labels = '', content, isPrivate = false,
   } = ctx.request.body
 
   // 是否缺少必需的参数
@@ -87,6 +88,7 @@ draftService.updateDraft = async (ctx) => {
     content,
     category,
     labels,
+    private: isPrivate,
     gmt_modify: gmt,
   })
 
@@ -94,7 +96,7 @@ draftService.updateDraft = async (ctx) => {
 }
 
 draftService.deleteDraft = async (ctx) => {
-  const { id } = ctx.request.body
+  const { id } = ctx.query
   if (!id) {
     const { message } = codes.INSURFICIENT_PARAMS
     ctx.body = u.response(ctx, {

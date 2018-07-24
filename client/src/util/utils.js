@@ -22,7 +22,7 @@ export function parsePath({ type, dateStr, title }) {
 }
 
 export function fail(err, callback = message.error) {
-  console.log(err)
+  callback(err.message)
   if (!err.code || err.code > 1000) callback(err.message)
 }
 

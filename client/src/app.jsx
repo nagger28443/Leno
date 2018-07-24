@@ -2,17 +2,18 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import { Provider } from 'mobx-react'
 import { configure } from 'mobx'
-import 'babel-polyfill'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import 'babel-polyfill'
 import axios from 'axios'
-import App from './views/App'
 import appStore from './store/appStore'
 import labelStore from './store/banner/labelStore'
 import blogListStore from './store/blogList/blogListStore'
 import blogEditorStore from './store/admin/management/blogEditorStore'
 import './app.styl'
-import Admin from './views/admin'
 import { serverHost, serverPort } from '../projectConfig'
+import ErrorHandler from './errorHandler'
+import Admin from './views/admin'
+import App from './views/App'
 
 configure({ enforceActions: true })
 
@@ -59,21 +60,22 @@ axios.interceptors.response.use(
   },
 )
 
-const render = Component => {
-  ReactDom.render(
+
+ReactDom.render(
+  <ErrorHandler>
     <Provider {...stores}>
       <BrowserRouter basename="">
         <Switch>
           <Route path="/admin" key="/admin" component={Admin} />
-          <Route key="/home" component={Component} />
+          <Route key="/home" component={App} />
         </Switch>
       </BrowserRouter>
-    </Provider>,
-    document.getElementById('root'),
-  )
-}
+    </Provider>
+  </ErrorHandler>,
 
-render(App)
+  document.getElementById('root'),
+)
+
 
 // Remove Webpack Hot Module Replacement API
 // if (module.hot) {

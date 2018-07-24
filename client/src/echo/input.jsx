@@ -89,11 +89,11 @@ class Input extends React.Component {
 
   render() {
     const {
-      style, value, placeholder, className, defaultValue, disabled, autoFocus,
+      style, value, placeholder, className = '', defaultValue, disabled, autoFocus,
     } = this.props
     const { isValid, helper } = this.state
     return (
-      <React.Fragment>
+      <div style={{ display: 'inline-block', verticalAlign: 'text-top' }}>
         <input
           className={`input-box ${isValid ? '' : 'warning'} ${className}`}
           placeholder={placeholder}
@@ -108,7 +108,7 @@ class Input extends React.Component {
         <div className="helper" style={{ display: isValid ? 'none' : 'block' }}>
           {helper}
         </div>
-      </React.Fragment>
+      </div>
     )
   }
 }

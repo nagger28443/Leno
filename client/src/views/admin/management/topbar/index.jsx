@@ -19,8 +19,12 @@ const styles = {
   right: {},
 }
 
-class Topbar extends React.Component {
+class TopBar extends React.Component {
   componentDidMount() {}
+
+  logOut= () => {
+    console.log('logout')
+  }
 
   render() {
     const { classes, clazz } = this.props
@@ -34,7 +38,7 @@ class Topbar extends React.Component {
               style={{ marginRight: 15 }}
             />
             <span>Greetings!</span>
-            <span className="plain-link">退出</span>
+            <span className="link" onClick={this.logOut} style={{ margin: '0 1rem' }}>退出</span>
           </div>
         </div>
       </header>
@@ -42,4 +46,4 @@ class Topbar extends React.Component {
   }
 }
 
-export default injectSheet(styles)(Topbar)
+export default injectSheet(styles)(TopBar)
