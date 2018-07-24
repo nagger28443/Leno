@@ -1,10 +1,9 @@
-const Router = require('koa-router')
 const u = require('../utils/u')
 const codes = require('../constants/codes')
 
-const router = new Router()
+const archiveService = {}
 
-router.get('/list', async (ctx) => {
+archiveService.getArchiveList = async (ctx) => {
   const [{ total }] = await u.dbQuery('SELECT COUNT(id) as total FROM archive')
   if (total === 0) {
     ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
@@ -16,6 +15,6 @@ router.get('/list', async (ctx) => {
     const result = await u.dbQuery(sql)
     ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
-})
+}
 
-module.exports = router
+module.exports = archiveService

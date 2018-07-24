@@ -1,11 +1,10 @@
-const Router = require('koa-router')
 const codes = require('../constants/codes')
 const u = require('../utils/u')
 
-const router = new Router()
+const draftService = {}
 
 // 获取草稿列表
-router.get('/list', async (ctx) => {
+draftService.getDraftList = async (ctx) => {
   const { page, pageSize = 20 } = ctx.query
 
   const listSql = 'SELECT id,title,gmt_modify as time,category,labels FROM draft'
@@ -22,10 +21,10 @@ router.get('/list', async (ctx) => {
     const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
     ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
-})
+}
 
 // 获取草稿内容
-router.get('/', async (ctx) => {
+draftService.getDraft = async (ctx) => {
   const { id } = ctx.query
   const sql = 'SELECT title,content,gmt_modify as time,category,labels FROM draft where id=?'
   const res = await u.dbQuery(sql, [id])
@@ -34,10 +33,10 @@ router.get('/', async (ctx) => {
   } else {
     ctx.throw(404)
   }
-})
+}
 
 // 新建草稿
-router.post('/', async (ctx) => {
+draftService.addDraft = async (ctx) => {
   const {
     title, category, labels = '', content,
   } = ctx.request.body
@@ -64,10 +63,10 @@ router.post('/', async (ctx) => {
   })
 
   ctx.body = u.response(ctx, codes.SUCCESS)
-})
+}
 
 // 修改草稿
-router.put('/', async (ctx) => {
+draftService.updateDraft = async (ctx) => {
   const {
     id, title, category, labels = '', content,
   } = ctx.request.body
@@ -92,9 +91,9 @@ router.put('/', async (ctx) => {
   })
 
   ctx.body = u.response(ctx, codes.SUCCESS)
-})
+}
 
-router.del('/', async (ctx) => {
+draftService.deleteDraft = async (ctx) => {
   const { id } = ctx.request.body
   if (!id) {
     const { message } = codes.INSURFICIENT_PARAMS
@@ -112,6 +111,6 @@ router.del('/', async (ctx) => {
   })
 
   ctx.body = u.response(ctx, codes.SUCCESS)
-})
+}
 
-module.exports = router
+module.exports = draftService

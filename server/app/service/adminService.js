@@ -1,13 +1,12 @@
-const Router = require('koa-router')
 const u = require('../utils/u')
 const codes = require('../constants/codes')
 const tku = require('../utils/tokenUtil')
-const { LOGIN_MAX_FAIL_TIMES, ACCOUNT_FREEZE_TIME } = require('../constants')
+const { LOGIN_MAX_FAIL_TIMES, ACCOUNT_FREEZE_TIME } = require('../constants/index')
 
-const router = new Router()
+const adminService = {}
 
 // 登录
-router.post('/login', async (ctx) => {
+adminService.login = async (ctx) => {
   const { name, password } = ctx.request.body
   const sql = 'SELECT password AS pwd FROM user WHERE name=?'
 
@@ -39,6 +38,6 @@ router.post('/login', async (ctx) => {
   ctx.state.token = token
   // ctx.cookies.set('token', token)
   ctx.body = u.response(ctx, codes.SUCCESS)
-})
+}
 
-module.exports = router
+module.exports = adminService

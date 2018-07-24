@@ -1,10 +1,9 @@
-const Router = require('koa-router')
 const u = require('../utils/u')
 const codes = require('../constants/codes')
 
-const router = new Router()
+const categoryService = {}
 
-router.get('/list', async (ctx) => {
+categoryService.getCategoryList = async (ctx) => {
   const [{ total }] = await u.dbQuery('SELECT COUNT(id) as total FROM category')
   if (total === 0) {
     ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
@@ -16,6 +15,13 @@ router.get('/list', async (ctx) => {
     const result = await u.dbQuery(sql)
     ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
-})
+}
 
-module.exports = router
+categoryService.updateCategory = async (ctx) => {
+  const { id, name } = ctx.request.body
+  const sql = 'UPDATE category SET ? WHERE id=?'
+  await u.dbQuery(sql, [{ name }, id])
+  ctx.body = u.response(ctx, codes.SUCCESS)
+}
+
+module.exports = categoryService
