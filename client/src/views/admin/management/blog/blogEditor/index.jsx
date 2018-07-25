@@ -82,20 +82,24 @@ class BlogEditor extends React.Component {
   @action
   async componentDidMount() {
     const { id } = this.props.match.params
-    const { isDraft } = this.props
+
     if (id === 'new') return
+
+    const { pathname } = this.props.location
+    const isDraft = pathname.startsWith('/admin/draft')
     if (isDraft) {
-      try {
-        const data = await get('/draft', { id })
-        runInAction(() => {
-          store.draftId = id
-          Object.assign(store, data, { labels: data.labels.split(',') })
-        })
-      } catch (e) {
-        fail(e)
-      }
+      store.draftId = id
     } else {
       store.blogId = id
+    }
+
+    try {
+      const data = await get(`${isDraft ? '/draft' : '/blog'}`, { id })
+      runInAction(() => {
+        Object.assign(store, data, { labels: data.labels.length > 0 ? data.labels.split(',') : [] })
+      })
+    } catch (e) {
+      fail(e)
     }
   }
 

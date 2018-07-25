@@ -8,7 +8,7 @@ const service = {}
 const getWhereSql = ({
   search, category, labels, archive, deleted, isPrivate,
 }) => {
-  const conditions = []
+  const conditions = [`deleted=${deleted}`]
 
   if (archive) {
     if (/^\d{4}$/.test(archive) || /^\d{4}-\d{2}$/.test(archive)) {
@@ -30,10 +30,6 @@ const getWhereSql = ({
     labels.split(',').forEach((label) => {
       conditions.push(`labels LIKE '%${label}%'`)
     })
-  }
-
-  if (deleted) {
-    conditions.push(`deleted=${1}`)
   }
 
   if (isPrivate === 1 || isPrivate === 0) {
@@ -90,19 +86,37 @@ service.getBlogList = async (ctx) => {
 // 展开首页文章时增加访问次数 todo
 // 获取博客内容
 service.getBlog = async (ctx) => {
-  const { title, date } = ctx.query
+  const { id, title, date } = ctx.query
 
-  const sql1 = 'SELECT title,content,date,category,labels,visit_cnt as visitCount FROM blog where title=? AND date=?'
-  const res = await u.dbQuery(sql1, [title, date])
+  const selectSql = 'SELECT title,content,date,category,labels,visit_cnt AS visitCount,'
+    + 'private AS isPrivate,deleted FROM blog'
+  let whereSql = ''
+  let params = []
+  if (id) {
+    whereSql = 'WHERE id=?'
+    params = [id]
+  } else if (title && date) {
+    whereSql = 'WHERE title=? AND date=?'
+    params = [title, date]
+  } else {
+    ctx.throw(404)
+  }
+
+  const sql1 = `${selectSql} ${whereSql}`
+  const res = await u.dbQuery(sql1, params)
   if (res.length > 0) {
+    const { isPrivate, deleted } = res[0]
+    if ((isPrivate || deleted) && !ctx.state.tokenValid) {
+      ctx.throw(403)
+    }
     ctx.body = u.response(ctx, codes.SUCCESS, res[0])
   } else {
     ctx.throw(404)
   }
 
   // 增加访问次数
-  const sql2 = 'UPDATE blog SET visit_cnt=visit_cnt+1 WHERE title=? AND date=?'
-  u.dbQuery(sql2, [title, date])
+  const sql2 = `UPDATE blog SET visit_cnt=visit_cnt+1 ${whereSql}`
+  u.dbQuery(sql2, params)
 }
 
 // 发表文章

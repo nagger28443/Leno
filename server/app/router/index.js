@@ -6,6 +6,7 @@ const statisticsService = require('../service/statisticsService')
 const labelService = require('../service/labelService')
 const archiveService = require('../service/archiveService')
 const categoryService = require('../service/categoryService')
+const recycleService = require('../service/recycle')
 
 const router = new Router()
 
@@ -41,7 +42,7 @@ router.put('/draft', draftService.updateDraft)
 router.del('/draft', draftService.deleteDraft)
 
 // 获取回收站文章列表
-router.get('/recycle')
+router.get('/recycle/list', recycleService.getRecycleList)
 
 // 获取分类列表
 router.get('/category/list', categoryService.getCategoryList)

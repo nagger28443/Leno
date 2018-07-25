@@ -7,8 +7,8 @@ const draftService = {}
 draftService.getDraftList = async (ctx) => {
   const { page, pageSize = 20 } = ctx.query
 
-  const listSql = 'SELECT id,title, DATE_FORMAT(gmt_modify,\'%Y-%m-%d %h:%m\') as date,category,labels FROM draft'
-  const countSql = 'SELECT COUNT(id) as total FROM blog'
+  const listSql = 'SELECT id,title, DATE_FORMAT(gmt_modify,\'%Y-%m-%d %H:%i\') as date,category,labels FROM draft'
+  const countSql = 'SELECT COUNT(id) as total FROM draft'
   const orderSql = 'ORDER BY gmt_modify DESC'
   const pageSql = page ? `limit ${(page - 1) * pageSize},${pageSize}` : ''
   const commonCond = `${orderSql} ${pageSql}`
@@ -27,8 +27,8 @@ draftService.getDraftList = async (ctx) => {
 // 获取草稿内容
 draftService.getDraft = async (ctx) => {
   const { id } = ctx.query
-  const sql = 'SELECT title,content,DATE_FORMAT(gmt_modify,\'%Y-%m-%d %h:%m\') as date,category,labels'
-    + ' FROM draft where id=?'
+  const sql = 'SELECT title,content,DATE_FORMAT(gmt_modify,\'%Y-%m-%d %H:%i\') as date,category,labels,'
+    + 'private as isPrivate FROM draft where id=?'
   const res = await u.dbQuery(sql, [id])
   if (res.length > 0) {
     ctx.body = u.response(ctx, codes.SUCCESS, res[0])

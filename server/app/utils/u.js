@@ -159,14 +159,7 @@ const u = {
     const start = Date.now()
     await next()
     const ms = Date.now() - start
-    u.log(`${ctx.method} ${decodeURIComponent(ctx.url)} - ${ms}ms`)
-  },
-
-  /**
-   * 简易的日志方法
-   */
-  log: (msg) => {
-    console.log(msg)
+    console.log(`${ctx.method} ${decodeURIComponent(ctx.url)} - ${ms}ms`)
   },
 }
 

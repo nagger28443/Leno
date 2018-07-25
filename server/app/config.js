@@ -5,11 +5,5 @@ const config = {
   salt: '812032',
   secret: 'this_is_a_secret_hohoho_haha',
 
-  authAPIs: [
-    {
-      url: '/blog',
-      methods: ['post', 'put', 'delete'],
-    },
-  ],
 }
 module.exports = config

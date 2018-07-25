@@ -1,11 +1,21 @@
 import {
-  React, injectSheet, get, fail,
+  React, injectSheet, get, fail, Link, dele,
 } from 'src/commonExports'
 import BlogListItem from 'src/views/commonComponents/blogListItem'
 
 const styles = {
   active: {
-    borderBottom: '2px solid red',
+    borderBottom: '2px solid #807979',
+  },
+  actions: {
+    position: 'absolute',
+    right: 0,
+    bottom: '0.6rem',
+  },
+  action: {
+    margin: [0, '0.5rem'],
+    fontSize: 'smaller',
+
   },
 }
 
@@ -86,6 +96,17 @@ class BlogList extends React.Component {
     this.props.history.push(pathname, { curTab: tabName })
   }
 
+  handleDelete = async (e) => {
+    const id = e.target.getAttribute('data-id')
+    const { curTab } = this.state
+
+    try {
+      await dele(`/${curTab === 'Draft' || curTab === 'Recycle' ? curTab.toLowerCase() : 'blog'}`, { id })
+    } catch (err) {
+      fail(err)
+    }
+  }
+
   async componentDidMount() {
     const stat = await get('/statistics', { admin: true })
     this.setState({
@@ -110,7 +131,6 @@ class BlogList extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log(prevState.curTab, this.state.curTab)
     if (prevState.curTab !== this.state.curTab) {
       this.curPage = 0
       this.getData(this.state.curTab)
@@ -139,8 +159,24 @@ class BlogList extends React.Component {
         <div>
           {list.length > 0
             ? list.map(item => (
-              <div>
+              <div style={{ position: 'relative' }}>
                 <BlogListItem data={item} isDraft={curTab === 'Draft'} />
+                <div className={classes.actions}>
+                  <Link
+                    to={`/admin/${curTab === 'Draft' ? 'draft' : 'blog'}/edit/${item.id}`}
+                    className={`plain-link ${classes.action}`}
+                  >
+                    编辑
+                  </Link>
+                  <span style={{ color: '#dfdfdf' }}>|</span>
+                  <span
+                    data-id={item.id}
+                    className={`plain-link ${classes.action}`}
+                    onClick={this.handleDelete}
+                  >
+                    删除
+                  </span>
+                </div>
               </div>
             ))
             : <span>无记录</span>
