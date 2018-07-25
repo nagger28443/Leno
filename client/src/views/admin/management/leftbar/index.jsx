@@ -31,18 +31,22 @@ const menu = [
   {
     title: '博客统计',
     link: '/admin/statistics',
+    match: /\/admin\/statistics/,
   },
   {
     title: '文章管理',
     link: '/admin/blog/list',
+    match: /\/admin\/(blog|draft)/,
   },
   {
     title: '分类管理',
     link: '/admin/category',
+    match: /\/admin\/category/,
   },
   {
     title: '博客设置',
     link: '/admin/settings',
+    match: /\/admin\/settings/,
   },
 ]
 
@@ -73,7 +77,7 @@ class Leftbar extends React.Component {
             menu.map(item => (
               <Link
                 to={item.link}
-                className={`${classes.menu} ${curPath.startsWith(item.link) ? classes.active : ''}`}
+                className={`${classes.menu} ${item.match.test(curPath) ? classes.active : ''}`}
               >
                 {item.title}
               </Link>

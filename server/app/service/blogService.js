@@ -5,97 +5,44 @@ const MDParser = require('../utils/MDParser')
 const service = {}
 
 // todo 参数校验
-
-const getPrivateBlogs = async ({
-  ctx, countSql, listSql, commonCond,
+const getWhereSql = ({
+  search, category, labels, archive, deleted, isPrivate,
 }) => {
-  const whereSql = 'WHERE private=1 AND deleted=0'
-  const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
-  if (total === 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
-  } else {
-    const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
-    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
+  const conditions = []
+
+  if (archive) {
+    if (/^\d{4}$/.test(archive) || /^\d{4}-\d{2}$/.test(archive)) {
+      conditions.push(`date like '${archive}%'`)
+    } else if (archive !== 'all') {
+      return false
+    }
   }
+
+  if (search) {
+    conditions.push(`(title LIKE '%${search}%' OR category LIKE '%${search}%' OR labels LIKE '%${search}%')`)
+  }
+
+  if (category) {
+    conditions.push(`category='${category}'`)
+  }
+
+  if (labels) {
+    labels.split(',').forEach((label) => {
+      conditions.push(`labels LIKE '%${label}%'`)
+    })
+  }
+
+  if (deleted) {
+    conditions.push(`deleted=${1}`)
+  }
+
+  if (isPrivate === 1 || isPrivate === 0) {
+    conditions.push(`private=${isPrivate}`)
+  }
+
+  return conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
 }
 
-const serachBlog = async ({
-  ctx, search, countSql, listSql, commonCond, hasPrivate,
-}) => {
-  const whereSql = `WHERE (title LIKE '%${search}%' OR category LIKE '%${search}%' OR labels LIKE '%${search}%') ${
-    !hasPrivate ? 'AND private=0' : ''
-  } AND deleted=0`
-
-  const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
-  if (total === 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
-  } else {
-    const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
-    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
-  }
-}
-
-const getBlogByCategory = async ({
-  ctx, category, countSql, listSql, commonCond, hasPrivate,
-}) => {
-  const whereSql = `WHERE category=?  ${!hasPrivate ? 'AND private=0' : ''} AND deleted=0`
-  const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`, [category])
-  if (total === 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
-  } else {
-    const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`, [category])
-    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
-  }
-}
-
-const getBlogByLabels = async ({
-  ctx, labels, countSql, listSql, commonCond, hasPrivate,
-}) => {
-  const params = labels.split(',')
-  const labelSql = params.map(label => `labels LIKE '%${label}%'`).join(' AND ')
-  const whereSql = `WHERE ${labelSql} ${!hasPrivate ? 'AND private=0' : ''} AND deleted=0`
-  const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`, params)
-  if (total === 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
-  } else {
-    const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`, params)
-    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
-  }
-}
-
-const getBlogByArchive = async ({
-  ctx, archive, countSql, listSql, commonCond, hasPrivate,
-}) => {
-  let whereSql = ''
-  if (/^\d{4}$/.test(archive) || /^\d{4}-\d{2}$/.test(archive)) {
-    whereSql = `WHERE date like '${archive}%' ${!hasPrivate ? 'AND private=0' : ''} AND deleted=0`
-  } else if (archive === 'all') {
-    whereSql = `WHERE deleted=0 ${!hasPrivate ? 'AND private=0' : ''}`
-  } else {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total: 0 })
-    return
-  }
-
-  const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
-  if (total === 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
-  } else {
-    const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
-    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
-  }
-}
-
-const getHomeBlogs = async ({ ctx, countSql, commonCond }) => {
-  const listSql = `SELECT id,title,date,category,labels,visit_cnt
-  as visitCount,content,private as isPrivate FROM blog`
-  const [{ total }] = await u.dbQuery(`${countSql}`)
-  if (total === 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
-  } else {
-    const result = await u.dbQuery(`${listSql} ${commonCond}`)
-    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
-  }
-}
 // 获取博客列表
 service.getBlogList = async (ctx) => {
   const {
@@ -105,63 +52,38 @@ service.getBlogList = async (ctx) => {
     archive,
     page,
     pageSize = 20,
+    deleted = 0,
     hasDetail = false,
-    isPrivate = false,
+    isPrivate = 0,
   } = ctx.query
 
-  if (isPrivate && !ctx.state.tokenValid) {
+  if ((isPrivate || deleted) && !ctx.state.tokenValid) {
     ctx.throw(403)
   }
 
-  const listSql = 'SELECT id,title,date,category,labels,visit_cnt as visitCount FROM blog'
+  const listSql = `SELECT id,title,date,category,labels,visit_cnt as visitCount
+   ${hasDetail ? ',content' : ''} FROM blog`
   const countSql = 'SELECT COUNT(id) as total FROM blog'
   const orderSql = 'ORDER BY date DESC, visit_cnt DESC'
   const pageSql = page ? `limit ${(page - 1) * pageSize},${pageSize}` : ''
   const commonCond = `${orderSql} ${pageSql}`
-  const hasPrivate = ctx.state.tokenValid
 
-  if (isPrivate) {
-    await getPrivateBlogs({
-      ctx, countSql, listSql, commonCond,
-    })
-    return
-  }
+  const whereSql = getWhereSql({
+    search, category, labels, archive, deleted: Number(deleted), isPrivate: Number(isPrivate),
+  })
 
-  // 搜索博客
-  if (search) {
-    await serachBlog({
-      ctx, search, countSql, listSql, commonCond, hasPrivate,
-    })
-    return
+  if (!whereSql) {
+    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total: 0 })
   }
 
-  // 获取某类目下博客列表
-  if (category) {
-    await getBlogByCategory({
-      ctx, category, countSql, listSql, commonCond, hasPrivate,
-    })
-    return
-  }
-  // 获取具有某标签的博客列表
-  if (labels) {
-    await getBlogByLabels({
-      ctx, labels, countSql, listSql, commonCond, hasPrivate,
-    })
-    return
-  }
+  console.log(whereSql)
 
-  // 按归档日期获取博客列表
-  if (archive) {
-    await getBlogByArchive({
-      ctx, archive, countSql, listSql, commonCond, hasPrivate,
-    })
-    return
-  }
-  // 获取首页列表,待文章内容
-  if (hasDetail) {
-    await getHomeBlogs({
-      ctx, archive, countSql, listSql, commonCond,
-    })
+  const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
+  if (total === 0) {
+    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
+  } else {
+    const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
+    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
 }
 

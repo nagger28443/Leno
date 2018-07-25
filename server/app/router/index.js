@@ -40,6 +40,9 @@ router.put('/draft', draftService.updateDraft)
 // 删除草稿
 router.del('/draft', draftService.deleteDraft)
 
+// 获取回收站文章列表
+router.get('/recycle')
+
 // 获取分类列表
 router.get('/category/list', categoryService.getCategoryList)
 // 修改分类名称

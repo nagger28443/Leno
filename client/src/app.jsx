@@ -10,7 +10,6 @@ import labelStore from './store/banner/labelStore'
 import blogListStore from './store/blogList/blogListStore'
 import blogEditorStore from './store/admin/management/blogEditorStore'
 import './app.styl'
-import { serverHost, serverPort } from '../projectConfig'
 import ErrorHandler from './errorHandler'
 import Admin from './views/admin'
 import App from './views/App'
@@ -29,11 +28,7 @@ axios.interceptors.request.use(config => {
   // c.withCredentials = true
   const { token } = window.sessionStorage
 
-  if (
-    token
-    && token.length > 0
-    && config.url.startsWith(`http://${serverHost}:${serverPort}/admin`)
-  ) {
+  if (token && token.length > 0) {
     c.headers.token = window.sessionStorage.token || ''
   }
   return c

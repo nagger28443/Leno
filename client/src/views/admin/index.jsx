@@ -9,7 +9,7 @@ class Admin extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/admin/login" key="/login" component={<Login />} />
+        <Route path="/admin/login" key="/login" component={Login} />
         <Route key="/management" component={Management} />
       </Switch>
     )

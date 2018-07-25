@@ -7,14 +7,15 @@ const draftService = {}
 draftService.getDraftList = async (ctx) => {
   const { page, pageSize = 20 } = ctx.query
 
-  const listSql = 'SELECT id,title,gmt_modify as time,category,labels FROM draft'
+  const listSql = 'SELECT id,title, DATE_FORMAT(gmt_modify,\'%Y-%m-%d %h:%m\') as date,category,labels FROM draft'
   const countSql = 'SELECT COUNT(id) as total FROM blog'
-  const orderSql = 'ORDER BY gmt_modify DESC, visit_cnt DESC'
+  const orderSql = 'ORDER BY gmt_modify DESC'
   const pageSql = page ? `limit ${(page - 1) * pageSize},${pageSize}` : ''
   const commonCond = `${orderSql} ${pageSql}`
   const whereSql = 'WHERE deleted=0'
 
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
+  console.log(total)
   if (total === 0) {
     ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
@@ -26,7 +27,8 @@ draftService.getDraftList = async (ctx) => {
 // 获取草稿内容
 draftService.getDraft = async (ctx) => {
   const { id } = ctx.query
-  const sql = 'SELECT title,content,gmt_modify as time,category,labels FROM draft where id=?'
+  const sql = 'SELECT title,content,DATE_FORMAT(gmt_modify,\'%Y-%m-%d %h:%m\') as date,category,labels'
+    + ' FROM draft where id=?'
   const res = await u.dbQuery(sql, [id])
   if (res.length > 0) {
     ctx.body = u.response(ctx, codes.SUCCESS, res[0])

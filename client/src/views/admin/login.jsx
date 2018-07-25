@@ -1,9 +1,11 @@
 import { React, post, fail } from 'src/commonExports'
 
 class Login extends React.Component {
-  name = ''
-
-  password = ''
+  constructor() {
+    super()
+    this.name = ''
+    this.password = ''
+  }
 
   handleNameChange = e => {
     this.name = e.target.value.trim()

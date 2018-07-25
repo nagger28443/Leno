@@ -11,6 +11,7 @@ const styles = {
     minHeight: '2rem',
     padding: '0.3rem 0.6rem',
     textAlign: 'center',
+    verticalAlign: 'middle',
     '&:hover': {
       backgroundColor: props => props.color,
       color: props => props.backgroundColor,

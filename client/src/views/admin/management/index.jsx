@@ -57,6 +57,7 @@ class Management extends React.Component {
           <div className={classes.content}>
             <Switch>
               <Route path={`${path}/blog/edit/:id`} key="/blog/edit" component={BlogEditor} />
+              <Route path={`${path}/draft/edit/:id`} key="/draft/edit" component={BlogEditor} />
               <Route path={`${path}/blog/list`} key="/blog/list" component={BlogList} />
 
               <Route path={`${path}/category`} key="/category" component={Category} />

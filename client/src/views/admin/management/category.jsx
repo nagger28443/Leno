@@ -9,12 +9,6 @@ const styles = {
   header: {
     // textAlign: 'right',
   },
-  hr: {
-    border: 0,
-    height: 1,
-    background: '#ababab',
-    margin: [15, 0],
-  },
   content: {
 
   },
@@ -114,7 +108,7 @@ class Category extends React.Component {
             onClick={this.toRename}
           />
         </div>
-        <hr className={classes.hr} />
+        <hr className="hr" />
         <div className={classes.content}>
           {categories.map(item => (
             <span className={classes.category}>
@@ -132,16 +126,20 @@ class Category extends React.Component {
                         ]}
                         onChange={this.handleInputChange}
                       />
-                      <Button
-                        text="保存"
+                      <span
                         onClick={this.updateCategory}
-                        style={{ fontSize: 'smaller', marginLeft: 10 }}
-                      />
-                      <Button
-                        text="取消"
+                        className="plain-link"
+                        style={{ fontSize: 'smaller', marginLeft: '1rem' }}
+                      >
+                       保存
+                      </span>
+                      <span
                         onClick={this.handleCancel}
-                        style={{ fontSize: 'smaller', marginLeft: 10 }}
-                      />
+                        className="plain-link"
+                        style={{ fontSize: 'smaller', marginLeft: '1rem' }}
+                      >
+                       取消
+                      </span>
                     </span>
                   )
                   : (

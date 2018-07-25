@@ -24,20 +24,22 @@ const styles = {
 class Item extends React.Component {
   handleClick = () => {}
 
-  getPath = data => `${data.date.split('-').join('/')}/${data.title}`
+  getBlogPath = data => `/blog/${data.date.slice(0, 10).split('-').join('/')}/${data.title}`
+
+  getDraftPath = data => `/admin/draft/edit/${data.id}`
 
   render() {
-    const { classes, data } = this.props
-    const path = this.getPath(data)
+    const { classes, data, isDraft } = this.props
+    const path = isDraft ? this.getDraftPath(data) : this.getBlogPath(data)
     return (
       <div className={classes.root}>
-        <Link to={`/blog/${path}`} className="plain-link">
+        <Link to={path} className="plain-link">
           <p className={classes.title}>{data.title}</p>
         </Link>
         <div className={classes.footer}>
           <span>{data.date}</span>
-          <span>阅读数：{data.visitCount}</span>
-          {/* <span>评论数：{data.commentCount}</span> */}
+          {data.visitCount ? <span>阅读数：{data.visitCount}</span> : ''}
+          <span>分类：{data.category}</span>
         </div>
       </div>
     )

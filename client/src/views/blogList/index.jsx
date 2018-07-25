@@ -2,7 +2,7 @@ import {
   React, injectSheet, _, get, fail, f, inject, observer, action,
 } from 'src/commonExports'
 import { Detail } from '../../styledComponents'
-import NomalList from './normal'
+import NormalList from './normalList'
 import Archive from './archive'
 import Home from './home'
 
@@ -134,7 +134,7 @@ class BlogList extends React.Component {
     } else if (title === 'archive') {
       content = <Archive />
     } else {
-      content = <NomalList />
+      content = <NormalList />
     }
     return (
       <Tag>

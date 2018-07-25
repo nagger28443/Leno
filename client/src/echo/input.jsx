@@ -68,8 +68,8 @@ class Input extends React.Component {
   }
 
   handleValueChange = e => {
-    const value = e.target.value.trim()
-    this.validate(value)
+    const { value } = e.target
+    this.validate(value.trim())
     if (this.props.onChange) {
       this.props.onChange(value)
     }
@@ -89,21 +89,21 @@ class Input extends React.Component {
 
   render() {
     const {
-      style, value, placeholder, className = '', defaultValue, disabled, autoFocus,
+      style, value, placeholder, className = '', defaultValue, disabled, autoFocus, width,
     } = this.props
     const { isValid, helper } = this.state
     return (
-      <div style={{ display: 'inline-block', verticalAlign: 'text-top' }}>
+      <div style={{ display: 'inline-block', width }}>
         <input
           className={`input-box ${isValid ? '' : 'warning'} ${className}`}
           placeholder={placeholder}
           onChange={this.handleValueChange}
           onBlur={this.handleBlur}
-          style={style}
+          style={{ width: '100%', ...style }}
           value={value}
           defaultValue={defaultValue}
           disabled={disabled}
-          autoFocus={autoFocus} //eslint-disable-line
+          autoFocus={!!autoFocus} //eslint-disable-line
         />
         <div className="helper" style={{ display: isValid ? 'none' : 'block' }}>
           {helper}

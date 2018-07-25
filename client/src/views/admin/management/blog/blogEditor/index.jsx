@@ -151,7 +151,7 @@ class BlogEditor extends React.Component {
                { max: 50, message: '标题长度不能超过50' },
                { min: 2, message: '标题长度不能小于2' },
              ]}
-             className={classes.title}
+             width="100%"
              onChange={this.handleTitleChange}
              value={title}
              placeholder="请输入文章标题"

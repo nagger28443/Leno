@@ -40,7 +40,9 @@ const u = {
     ctx.state.redisClient = redisClient
 
     // 初始化stattistics
-    await u.updateStatistics()
+    await u.updateStatistics({
+      categoryCnt: true, labelCnt: true, blogCnt: true, draftCnt: true, recycleCnt: true,
+    })
 
     await next()
   },
@@ -55,13 +57,32 @@ const u = {
   }),
 
   // 更新统计数据
-  updateStatistics: async () => {
-    const categoryCnt = (await u.dbQuery('select count(id) as count from category'))[0].count
-    const labelCnt = (await u.dbQuery('select count(id)  as count from label'))[0].count
-    const blogCnt = (await u.dbQuery('select count(id)  as count from blog'))[0].count
-    redisClient.set('categoryCnt', categoryCnt)
-    redisClient.set('labelCnt', labelCnt)
-    redisClient.set('blogCnt', blogCnt)
+  updateStatistics: async ({
+    categoryCnt, labelCnt, blogCnt, draftCnt, recycleCnt,
+  }) => {
+    if (categoryCnt) {
+      const t = (await u.dbQuery('SELECT count(id) AS count FROM category'))[0].count
+      redisClient.set('categoryCnt', t)
+    }
+    if (labelCnt) {
+      const t = (await u.dbQuery('SELECT count(id) AS count FROM label'))[0].count
+      redisClient.set('labelCnt', t)
+    }
+    if (blogCnt) {
+      const publicCnt = (await u.dbQuery('SELECT count(id) AS count FROM blog WHERE deleted=0 AND private=0'))[0].count
+      const privateCnt = (await u.dbQuery('SELECT count(id) AS count FROM blog WHERE deleted=0 && private=1'))[0].count
+      redisClient.set('publicCnt', publicCnt)
+      redisClient.set('privateCnt', privateCnt)
+    }
+    if (draftCnt) {
+      const t = (await u.dbQuery('SELECT count(id) AS count FROM draft WHERE deleted=0'))[0].count
+      redisClient.set('draftCnt', t)
+    }
+    if (recycleCnt) {
+      const t = (await u.dbQuery('SELECT count(id) AS count FROM blog WHERE deleted=1'))[0].count
+        + (await u.dbQuery('SELECT count(id) AS count FROM draft WHERE deleted=1'))[0].count
+      redisClient.set('recycleCnt', t)
+    }
   },
   // .finally(() => {
   //   connection.end()

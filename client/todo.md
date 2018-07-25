@@ -1,17 +1,18 @@
 <!-- - 文章收起后滚动bug? -->
+- 各接口更新统计数据
+- 防止重复请求
+- 英文化
 - context
 - 启动时检查数据库的可用性
-- 锚点,snapshot?
+- snapshot?
 - 原生js
 - 关于width 100%
 - history.replace,link
 - message-component
 
 - cookie跨域
-- options请求,204
 - draft, is_deleted, stick_top, private
 
-- 前端功能完成后, 后端实现
 - 服务器部署踩坑, 跨域与代理
 - 安全
 
