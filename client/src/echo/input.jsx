@@ -2,7 +2,11 @@ import React from 'react'
 import injectSheet from 'react-jss'
 import f from '../util/f'
 
-const styles = {}
+const styles = {
+  inputRoot: {
+    display: 'inline-block',
+  },
+}
 
 class Input extends React.Component {
   constructor(props) {
@@ -89,17 +93,19 @@ class Input extends React.Component {
 
   render() {
     const {
-      style, value, placeholder, className = '', defaultValue, disabled, autoFocus, width,
+      boxStyle, inputStyle, type = 'text', value, placeholder, className = '', defaultValue, disabled, autoFocus,
     } = this.props
     const { isValid, helper } = this.state
+    const { classes } = this.props
     return (
-      <div style={{ display: 'inline-block', width }}>
+      <div style={boxStyle} className={`${classes.inputRoot} ${className}`}>
         <input
-          className={`input-box ${isValid ? '' : 'warning'} ${className}`}
+          className={`input-box ${isValid ? '' : 'warning'}`}
           placeholder={placeholder}
+          type={type}
           onChange={this.handleValueChange}
           onBlur={this.handleBlur}
-          style={{ width: '100%', ...style }}
+          style={{ width: '100%', height: '100%', ...inputStyle }}
           value={value}
           defaultValue={defaultValue}
           disabled={disabled}

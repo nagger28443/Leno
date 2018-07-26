@@ -19,10 +19,10 @@ const styles = {
   },
 }
 const TITLE = {
-  search: '搜索关键字',
-  category: '当前类目',
-  labels: '当前标签',
-  archive: '归档',
+  search: 'Search',
+  category: 'Category',
+  labels: 'Label',
+  archive: 'Archive',
 }
 
 let store
@@ -126,38 +126,43 @@ class BlogList extends React.Component {
     const { classes } = this.props
     const { data, query } = store
     const title = Object.keys(query)[0]
+
     let content
-    let Tag = Detail
     if (query.hasDetail) {
       content = <Home />
-      Tag = 'div'
     } else if (title === 'archive') {
       content = <Archive />
     } else {
       content = <NormalList />
     }
-    return (
-      <Tag>
+
+    const innerElements = (
+      <React.Fragment>
         <div className={classes.title} style={{ display: query.hasDetail ? 'none' : 'block' }}>
-          <span>{`${TITLE[title]}：${query[title] === 'all' ? '全部' : query[title]}`}</span>
+          <span>{`${TITLE[title]}：${query[title] === 'all' ? 'All' : query[title]}`}</span>
         </div>
         <div style={{ display: data.length === 0 ? 'block' : 'none', textAlign: 'center' }}>
-          {'无记录'}
+         No records
         </div>
         <div style={{ display: data.length > 0 ? 'block' : 'none' }}>
           {content}
           <div className={classes.getMore}>
             {data.length < this.total ? (
               <span className="plain-link" onClick={store.getData}>
-                {'<<<加载更多>>>'}
+                {'<<<READ MORE>>>'}
               </span>
             ) : (
-              '没有更多了'
+              'NO MORE LEFT'
             )}
           </div>
         </div>
-      </Tag>
+      </React.Fragment>
     )
+
+    if (query.hasDetail) {
+      return (<div>{innerElements}</div>)
+    }
+    return (<Detail>{innerElements}</Detail>)
   }
 }
 export default injectSheet(styles)(BlogList)

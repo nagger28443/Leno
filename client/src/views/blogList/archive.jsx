@@ -43,6 +43,9 @@ const styles = {
   },
 }
 
+const monthArr = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+  'October', 'November', 'December']
+
 const dataFormat = data => {
   let preYear = null
   let preMonth = null
@@ -88,10 +91,10 @@ class Archive extends React.Component {
       <div className={classes.root}>
         {this.data.map(item => (
           <div className={classes.mark} key={item.data.id}>
-            <p className={classes.year}>{item.year}年</p>
+            <p className={classes.year}>{item.year}</p>
             {item.data.map(ele => (
               <div className={classes.mark} key={ele.data.id}>
-                <p className={classes.month}>{ele.month}月</p>
+                <p className={classes.month}>{monthArr[ele.month]}</p>
                 {ele.data.map(d => <BlogListItem data={d.data} key={d.data.id} />)}
               </div>
             ))}

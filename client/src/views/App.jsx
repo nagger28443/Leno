@@ -90,7 +90,7 @@ class App extends React.Component {
         <div
           onClick={scrollToTop}
           className={classes.toTop}
-          title="返回顶部"
+          title="To top"
           style={{ display: isAtTop ? 'none' : 'block' }}
         />
       </React.Fragment>

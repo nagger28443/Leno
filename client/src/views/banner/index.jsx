@@ -68,7 +68,7 @@ class Banner extends React.Component {
         <Menu />
         <div className="leftbar-extra">
           <Links />
-          <p>如人饮水，冷暖自知。</p>
+          <p>Warm or cold, can not be told.</p>
           <Statistics />
           <SearchBox />
         </div>

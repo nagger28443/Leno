@@ -51,7 +51,7 @@ const CardTemplate = ({ classes, data }) => (
       </p>
     ))}
     <Link to={data.all} className={`plain-link ${classes.all}`}>
-      查看全部
+      MORE
     </Link>
   </div>
 )

@@ -81,12 +81,16 @@ class Category extends React.Component {
 
     return (
       <div>
-        <span>个人分类：</span>
+        <span style={{
+          display: 'inline-block', width: '5rem', textAlign: 'right', marginRight: '0.5rem',
+        }}
+        >Category:
+        </span>
         <span>
           <div className={classes.categories}>
             <input
               type="text"
-              placeholder="搜索或添加分类"
+              placeholder="Search or insert"
               className="input-box"
               style={{ width: '10rem' }}
               onFocus={this.handleInputFocus}

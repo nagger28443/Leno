@@ -23,7 +23,8 @@ class TopBar extends React.Component {
   componentDidMount() {}
 
   logOut= () => {
-    console.log('logout')
+    window.sessionStorage.removeItem('token')
+    window.location.href = '/admin/login'
   }
 
   render() {
@@ -31,14 +32,14 @@ class TopBar extends React.Component {
     return (
       <header className={`${classes.root} ${clazz}`}>
         <div className={classes.content}>
-          <span className={classes.left}>管理中心</span>
+          <span className={classes.left}>Console</span>
           <div className={classes.right}>
             <Button
-              text={<Link to="/admin/blog/edit/new" className="plain-link">写博客</Link>}
+              text={<Link to="/admin/blog/edit/new" className="plain-link">New post</Link>}
               style={{ marginRight: 15 }}
             />
             <span>Greetings!</span>
-            <span className="link" onClick={this.logOut} style={{ margin: '0 1rem' }}>退出</span>
+            <span className="link" onClick={this.logOut} style={{ margin: '0 1rem' }}>Sign out</span>
           </div>
         </div>
       </header>

@@ -38,8 +38,8 @@ class Item extends React.Component {
         </Link>
         <div className={classes.footer}>
           <span>{data.date}</span>
-          {data.visitCount ? <span>阅读数：{data.visitCount}</span> : ''}
-          <span>分类：{data.category}</span>
+          {data.visitCount ? <span>Read：{data.visitCount}</span> : ''}
+          <span>Category：{data.category}</span>
         </div>
       </div>
     )

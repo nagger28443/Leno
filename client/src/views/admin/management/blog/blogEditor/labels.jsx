@@ -61,7 +61,11 @@ class Labels extends React.Component {
     const { labels } = store
     return (
       <div>
-        <span>文章标签：</span>
+        <span style={{
+          display: 'inline-block', width: '5rem', textAlign: 'right', marginRight: '0.5rem',
+        }}
+        >Labels:
+        </span>
         <span>
           {labels.map((label, index) => (
             <span
@@ -85,7 +89,7 @@ class Labels extends React.Component {
             onClick={this.showLabelInput}
             style={{ marginLeft: '0.3rem', display: labels.length < 6 ? 'inline-block' : 'none' }}
           >
-            添加
+            Add
           </span>
         </span>
       </div>

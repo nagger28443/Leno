@@ -72,8 +72,6 @@ service.getBlogList = async (ctx) => {
     ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total: 0 })
   }
 
-  console.log(whereSql)
-
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
   if (total === 0) {
     ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
@@ -81,9 +79,12 @@ service.getBlogList = async (ctx) => {
     const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
     ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
   }
+
+  if (hasDetail) {
+    u.dbQuery(`UPDATE blog SET visit_cnt=visit_cnt+1 ${whereSql}`)
+  }
 }
 
-// 展开首页文章时增加访问次数 todo
 // 获取博客内容
 service.getBlog = async (ctx) => {
   const { id, title, date } = ctx.query
@@ -117,6 +118,30 @@ service.getBlog = async (ctx) => {
   // 增加访问次数
   const sql2 = `UPDATE blog SET visit_cnt=visit_cnt+1 ${whereSql}`
   u.dbQuery(sql2, params)
+}
+
+const updateCategoryLabelArchive = ({ category, labels, date }) => {
+  const commonCond = 'private=0 AND deleted=0'
+  // 更新category表
+  u.dbQuery(`INSERT INTO category set name=?,count=1 ON DUPLICATE KEY UPDATE count=(
+    SELECT COUNT(id) FROM blog WHERE category=? AND ${commonCond})`,
+  [category, category])
+
+  // 更新archive表
+  if (date) {
+    u.dbQuery(`INSERT INTO archive set date=?,count=1 ON DUPLICATE KEY UPDATE count=( 
+  SELECT COUNT(id) FROM blog WHERE date LIKE '${date.slice(0, 7)}%' AND ${commonCond})`, [date.slice(0, 7)])
+  }
+
+  // 更新label表
+  if (labels) {
+    labels
+      .split(',')
+      .forEach(async (label) => {
+        u.dbQuery(`INSERT INTO label set name=?,count=1 ON DUPLICATE KEY UPDATE count=(
+              SELECT COUNT(id) FROM blog WHERE labels LIKE '%${label}%' AND ${commonCond})`, [label])
+      })
+  }
 }
 
 // 发表文章
@@ -153,22 +178,9 @@ service.addBlog = async (ctx) => {
   })
   ctx.body = u.response(ctx, codes.SUCCESS)
 
-  // 更新category表
-  await u.dbQuery('INSERT INTO category set name=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [
-    category,
-  ])
-
-  // 更新archive表
-  await u.dbQuery('INSERT INTO archive set date=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [date.slice(0, 7)])
-
-  // 更新label表
-  labels.split(',')
-    .forEach(async (label) => {
-      await u.dbQuery(`INSERT INTO label set name='${label}',count=1 ON DUPLICATE KEY UPDATE count=count+1`)
-    })
-
+  updateCategoryLabelArchive({ category, labels: labels.length > 0 ? labels : null, date })
   // 更新statistics
-  u.updateStatistics()
+  u.updateStatistics({ categoryCnt: true, labelCnt: true, blogCnt: true })
 }
 
 
@@ -191,9 +203,6 @@ service.updateBlog = async (ctx) => {
   if (u.isEmpty(res1)) {
     ctx.throw(404)
   }
-  const prevCategory = res1[0].category
-  const prevLabels = res1[0].labels.split(',')
-  console.log(prevLabels)
 
   const contentHTMLStr = MDParser(content)
   const gmt = new Date()
@@ -203,7 +212,7 @@ service.updateBlog = async (ctx) => {
   const day = gmt.getDate()
   const date = `${year}-${month <= 9 ? 0 : ''}${month}-${day <= 9 ? 0 : ''}${day}`
 
-  // 插入博客信息
+  // 更新博客信息
   await u.dbQuery(`UPDATE blog SET ? WHERE id=${id}`, {
     title,
     content: contentHTMLStr,
@@ -216,41 +225,32 @@ service.updateBlog = async (ctx) => {
   })
   ctx.body = u.response(ctx, codes.SUCCESS)
 
-  // 更新category表
-  if (prevCategory !== category) {
-    await u.dbQuery('UPDATE category set count=count-1 WHERE name=?', [
-      prevCategory,
-    ])
-    await u.dbQuery('INSERT INTO category set name=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [
-      category,
-    ])
-  }
-
-  // 更新archive表
-  await u.dbQuery('INSERT INTO archive set date=?,count=1 ON DUPLICATE KEY UPDATE count=count+1', [date.slice(0, 7)])
-
-  // 更新label表
-  labels.split(',')
-    .forEach(async (label) => {
-      const index = prevLabels.indexOf(label)
-      if (index >= 0) {
-        prevLabels.splice(index, 1)
-      } else {
-        await u.dbQuery(`INSERT INTO label set name='${label}',count=1 ON DUPLICATE KEY UPDATE count=count+1`, [label])
-      }
-    })
-  prevLabels
-    .forEach(async (label) => {
-      await u.dbQuery('UPDATE label set count=count-1 WHERE name=? AND count>0', [label])
-    })
+  updateCategoryLabelArchive({ category, labels: labels.length > 0 ? labels : null, date })
 
   // 更新statistics
-  u.updateStatistics()
+  u.updateStatistics({ categoryCnt: true, labelCnt: true, blogCnt: true })
 }
 
 
 service.deleteBlog = async (ctx) => {
-  console.log(ctx)
+  const { id } = ctx.query
+
+  const res = await u.dbQuery('SELECT category,labels,date FROM blog WHERE id=?', [id])
+  if (res.length === 0) {
+    ctx.throw(404)
+  }
+
+  await u.dbQuery('UPDATE BLOG SET deleted=1 WHERE id=?', [id])
+  ctx.body = u.response(ctx, codes.SUCCESS)
+
+  const blog = res[0]
+  const { category, labels, date } = blog
+  updateCategoryLabelArchive({ category, labels: labels.length > 0 ? labels : null, date })
+
+  // 更新statistics
+  u.updateStatistics({
+    categoryCnt: true, labelCnt: true, blogCnt: true, recycleCnt: true,
+  })
 }
 
 module.exports = service

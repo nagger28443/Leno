@@ -152,26 +152,26 @@ class BlogEditor extends React.Component {
            <Input
              bridge={this.titleInput}
              rules={[
-               { max: 50, message: '标题长度不能超过50' },
-               { min: 2, message: '标题长度不能小于2' },
+               { max: 50, message: 'Title can not be longer then 50 characters' },
+               { required: true, message: 'Title required' },
              ]}
-             width="100%"
+             boxStyle={{ width: '100%' }}
              onChange={this.handleTitleChange}
              value={title}
-             placeholder="请输入文章标题"
+             placeholder="Post title"
            />
          </div>
          <div className={classes.row}>
            <TextArea
              bridge={this.contentInput}
              rules={[
-               { required: true, message: '内容不能为空' },
-               { max: 20000, message: '标题长度不能超过20000字' },
+               { required: true, message: 'Content required' },
+               { max: 20000, message: 'Content can not be longer then 20000 characters' },
              ]}
              className={classes.content}
              value={content}
              onChange={this.handleContentChange}
-             placeholder="请输入文章内容"
+             placeholder="Post content"
            />
          </div>
          <div style={{ fontSize: 'small' }}>
@@ -185,9 +185,8 @@ class BlogEditor extends React.Component {
              <PrivateSwitch />
            </div>
            <div className={classes.row}>
-             <span style={{ visibility: 'hidden' }}>提交按钮：</span>
-             <Button style={{ marginRight: '0.5rem' }} text="发表博客" onClick={this.postBlog} />
-             <Button text="保存草稿" onClick={this.saveDraft} />
+             <Button style={{ marginRight: '0.5rem', marginLeft: '5.5rem' }} text="POST" onClick={this.postBlog} />
+             <Button text="SAVE DRAFT" onClick={this.saveDraft} />
            </div>
          </div>
        </div>

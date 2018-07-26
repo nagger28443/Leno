@@ -15,7 +15,6 @@ draftService.getDraftList = async (ctx) => {
   const whereSql = 'WHERE deleted=0'
 
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
-  console.log(total)
   if (total === 0) {
     ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {

@@ -2,6 +2,7 @@ import {
   React, injectSheet, get, fail, Link, dele,
 } from 'src/commonExports'
 import BlogListItem from 'src/views/commonComponents/blogListItem'
+import message from '../../../../echo/message'
 
 const styles = {
   active: {
@@ -101,7 +102,30 @@ class BlogList extends React.Component {
     const { curTab } = this.state
 
     try {
-      await dele(`/${curTab === 'Draft' || curTab === 'Recycle' ? curTab.toLowerCase() : 'blog'}`, { id })
+      const isBlog = curTab === 'Public' || curTab === 'Private' || curTab === 'All'
+
+      const params = { id }
+      if (curTab === 'Recycle') {
+        params.type = e.target.getAttribute('data-tp')
+      }
+
+      await dele(`/${isBlog ? 'blog' : curTab.toLowerCase()}`, params)
+      message.info('Deleted successfully')
+
+      const { list, stat } = this.state
+      const { statName } = menus.find(item => item.title === curTab)
+      stat[statName] -= 1
+      if (curTab === 'Public' || curTab === 'Private') {
+        stat.allCnt -= 1
+      }
+      if (curTab !== 'Recycle') {
+        stat.recycleCnt += 1
+      }
+
+      this.setState({
+        stat,
+        list: list.filter(item => String(item.id) !== id),
+      })
     } catch (err) {
       fail(err)
     }
@@ -109,10 +133,14 @@ class BlogList extends React.Component {
 
   async componentDidMount() {
     const stat = await get('/statistics', { admin: true })
+    Object.keys(stat).forEach(key => {
+      stat[key] = Number(stat[key])
+    })
+
     this.setState({
       stat: {
         ...stat,
-        allCnt: Number(stat.publicCnt) + Number(stat.privateCnt),
+        allCnt: stat.publicCnt + stat.privateCnt,
       },
     })
 
@@ -166,20 +194,21 @@ class BlogList extends React.Component {
                     to={`/admin/${curTab === 'Draft' ? 'draft' : 'blog'}/edit/${item.id}`}
                     className={`plain-link ${classes.action}`}
                   >
-                    编辑
+                    Edit
                   </Link>
                   <span style={{ color: '#dfdfdf' }}>|</span>
                   <span
                     data-id={item.id}
+                    data-tp={item.type}
                     className={`plain-link ${classes.action}`}
                     onClick={this.handleDelete}
                   >
-                    删除
+                    Delete
                   </span>
                 </div>
               </div>
             ))
-            : <span>无记录</span>
+            : <span>No records</span>
           }
         </div>
       </div>

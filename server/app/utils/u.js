@@ -146,6 +146,7 @@ const u = {
       ctx.set('Access-Control-Allow-Origin', ctx.request.header.origin)
       ctx.set('Access-Control-Allow-Credentials', true)
       ctx.set('Access-Control-Allow-Headers', 'Content-Type')
+      ctx.set('Access-Control-Max-Age', 3600)
       await next()
     } catch (err) {
       if (err.status) {

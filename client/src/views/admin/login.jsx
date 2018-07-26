@@ -1,4 +1,24 @@
-import { React, post, fail } from 'src/commonExports'
+import {
+  React, post, fail, injectSheet,
+} from 'src/commonExports'
+import { Input, Button, message } from 'src/echo'
+
+
+const styles = {
+  root: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
+    padding: '1rem',
+  },
+  item: {
+    margin: ['1rem', 0],
+    display: 'block',
+    width: '15rem',
+    height: '2rem',
+  },
+}
 
 class Login extends React.Component {
   constructor() {
@@ -7,12 +27,12 @@ class Login extends React.Component {
     this.password = ''
   }
 
-  handleNameChange = e => {
-    this.name = e.target.value.trim()
+  handleNameChange = value => {
+    this.name = value.trim()
   }
 
-  handlePasswordChange = e => {
-    this.password = e.target.value.trim()
+  handlePasswordChange = value => {
+    this.password = value.trim()
   }
 
   handleSubmit = () => {
@@ -23,11 +43,9 @@ class Login extends React.Component {
       })
       .catch(err => {
         if (err.code === 2101) {
-          // 用户名或密码错误
-          console.log('密码错误')
+          message.error('User name or password invalid')
         } else if (err.code === 2110) {
-          // frozen
-          console.log('账户冻结')
+          message.error('Account frozen')
         } else {
           fail(err)
         }
@@ -35,18 +53,15 @@ class Login extends React.Component {
   }
 
   render() {
+    const { classes } = this.props
     return (
-      <div>
-        <div>
-          用户名：<input type="text" onChange={this.handleNameChange} />
-        </div>
-        <div>
-          密码：<input type="password" onChange={this.handlePasswordChange} />
-        </div>
-        <button onClick={this.handleSubmit}>登录</button>
+      <div className={classes.root}>
+        <Input className={classes.item} type="text" placeholder="User name" onChange={this.handleNameChange} />
+        <Input className={classes.item} type="password" placeholder="Password" onChange={this.handlePasswordChange} />
+        <Button className={classes.item} text="Sign in" onClick={this.handleSubmit} style={{ fontSize: 'smaller' }} />
       </div>
     )
   }
 }
 
-export default Login
+export default injectSheet(styles)(Login)

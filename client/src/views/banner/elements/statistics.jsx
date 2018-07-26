@@ -42,19 +42,19 @@ class Statistics extends React.Component {
         <Link to="/list?archive=all">
           <div className={`plain-link ${classes.item}`}>
             <p>{data.blog}</p>
-            <p>日志</p>
+            <p>POST</p>
           </div>
         </Link>
         <Link to="/category">
           <div className={`plain-link ${classes.item}`}>
             <p>{data.category}</p>
-            <p>分类</p>
+            <p>CATEGORY</p>
           </div>
         </Link>
         <Link to="#">
           <div className={`plain-link ${classes.item}`}>
             <p>{data.label}</p>
-            <p>标签</p>
+            <p>LABEL</p>
           </div>
         </Link>
       </div>

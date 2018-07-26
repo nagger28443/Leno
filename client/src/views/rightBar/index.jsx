@@ -69,8 +69,8 @@ const styles = {
 }
 
 const TABS = {
-  catalog: '文章目录',
-  categoryArchive: '分类·归档',
+  catalog: 'CATALOG',
+  categoryArchive: 'CATEGORY·ARCHIVE',
 }
 const anchorRegex = /<(h[23])\sid=(.*?)>.*?<\/\1>/g
 
@@ -89,12 +89,12 @@ class RightBar extends React.Component {
       childAnchorId: '',
       anchors: [],
       categories: {
-        title: '分类',
+        title: 'CATEGORY',
         all: '/category',
         content: [],
       },
       archives: {
-        title: '归档',
+        title: 'ARCHIVE',
         all: '/list?archive=all',
         content: [],
       },

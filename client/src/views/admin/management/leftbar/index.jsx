@@ -29,22 +29,22 @@ const styles = {
 
 const menu = [
   {
-    title: '博客统计',
+    title: 'Stats',
     link: '/admin/statistics',
     match: /\/admin\/statistics/,
   },
   {
-    title: '文章管理',
+    title: 'Posts',
     link: '/admin/blog/list',
     match: /\/admin\/(blog|draft)/,
   },
   {
-    title: '分类管理',
+    title: 'Categories',
     link: '/admin/category',
     match: /\/admin\/category/,
   },
   {
-    title: '博客设置',
+    title: 'Settings',
     link: '/admin/settings',
     match: /\/admin\/settings/,
   },
@@ -71,7 +71,7 @@ class Leftbar extends React.Component {
     const { curPath } = this.state
     return (
       <sider className={`${clazz} ${root}`}>
-        <div className={classes.title}>菜单</div>
+        <div className={classes.title}>Menu</div>
         <nav className={classes.menuContainer}>
           {
             menu.map(item => (

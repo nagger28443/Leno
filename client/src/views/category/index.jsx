@@ -37,7 +37,7 @@ class Category extends React.Component {
     const { list } = this.state
     return (
       <Detail>
-        <h1 className={classes.header}>分类列表</h1>
+        <h1 className={classes.header}>Category List</h1>
         {list.map(item => (
           <Link
             to={`/list?category=${item.name}`}

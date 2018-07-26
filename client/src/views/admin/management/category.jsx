@@ -98,7 +98,7 @@ class Category extends React.Component {
       <div>
         <div className={classes.header}>
           <Button
-            text="重命名"
+            text="Rename"
             style={{
               fontSize: 'smaller',
               marginRight: 10,
@@ -121,8 +121,8 @@ class Category extends React.Component {
                         bridge={this.input}
                         defaultValue={item.name}
                         rules={[
-                          { required: true, message: '分类名称不能为空' },
-                          { max: 20, message: '分类名称长度不可超过20' },
+                          { required: true, message: 'Category name required' },
+                          { max: 20, message: 'Category name can not be more then 20 characters' },
                         ]}
                         onChange={this.handleInputChange}
                       />
@@ -131,14 +131,14 @@ class Category extends React.Component {
                         className="plain-link"
                         style={{ fontSize: 'smaller', marginLeft: '1rem' }}
                       >
-                       保存
+                       Save
                       </span>
                       <span
                         onClick={this.handleCancel}
                         className="plain-link"
                         style={{ fontSize: 'smaller', marginLeft: '1rem' }}
                       >
-                       取消
+                       Cancel
                       </span>
                     </span>
                   )

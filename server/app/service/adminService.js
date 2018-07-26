@@ -34,10 +34,13 @@ adminService.login = async (ctx) => {
     ctx.body = u.response(ctx, codes.PASSWORD_OR_USER_INVALID)
     return
   }
+
+  redisClient.set('loginFailedCount', 0)
   const token = tku.tokenGenerator()
   ctx.state.token = token
   // ctx.cookies.set('token', token)
   ctx.body = u.response(ctx, codes.SUCCESS)
 }
+
 
 module.exports = adminService

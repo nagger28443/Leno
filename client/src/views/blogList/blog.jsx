@@ -59,12 +59,12 @@ class Blog extends React.Component {
     const { isArticleCollapsed } = this.state
     return (
       <div className={classes.root}>
-        <article className={classes.article} style={{ height: isArticleCollapsed ? '50rem' : '' }}>
+        <article className={classes.article} style={{ minHeight: '50rem', height: isArticleCollapsed ? '50rem' : '' }}>
           <BlogHeader data={data} />
           <div dangerouslySetInnerHTML={{ __html: data.content }} />
           <div className={classes.toggleCollapse} onClick={this.toggleArticleCollapse}>
             <span className="plain-link">
-              {isArticleCollapsed ? '<<<点击展开>>>' : '>>>点击收起<<<'}
+              {isArticleCollapsed ? '<<<READ MORE>>>' : '>>>COLLAPSE<<<'}
             </span>
           </div>
         </article>

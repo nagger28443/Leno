@@ -1,9 +1,9 @@
 const u = require('../utils/u')
 const codes = require('../constants/codes')
 
-const statisticsService = {}
+const statsService = {}
 
-statisticsService.getHomeStatistics = async (ctx) => {
+statsService.getHomeStatistics = async (ctx) => {
   const { admin } = ctx.query
   const { redisClient } = ctx.state
 
@@ -27,4 +27,4 @@ statisticsService.getHomeStatistics = async (ctx) => {
   ctx.body = u.response(ctx, codes.SUCCESS, { category: categoryCnt, label: labelCnt, blog: blogCnt })
 }
 
-module.exports = statisticsService
+module.exports = statsService

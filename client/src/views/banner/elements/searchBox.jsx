@@ -53,7 +53,7 @@ class SearchBox extends React.Component {
     e.target.value = ''
     if (text.length === 0) {
       this.setState({
-        warning: '请输入搜索内容!',
+        warning: 'Content required!',
       })
       setTimeout(() => {
         this.setState({
@@ -89,7 +89,7 @@ class SearchBox extends React.Component {
             this.input = input
           }}
           onBlur={this.handleInputBlur}
-          placeholder="搜索标题和标签"
+          placeholder="Search"
           onKeyPress={this.handleKeyEnter}
           className={classes.searchInput}
           style={{ width: this.state.isInputCollapsed ? 0 : '80%' }}

@@ -49,7 +49,11 @@ class Category extends React.Component {
 
     return (
       <div>
-        <span>私密文章：</span>
+        <span style={{
+          display: 'inline-block', width: '5rem', textAlign: 'right', marginRight: '0.5rem',
+        }}
+        >Private:
+        </span>
         <div
           className={classes.switchContainer}
           onClick={this.handleSwitch}

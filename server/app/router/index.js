@@ -2,7 +2,7 @@ const Router = require('koa-router')
 const blogService = require('../service/blogService')
 const draftService = require('../service/draftService')
 const adminService = require('../service/adminService')
-const statisticsService = require('../service/statisticsService')
+const statsService = require('../service/statsService')
 const labelService = require('../service/labelService')
 const archiveService = require('../service/archiveService')
 const categoryService = require('../service/categoryService')
@@ -43,6 +43,8 @@ router.del('/draft', draftService.deleteDraft)
 
 // 获取回收站文章列表
 router.get('/recycle/list', recycleService.getRecycleList)
+// 删除回收站条目
+router.del('/recycle', recycleService.deleteItem)
 
 // 获取分类列表
 router.get('/category/list', categoryService.getCategoryList)
@@ -56,7 +58,7 @@ router.get('/archive/list', archiveService.getArchiveList)
 router.get('/label/list', labelService.getLabelList)
 
 // 获取统计信息
-router.get('/statistics', statisticsService.getHomeStatistics)
+router.get('/statistics', statsService.getHomeStatistics)
 
 // 登录
 router.post('/admin/login', adminService.login)

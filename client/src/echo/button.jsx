@@ -8,10 +8,8 @@ const styles = {
     borderColor: props => props.borderColor,
     borderRadius: '0.2rem',
     minWidth: '4rem',
-    minHeight: '2rem',
-    padding: '0.3rem 0.6rem',
+    padding: '0.4rem 0.6rem',
     textAlign: 'center',
-    verticalAlign: 'middle',
     '&:hover': {
       backgroundColor: props => props.color,
       color: props => props.backgroundColor,
@@ -23,10 +21,10 @@ const styles = {
 }
 
 const Button = ({
-  classes, style, text, onClick,
+  classes, style, text, onClick, className,
 }) => (
-  <div className={`plain-link ${classes.container}`} style={style} onClick={onClick}>
-    <span style={{ verticalAlign: 'middle' }}>{text}</span>
+  <div className={`plain-link ${classes.container} ${className}`} style={style} onClick={onClick}>
+    <span>{text}</span>
   </div>
 )
 

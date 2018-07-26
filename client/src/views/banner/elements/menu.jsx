@@ -27,22 +27,22 @@ const Menu = inject('labelStore')(observer(({ labelStore, classes }) => (
   <ul className={classes.menu}>
     <li className={classes.menuItem}>
       <Link to="/list?archive=all" className="plain-link">
-          归档
+          ARCHIVE
       </Link>
     </li>
     <li className={classes.menuItem}>
       <Link to="/category" className="plain-link">
-          分类
+          CATEGORY
       </Link>
     </li>
     <li className={classes.menuItem}>
       <span className="plain-link" onClick={labelStore.showLabelModal}>
-          标签
+          LABEL
       </span>
     </li>
     <li className={classes.menuItem}>
       <Link to="/about" className="plain-link">
-          关于
+          ABOUT
       </Link>
     </li>
     <LabelModal />
