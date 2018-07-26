@@ -1,17 +1,17 @@
 <!-- - 文章收起后滚动bug? -->
 - labels与category一样提供列表
 - 回收站编辑,恢复逻辑梳理
-- promise.then->async
-- 控制台博客管理,分页
-- 各接口更新统计数据
+<!--- promise.then->async-->
+<!--- 控制台博客管理,分页-->
+<!--- 各接口更新统计数据-->
 - 防止重复请求
 - context
 - 启动时检查数据库的可用性
 - snapshot?
+
 - 原生js
 - 关于width 100%
 - history.replace,link
-- 登录后重定向回原来的页面?
 - sessionStorage跨标签
 - text-overflow总结
 
@@ -27,6 +27,7 @@
 -
 - 文章内样式细节实现
 
+- 登录后重定向回原来的页面?
 
 
  toBase64 = file => {

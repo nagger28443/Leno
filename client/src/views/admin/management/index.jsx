@@ -56,13 +56,13 @@ class Management extends React.Component {
           <Leftbar clazz={classes.leftbar} />
           <div className={classes.content}>
             <Switch>
-              <Route path={`${path}/blog/edit/:id`} key="/blog/edit" component={BlogEditor} />
-              <Route path={`${path}/draft/edit/:id`} key="/draft/edit" component={BlogEditor} />
-              <Route path={`${path}/blog/list`} key="/blog/list" component={BlogList} />
-
               <Route path={`${path}/category`} key="/category" component={Category} />
               <Route path={`${path}/settings`} key="/settings" component={Settings} />
-              <Route key="/statistics" component={Statistics} />
+              <Route path={`${path}/statistics`} key="/statistics" component={Statistics} />
+
+              <Route path={`${path}/blog/edit/:id`} key="/blog/edit" component={BlogEditor} />
+              <Route path={`${path}/draft/edit/:id`} key="/draft/edit" component={BlogEditor} />
+              <Route key="/blog/list" component={BlogList} />
             </Switch>
           </div>
         </div>

@@ -56,8 +56,11 @@ class BlogEditor extends React.Component {
     if (
       !this.titleInput.validate(title)
       || !this.contentInput.validate(content)
-      || store.category.length === 0
     ) {
+      return
+    }
+    if (store.category.length === 0) {
+      message.error('Category required')
       return
     }
 
@@ -72,7 +75,7 @@ class BlogEditor extends React.Component {
         await dele('/draft', { id: draftId })
       }
 
-      message.info('发表成功')
+      message.info('Published successfully')
       this.props.history.push('/admin/blog/list')
     } catch (e) {
       fail(e)

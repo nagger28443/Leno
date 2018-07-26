@@ -1,6 +1,7 @@
 import {
   React, injectSheet, _, get, fail, f, inject, observer, action,
 } from 'src/commonExports'
+import { runInAction } from 'mobx'
 import { Detail } from '../../styledComponents'
 import NormalList from './normalList'
 import Archive from './archive'
@@ -35,21 +36,17 @@ class BlogList extends React.Component {
     this.curPage = 0
   }
 
-  getData = () => {
+  getData = async () => {
     const { query } = store
-    get('/blog/list', {
-      ...query,
-      page: ++this.curPage,
-    })
-      .then(
-        action(resp => {
-          store.total = resp.total
-          store.data = [...store.data, ...resp.result]
-        }),
-      )
-      .catch(err => {
-        fail(err)
+    try {
+      const res = await get('/blog/list', { ...query, page: ++this.curPage })
+      runInAction(() => {
+        store.total = res.total
+        store.data = [...store.data, ...res.result]
       })
+    } catch (e) {
+      fail(e)
+    }
   }
 
   @action
@@ -139,7 +136,8 @@ class BlogList extends React.Component {
     const innerElements = (
       <React.Fragment>
         <div className={classes.title} style={{ display: query.hasDetail ? 'none' : 'block' }}>
-          <span>{`${TITLE[title]}：${query[title] === 'all' ? 'All' : query[title]}`}</span>
+          <span style={{ opacity: 0.7, marginRight: '0.5rem', display: 'inline-block' }}>{`${TITLE[title]}:`}</span>
+          <span>{`${query[title] === 'all' ? 'All' : query[title]}`}</span>
         </div>
         <div style={{ display: data.length === 0 ? 'block' : 'none', textAlign: 'center' }}>
          No records

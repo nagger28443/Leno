@@ -17,7 +17,7 @@ const styles = {
   },
 }
 const BlogHeader = ({ classes, data }) => (
-  <div>
+  <div style={{ color: data.isPrivate ? '#589ed4' : 'inherit' }}>
     <header className={classes.title}>{data.title}</header>
     <p className={classes.info}>
       <span>发表于：{data.date}</span>
@@ -30,7 +30,7 @@ const BlogHeader = ({ classes, data }) => (
       <span>
         标签：
         {data.labels.split(',').map((item, index, record) => (
-          /* eslint-disable */ 
+          /* eslint-disable */
           <React.Fragment key={index}>
             <Link to={`/list?labels=${item}`} className="link" key={item} style={{}}>
               {item}

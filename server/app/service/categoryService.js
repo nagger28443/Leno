@@ -40,6 +40,7 @@ categoryService.updateCategory = async (ctx) => {
     u.dbQuery('UPDATE category SET name=? WHERE id=?', [name, id])
   }
   ctx.body = u.response(ctx, codes.SUCCESS)
+  u.updateStatistics({ categoryCnt: true })
 }
 
 module.exports = categoryService

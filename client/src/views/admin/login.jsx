@@ -3,7 +3,6 @@ import {
 } from 'src/commonExports'
 import { Input, Button, message } from 'src/echo'
 
-
 const styles = {
   root: {
     position: 'fixed',
@@ -35,25 +34,24 @@ class Login extends React.Component {
     this.password = value.trim()
   }
 
-  handleSubmit = () => {
-    post('/admin/login', { name: this.name, password: this.password })
-      .then(() => {
-        this.props.history.push('/admin')
-        console.log(document.cookie)
-      })
-      .catch(err => {
-        if (err.code === 2101) {
-          message.error('User name or password invalid')
-        } else if (err.code === 2110) {
-          message.error('Account frozen')
-        } else {
-          fail(err)
-        }
-      })
+  handleSubmit = async () => {
+    try {
+      await post('/admin/login', { name: this.name, password: this.password })
+      this.props.history.push('/admin/bloglist')
+    } catch (err) {
+      if (err.code === 2101) {
+        message.error('User name or password invalid')
+      } else if (err.code === 2110) {
+        message.error('Account frozen')
+      } else {
+        fail(err)
+      }
+    }
   }
 
   render() {
     const { classes } = this.props
+    console.log(this.props)
     return (
       <div className={classes.root}>
         <Input className={classes.item} type="text" placeholder="User name" onChange={this.handleNameChange} />

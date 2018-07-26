@@ -1,11 +1,8 @@
-import React from 'react'
-import injectSheet from 'react-jss'
-import { action } from 'mobx'
-import { observer, inject } from 'mobx-react'
+import {
+  React, injectSheet, action, runInAction, observer, inject, get, fail,
+} from 'src/commonExports'
 import { Detail } from '../../styledComponents'
-import { get } from '../../util/http'
 import BlogHeader from '../commonComponents/blogHeader'
-import { fail } from '../../util/utils'
 
 const styles = {}
 
@@ -39,21 +36,17 @@ class FullPage extends React.Component {
     const date = pathParams[1].split(/\/+/).join('-')
     const title = pathParams[2]
 
-    get('/blog', {
-      date,
-      title,
-    })
-      .then(
-        action(resp => {
-          store.blogContent = resp.content
-          this.setState({
-            data: resp,
-          })
-        }),
-      )
-      .catch(err => {
-        fail(err)
+    try {
+      const data = get('/blog', { date, title })
+      runInAction(() => {
+        store.blogContent = data.content
+        this.setState({
+          data,
+        })
       })
+    } catch (e) {
+      fail(e)
+    }
   }
 
   render() {
@@ -62,9 +55,7 @@ class FullPage extends React.Component {
       <Detail style={{ paddingTop: 0 }}>
         <article style={{ paddingTop: '4rem' }}>
           <BlogHeader data={data} />
-          {/* eslint-disable */}
-          <div dangerouslySetInnerHTML={{ __html: data.content }}/>
-          {/* eslint-enable */}
+          <div dangerouslySetInnerHTML={{ __html: data.content }} />
         </article>
       </Detail>
     )

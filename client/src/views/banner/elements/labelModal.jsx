@@ -1,5 +1,5 @@
 import {
-  React, injectSheet, inject, observer, action, Link, get, fail,
+  React, injectSheet, inject, observer, Link, get, fail,
 } from 'src/commonExports'
 
 const styles = {
@@ -53,16 +53,15 @@ class LabelModal extends React.Component {
     labels: [],
   }
 
-  componentDidMount() {
-    get('/label/list')
-      .then(action(resp => {
-        this.setState({
-          labels: resp.result,
-        })
-      }))
-      .catch(err => {
-        fail(err)
+  async componentDidMount() {
+    try {
+      const res = await get('/label/list')
+      this.setState({
+        labels: res.result,
       })
+    } catch (e) {
+      fail(e)
+    }
   }
 
   render() {

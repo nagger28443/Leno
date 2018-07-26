@@ -1,10 +1,29 @@
 import {
-  React, injectSheet, inject, observer, action,
+  React, injectSheet, inject, observer, action, fail, get,
 } from 'src/commonExports'
+import Input from '../../../../../echo/input'
 
 const styles = {
+  labels: {
+    display: 'inline-block',
+    position: 'relative',
+    zIndex: 15,
+  },
   label: {
     marginRight: '0.6rem',
+    cursor: 'pointer',
+  },
+  dropDown: {
+    background: '#f5f5f5',
+    width: '10rem',
+    position: 'absolute',
+    top: '2rem',
+    left: 0,
+    maxHeight: '10rem',
+    overflow: 'auto',
+  },
+  dropDownLabel: {
+    height: '1.3rem',
     cursor: 'pointer',
   },
 }
@@ -16,11 +35,35 @@ let store
 class Labels extends React.Component {
   constructor(props) {
     super(props)
-    this.input = React.createRef()
+    this.allLabels = []
     store = props.blogEditorStore
     this.state = {
+      dropDownLabels: [],
       isLabelInputVisible: false,
+      isDropDownVisible: false,
     }
+  }
+
+  handleInputFocus = () => {
+    this.setState({ isDropDownVisible: true })
+  }
+
+  handleInputChange = value => {
+    const v = value.trim()
+    const inputRegex = new RegExp(`.*${v}.*`, 'i')
+    const dropDownLabels = this.allLabels.filter(c => inputRegex.test(c.name))
+    this.setState({ dropDownLabels })
+  }
+
+  fetchLabels = () => {
+    get('/label/list')
+      .then(resp => {
+        this.allLabels = resp.result
+        this.setState({ dropDownLabels: resp.result })
+      })
+      .catch(err => {
+        fail(err)
+      })
   }
 
   @action
@@ -30,34 +73,54 @@ class Labels extends React.Component {
   }
 
   showLabelInput = () => {
-    this.setState(
-      {
-        isLabelInputVisible: true,
-      },
-      () => {
-        this.input.current.focus()
-      },
-    )
+    this.setState({
+      isLabelInputVisible: true,
+    })
+  }
+
+  // blur 与 click 冲突  todo
+  handleInputBlur = (e) => {
+    const { target } = e
+    const { value } = target
+    e.target.value = ''
+    setTimeout(() => {
+      if (target.value.length > 0) {
+        this.handleLabelConfirm(value.trim())
+      }
+      this.setState({
+        isLabelInputVisible: false,
+      })
+    }, 200)
+  }
+
+  handleLabelChoose = (e) => {
+    const value = e.target.innerText
+    setTimeout(() => {
+      this.setState({
+        isLabelInputVisible: false,
+        isDropDownVisible: false,
+      })
+    }, 200)
+    this.handleLabelConfirm(value)
   }
 
   @action
-  handleLabelConfirm = e => {
-    const value = e.target.value.trim()
-    e.target.value = ''
+  handleLabelConfirm = (value) => {
     if (value.length > 0) {
       const { labels } = store
       if (!labels.includes(value)) {
         labels.push(value)
       }
     }
-    this.setState({ isLabelInputVisible: false })
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.fetchLabels()
+  }
 
   render() {
     const { classes } = this.props
-    const { isLabelInputVisible } = this.state
+    const { isLabelInputVisible, isDropDownVisible, dropDownLabels } = this.state
     const { labels } = store
     return (
       <div>
@@ -78,12 +141,27 @@ class Labels extends React.Component {
               {label}
             </span>
           ))}
-          <input
-            className="input-box"
-            ref={this.input}
-            style={{ display: isLabelInputVisible ? 'inline-block' : 'none', width: '6rem' }}
-            onBlur={this.handleLabelConfirm}
-          />
+          <div className={classes.labels} style={{ display: isLabelInputVisible ? 'inline-block' : 'none' }}>
+            <Input
+              type="text"
+              placeholder="Search or insert"
+              boxStyle={{ width: '10rem' }}
+              onFocus={this.handleInputFocus}
+              onBlur={this.handleInputBlur}
+              onChange={this.handleInputChange}
+              autoFocus
+            />
+            <div
+              className={`input-box ${classes.dropDown}`}
+              style={{ display: isDropDownVisible && dropDownLabels.length > 0 ? 'block' : 'none' }}
+            >
+              {dropDownLabels.map(c => (
+                <div className={classes.dropDownLabel} key={c.id} onClick={this.handleLabelChoose}>
+                  {c.name}
+                </div>
+              ))}
+            </div>
+          </div>
           <span
             className="link"
             onClick={this.showLabelInput}

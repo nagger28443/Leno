@@ -69,6 +69,7 @@ class Leftbar extends React.Component {
   render() {
     const { clazz, root, classes } = this.props
     const { curPath } = this.state
+    const actived = menu.find(item => item.match.test(curPath)) || 'Posts'
     return (
       <sider className={`${clazz} ${root}`}>
         <div className={classes.title}>Menu</div>
@@ -77,7 +78,7 @@ class Leftbar extends React.Component {
             menu.map(item => (
               <Link
                 to={item.link}
-                className={`${classes.menu} ${item.match.test(curPath) ? classes.active : ''}`}
+                className={`${classes.menu} ${item.title === actived ? classes.active : ''}`}
               >
                 {item.title}
               </Link>

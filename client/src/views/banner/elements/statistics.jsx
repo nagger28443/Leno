@@ -22,16 +22,15 @@ class Statistics extends React.Component {
     data: {},
   }
 
-  componentDidMount() {
-    get('/statistics')
-      .then(resp => {
-        this.setState({
-          data: resp,
-        })
+  async componentDidMount() {
+    try {
+      const data = await get('/statistics')
+      this.setState({
+        data,
       })
-      .catch(err => {
-        fail(err)
-      })
+    } catch (e) {
+      fail(e)
+    }
   }
 
   render() {

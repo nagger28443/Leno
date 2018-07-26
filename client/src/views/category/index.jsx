@@ -19,17 +19,16 @@ class Category extends React.Component {
     list: [],
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     document.documentElement.scrollIntoView()
-    get('/category/list')
-      .then(resp => {
-        this.setState({
-          list: resp.result,
-        })
+    try {
+      const resp = await get('/category/list')
+      this.setState({
+        list: resp.result,
       })
-      .catch(err => {
-        fail(err)
-      })
+    } catch (e) {
+      fail(e)
+    }
   }
 
   render() {

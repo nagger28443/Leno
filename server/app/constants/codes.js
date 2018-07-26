@@ -8,4 +8,5 @@ module.exports = {
   ACCOUNR_BEING_FROZEN: { code: 2110, message: 'acount being frozen' },
 
   INSURFICIENT_PARAMS: { code: 3001, message: 'insuficient params' },
+  DUPLICATE_ENTRY: { code: 3005, message: 'duplicate entry' },
 }

@@ -29,11 +29,17 @@ class Item extends React.Component {
   getDraftPath = data => `/admin/draft/edit/${data.id}`
 
   render() {
-    const { classes, data, isDraft } = this.props
+    const {
+      classes, data, isDraft, isAdmin,
+    } = this.props
     const path = isDraft ? this.getDraftPath(data) : this.getBlogPath(data)
     return (
       <div className={classes.root}>
-        <Link to={path} className="plain-link">
+        <Link
+          to={path}
+          className="plain-link"
+          target={`${isAdmin ? '_blank' : '_self'}`}
+        >
           <p className={classes.title}>{data.title}</p>
         </Link>
         <div className={classes.footer}>

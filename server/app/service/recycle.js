@@ -37,6 +37,7 @@ recycleService.deleteItem = async (ctx) => {
   const { id, type } = ctx.query
   await u.dbQuery(`UPDATE ${type} SET deleted=-1 WHERE id=?`, [id])
   ctx.body = u.response(ctx, codes.SUCCESS)
+  u.updateStatistics({ recycleCnt: true })
 }
 
 module.exports = recycleService

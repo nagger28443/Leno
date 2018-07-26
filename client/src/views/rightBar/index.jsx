@@ -128,46 +128,39 @@ class RightBar extends React.Component {
     })
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.scrollListener = _.throttle(this.updateAnchor, 50)
     window.addEventListener('scroll', this.scrollListener, false)
     prevPath = window.location.pathname
 
-    get('/category/list', {
-      page: 1,
-      pageSize: 5,
-    })
-      .then(resp => {
-        const { categories } = this.state
-        categories.content = resp.result.map(item => ({
-          ...item,
-          link: `/list?category=${item.name}`,
-        }))
-        this.setState({
-          categories,
-        })
+    try {
+      const resp = await get('/category/list', { page: 1, pageSize: 5 })
+      const { categories } = this.state
+      categories.content = resp.result.map(item => ({
+        ...item,
+        link: `/list?category=${item.name}`,
+      }))
+      this.setState({
+        categories,
       })
-      .catch(err => {
-        fail(err)
+    } catch (e) {
+      fail(e)
+    }
+
+    try {
+      const resp = await get('/archive/list', { page: 1, pageSize: 5 })
+      const { archives } = this.state
+      archives.content = resp.result.map(item => ({
+        ...item,
+        name: item.date,
+        link: `/list?archive=${item.date}`,
+      }))
+      this.setState({
+        archives,
       })
-    get('/archive/list', {
-      page: 1,
-      pageSize: 5,
-    })
-      .then(resp => {
-        const { archives } = this.state
-        archives.content = resp.result.map(item => ({
-          ...item,
-          name: item.date,
-          link: `/list?archive=${item.date}`,
-        }))
-        this.setState({
-          archives,
-        })
-      })
-      .catch(err => {
-        fail(err)
-      })
+    } catch (e) {
+      fail(e)
+    }
   }
 
   componentWillUnmount() {

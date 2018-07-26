@@ -9,7 +9,7 @@ labelService.getLabelList = async (ctx) => {
   if (total === 0) {
     ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
-    const { page, pageSize = 10 } = ctx.query
+    const { page, pageSize = 20 } = ctx.query
     const sql = `SELECT id,name,count FROM label ORDER BY count DESC ${
       page ? `LIMIT ${(page - 1) * pageSize},${pageSize}` : ''
     }`

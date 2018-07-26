@@ -65,6 +65,8 @@ draftService.addDraft = async (ctx) => {
   })
 
   ctx.body = u.response(ctx, codes.SUCCESS, { id: res.insertId })
+
+  u.updateStatistics({ draftCnt: true })
 }
 
 // 修改草稿
@@ -114,6 +116,8 @@ draftService.deleteDraft = async (ctx) => {
   })
 
   ctx.body = u.response(ctx, codes.SUCCESS)
+
+  u.updateStatistics({ draftCnt: true })
 }
 
 module.exports = draftService

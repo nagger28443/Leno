@@ -26,11 +26,7 @@ const stores = {
 axios.interceptors.request.use(config => {
   const c = config
   // c.withCredentials = true
-  const { token } = window.sessionStorage
-
-  if (token && token.length > 0) {
-    c.headers.token = window.sessionStorage.token || ''
-  }
+  c.headers.token = window.sessionStorage.token || ''
   return c
 })
 

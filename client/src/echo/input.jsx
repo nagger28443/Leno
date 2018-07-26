@@ -79,9 +79,15 @@ class Input extends React.Component {
     }
   }
 
-  handleBlur = () => {
+  handleBlur = (e) => {
     if (this.props.onBlur) {
-      this.props.onBlur()
+      this.props.onBlur(e)
+    }
+  }
+
+  handleFocus =() => {
+    if (this.props.onFocus) {
+      this.props.onFocus()
     }
   }
 
@@ -105,6 +111,7 @@ class Input extends React.Component {
           type={type}
           onChange={this.handleValueChange}
           onBlur={this.handleBlur}
+          onFocus={this.handleFocus}
           style={{ width: '100%', height: '100%', ...inputStyle }}
           value={value}
           defaultValue={defaultValue}

@@ -166,17 +166,24 @@ service.addBlog = async (ctx) => {
   const date = `${year}-${month <= 9 ? 0 : ''}${month}-${day <= 9 ? 0 : ''}${day}`
 
   // 插入博客信息
-  await u.dbQuery('INSERT INTO blog SET ?', {
-    title,
-    content: contentHTMLStr,
-    category,
-    labels,
-    date,
-    private: isPrivate,
-    gmt_create: gmt,
-    gmt_modify: gmt,
-  })
-  ctx.body = u.response(ctx, codes.SUCCESS)
+  try {
+    await u.dbQuery('INSERT INTO blog SET ?', {
+      title,
+      content: contentHTMLStr,
+      category,
+      labels,
+      date,
+      private: isPrivate,
+      gmt_create: gmt,
+      gmt_modify: gmt,
+    })
+    ctx.body = u.response(ctx, codes.SUCCESS)
+  } catch (e) {
+    if (e.sqlState === '23000') {
+      ctx.body = u.response(ctx, { ...codes.DUPLICATE_ENTRY, message: `${codes.DUPLICATE_ENTRY.message}:title` })
+    }
+  }
+
 
   updateCategoryLabelArchive({ category, labels: labels.length > 0 ? labels : null, date })
   // 更新statistics

@@ -2,6 +2,7 @@ import {
   React, injectSheet, get, fail, Link, dele,
 } from 'src/commonExports'
 import BlogListItem from 'src/views/commonComponents/blogListItem'
+import _ from 'lodash'
 import message from '../../../../echo/message'
 
 const styles = {
@@ -16,7 +17,11 @@ const styles = {
   action: {
     margin: [0, '0.5rem'],
     fontSize: 'smaller',
-
+  },
+  getMore: {
+    textAlign: 'center',
+    margin: ['1rem', 0],
+    fontSize: 'small',
   },
 }
 
@@ -77,12 +82,15 @@ class BlogList extends React.Component {
   }
 
   getData = async (tab) => {
-    const { url, params } = menus.find(item => item.title === tab)
+    const list = tab ? [] : this.state.list
+
+    const t = tab || this.state.curTab
+    const { url, params } = menus.find(item => item.title === t)
     try {
       const data = await get(url, { ...params, page: ++this.curPage })
       this.total = data.total
       this.setState({
-        list: data.result,
+        list: [...list, ...data.result],
       })
     } catch (e) {
       fail(e)
@@ -131,7 +139,28 @@ class BlogList extends React.Component {
     }
   }
 
+  handleScroll = () => {
+    let prevHeight = 0
+    return () => {
+      const curHeight = window.pageYOffset
+      const tmp = prevHeight
+      prevHeight = curHeight
+
+      if (tmp > curHeight || this.state.list.length >= this.total) return
+
+      const maxHeight = document.body.clientHeight
+      const windowHeight = window.outerHeight
+      if (maxHeight - curHeight - windowHeight < 200) {
+        this.getData()
+      }
+    }
+  }
+
   async componentDidMount() {
+    document.documentElement.scrollIntoView()
+    this.scrollListener = _.throttle(this.handleScroll(), 500)
+    window.addEventListener('scroll', this.scrollListener, false)
+
     const stat = await get('/statistics', { admin: true })
     Object.keys(stat).forEach(key => {
       stat[key] = Number(stat[key])
@@ -146,6 +175,10 @@ class BlogList extends React.Component {
 
     const { curTab } = this.props.history.location.state || { curTab: 'All' }
     this.getData(curTab)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.scrollListener, false)
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -169,6 +202,7 @@ class BlogList extends React.Component {
   render() {
     const { classes } = this.props
     const { curTab, list, stat } = this.state
+    console.log(list.length, this.total)
     return (
       <div>
         <div style={{ fontSize: 'smaller' }}>
@@ -184,33 +218,40 @@ class BlogList extends React.Component {
           ))}
         </div>
         <hr className="hr" style={{ marginTop: 0 }} />
-        <div>
-          {list.length > 0
-            ? list.map(item => (
-              <div style={{ position: 'relative' }}>
-                <BlogListItem data={item} isDraft={curTab === 'Draft'} />
-                <div className={classes.actions}>
-                  <Link
-                    to={`/admin/${curTab === 'Draft' ? 'draft' : 'blog'}/edit/${item.id}`}
-                    className={`plain-link ${classes.action}`}
-                  >
+        <div style={{ display: list.length > 0 ? 'block' : 'none' }}>
+          {list.map(item => (
+            <div style={{ position: 'relative' }}>
+              <BlogListItem data={item} isDraft={curTab === 'Draft'} isAdmin />
+              <div className={classes.actions}>
+                <Link
+                  to={`/admin/${curTab === 'Draft' ? 'draft' : 'blog'}/edit/${item.id}`}
+                  className={`plain-link ${classes.action}`}
+                >
                     Edit
-                  </Link>
-                  <span style={{ color: '#dfdfdf' }}>|</span>
-                  <span
-                    data-id={item.id}
-                    data-tp={item.type}
-                    className={`plain-link ${classes.action}`}
-                    onClick={this.handleDelete}
-                  >
+                </Link>
+                <span style={{ color: '#dfdfdf' }}>|</span>
+                <span
+                  data-id={item.id}
+                  data-tp={item.type}
+                  className={`plain-link ${classes.action}`}
+                  onClick={this.handleDelete}
+                >
                     Delete
-                  </span>
-                </div>
+                </span>
               </div>
-            ))
-            : <span>No records</span>
-          }
+            </div>
+          ))}
+          <div className={classes.getMore}>
+            {list.length < this.total ? (
+              <span className="plain-link" onClick={this.getData}>
+                {'<<<READ MORE>>>'}
+              </span>
+            ) : (
+              'No MORE LEFT'
+            )}
+          </div>
         </div>
+        <span style={{ display: list.length === 0 ? 'block' : 'none' }}>No records</span>
       </div>
     )
   }

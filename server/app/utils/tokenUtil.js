@@ -5,6 +5,7 @@ const { TOKEN_INVALID } = require('../constants/codes')
 const tku = {}
 
 const authMethods = ['POST', 'PUT', 'DELETE']
+const authAPIs = ['/draft', '/recycle']
 
 tku.tokenGenerator = () => jwt.sign({ expiresIn: 60 * 60 }, secret)
 
@@ -29,7 +30,9 @@ tku.checkToken = async (ctx, next) => {
     ctx.state.tokenValid = false
 
     const { method, url } = ctx.request
-    if (authMethods.includes(method) && url !== '/admin/login') {
+    if ((authMethods.includes(method)
+      || (authAPIs.find(api => url.startsWith(api)) && method !== 'OPTIONS'))
+      && url !== '/admin/login') {
       ctx.throw(403)
     }
   } else {

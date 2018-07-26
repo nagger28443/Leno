@@ -1,6 +1,7 @@
 import {
   React, injectSheet, inject, observer, get, action, fail,
 } from 'src/commonExports'
+import Input from 'src/echo/input'
 
 const styles = {
   categories: {
@@ -8,12 +9,14 @@ const styles = {
     position: 'relative',
     zIndex: 10,
   },
-  dropdown: {
+  dropDown: {
     background: '#f5f5f5',
     width: '10rem',
     position: 'absolute',
     top: '2rem',
     left: 0,
+    maxHeight: '10rem',
+    overflow: 'auto',
   },
   category: {
     height: '1.3rem',
@@ -32,18 +35,18 @@ class Category extends React.Component {
     this.allCategories = []
     this.state = {
       categories: [],
-      isDropdownVisible: false,
+      isDropDownVisible: false,
     }
   }
 
   handleInputFocus = () => {
-    this.setState({ isDropdownVisible: true })
+    this.setState({ isDropDownVisible: true })
   }
 
   handleInputBlur = () => {
     setTimeout(() => {
-      this.setState({ isDropdownVisible: false })
-    }, 100)
+      this.setState({ isDropDownVisible: false })
+    }, 200)
   }
 
   @action
@@ -77,7 +80,7 @@ class Category extends React.Component {
 
   render() {
     const { classes } = this.props
-    const { categories, isDropdownVisible } = this.state
+    const { categories, isDropDownVisible } = this.state
 
     return (
       <div>
@@ -86,30 +89,27 @@ class Category extends React.Component {
         }}
         >Category:
         </span>
-        <span>
-          <div className={classes.categories}>
-            <input
-              type="text"
-              placeholder="Search or insert"
-              className="input-box"
-              style={{ width: '10rem' }}
-              onFocus={this.handleInputFocus}
-              onBlur={this.handleInputBlur}
-              onChange={this.handleInputChange}
-              value={store.category}
-            />
-            <div
-              className={`input-box ${classes.dropdown}`}
-              style={{ display: isDropdownVisible ? 'block' : 'none' }}
-            >
-              {categories.map(c => (
-                <div className={classes.category} key={c.id} onClick={this.handleInputConfirm}>
-                  {c.name}
-                </div>
-              ))}
-            </div>
+        <div className={classes.categories}>
+          <Input
+            type="text"
+            placeholder="Search or insert"
+            boxStyle={{ width: '10rem' }}
+            onFocus={this.handleInputFocus}
+            onBlur={this.handleInputBlur}
+            onChange={this.handleInputChange}
+            value={store.category}
+          />
+          <div
+            className={`input-box ${classes.dropDown}`}
+            style={{ display: isDropDownVisible && categories.length > 0 ? 'block' : 'none' }}
+          >
+            {categories.map(c => (
+              <div className={classes.category} key={c.id} onClick={this.handleInputConfirm}>
+                {c.name}
+              </div>
+            ))}
           </div>
-        </span>
+        </div>
       </div>
     )
   }
