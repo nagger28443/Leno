@@ -38,7 +38,7 @@ class Item extends React.Component {
         <Link
           to={path}
           className="plain-link"
-          target={`${isAdmin ? '_blank' : '_self'}`}
+          target={`${isAdmin ? '_blank' : ''}`}
         >
           <p className={classes.title}>{data.title}</p>
         </Link>

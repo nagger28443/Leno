@@ -1,22 +1,13 @@
-<!-- - 文章收起后滚动bug? -->
-- labels与category一样提供列表
-- 回收站编辑,恢复逻辑梳理
-<!--- promise.then->async-->
-<!--- 控制台博客管理,分页-->
-<!--- 各接口更新统计数据-->
-- 防止重复请求
-- context
-- 启动时检查数据库的可用性
-- snapshot?
+- 回收站逻辑梳理
+
+- 调用子组件ref实现失败!
 
 - 原生js
 - 关于width 100%
-- history.replace,link
 - sessionStorage跨标签
 - text-overflow总结
 
 - cookie跨域
-- draft, is_deleted, stick_top, private
 
 - 服务器部署踩坑, 跨域与代理
 - 安全
@@ -24,8 +15,7 @@
 - 图片上传?md
 - 重温网页渲染过程, 重绘重排, css世界
 - 原生的h5-history
--
-- 文章内样式细节实现
+
 
 - 登录后重定向回原来的页面?
 

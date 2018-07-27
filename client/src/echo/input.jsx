@@ -11,6 +11,8 @@ const styles = {
 class Input extends React.Component {
   constructor(props) {
     super(props)
+    this.textInputRef = React.createRef()
+    this.focusInput = this.focusInput.bind(this)
     this.state = {
       isValid: true,
       helper: '',
@@ -40,7 +42,6 @@ class Input extends React.Component {
       this.setState({ isValid: true })
       return true
     } if (value.length > v) {
-      console.log(value)
       this.setState({ isValid: false, helper: message })
       return false
     }
@@ -97,6 +98,10 @@ class Input extends React.Component {
     }
   }
 
+  focusInput() {
+    this.textInputRef.current.focus()
+  }
+
   render() {
     const {
       boxStyle, inputStyle, type = 'text', value, placeholder, className = '', defaultValue, disabled, autoFocus,
@@ -106,6 +111,7 @@ class Input extends React.Component {
     return (
       <div style={boxStyle} className={`${classes.inputRoot} ${className}`}>
         <input
+          ref={this.textInputRef}
           className={`input-box ${isValid ? '' : 'warning'}`}
           placeholder={placeholder}
           type={type}

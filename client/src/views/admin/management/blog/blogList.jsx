@@ -202,7 +202,6 @@ class BlogList extends React.Component {
   render() {
     const { classes } = this.props
     const { curTab, list, stat } = this.state
-    console.log(list.length, this.total)
     return (
       <div>
         <div style={{ fontSize: 'smaller' }}>

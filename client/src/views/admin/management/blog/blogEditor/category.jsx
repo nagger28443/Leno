@@ -50,8 +50,8 @@ class Category extends React.Component {
   }
 
   @action
-  handleInputChange = e => {
-    const value = e.target.value.trim()
+  handleInputChange = v => {
+    const value = v.trim()
     store.category = value
     const inputRegex = new RegExp(`.*${value}.*`, 'i')
     const categories = this.allCategories.filter(c => inputRegex.test(c.name))

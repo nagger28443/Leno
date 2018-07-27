@@ -8,10 +8,11 @@ const tku = require('./utils/tokenUtil')
 const app = new Koa()
 const router = new Router()
 
+u.init()
+
 router.use('', require('./router').routes())
 
 app.use(u.errHandler)
-app.use(u.init)
 app.use(u.logger)
 app.use(bodyParser())
 app.use(tku.checkToken)

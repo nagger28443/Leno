@@ -2,21 +2,33 @@ const fs = require('fs')
 const mysql = require('mysql')
 const redis = require('redis')
 const crypto = require('crypto')
-const { salt } = require('../config')
+const {
+  salt, dbTables, user, password,
+} = require('../config')
 const codes = require('../constants/codes')
 
-const pool = mysql.createPool({
-  connectionLimit: 100,
-  host: 'localhost',
-  user: 'nagger',
-  password: '123456',
-  port: '3306',
-  database: 'leno',
-})
-const redisClient = redis.createClient()
+let pool = null
 
 const u = {
-  init: async (ctx, next) => {
+  redisClient: (() => {
+    let client = null
+    return () => {
+      if (client) return client
+
+      client = redis.createClient()
+      // promisify
+      client.getAsync = key => new Promise((resolve, reject) => {
+        client.get(key, (err, res) => {
+          if (err) {
+            reject(err)
+          }
+          resolve(res)
+        })
+      })
+      return client
+    }
+  })()(),
+  init: async () => {
     // finally polyfill
     Promise.prototype.finally = function(callback) { //eslint-disable-line
       const P = this.constructor
@@ -28,23 +40,44 @@ const u = {
       )
     }
 
-    // promisify
-    redisClient.getAsync = key => new Promise((resolve, reject) => {
-      redisClient.get(key, (err, res) => {
-        if (err) {
-          reject(err)
-        }
-        resolve(res)
+    try {
+      pool = mysql.createPool({
+        connectionLimit: 100,
+        host: 'localhost',
+        user: 'nagger',
+        password: '123456',
+        port: '3306',
+        database: 'leno',
       })
-    })
-    ctx.state.redisClient = redisClient
+    } catch (e) {
+      console.log('数据库连接失败.......')
+    }
+
+    // 判断数据库是否正常的简易方法
+    try {
+      const existTables = await u.dbQuery('SHOW TABLES')
+      console.log(existTables)
+
+      existTables.forEach((table) => {
+        console.log(table.Tables_in_leno)
+      })
+
+      await dbTables.forEach(async (table) => {
+        if (existTables.find(t => t.Tables_in_leno === table.name)) return
+        await u.dbQuery(table.createSql)
+
+        if (table.name === 'user') {
+          u.dbQuery('INSERT INTO user set ?', { name: user, password: u.passwordEncrypt(password) })
+        }
+      })
+    } catch (e) {
+      u.log(e)
+    }
 
     // 初始化stattistics
-    await u.updateStatistics({
+    u.updateStatistics({
       categoryCnt: true, labelCnt: true, blogCnt: true, draftCnt: true, recycleCnt: true,
     })
-
-    await next()
   },
   // query from databse with promise
   dbQuery: (query, data) => new Promise((resolve, reject) => {
@@ -62,31 +95,28 @@ const u = {
   }) => {
     if (categoryCnt) {
       const t = (await u.dbQuery('SELECT count(id) AS count FROM category'))[0].count
-      redisClient.set('categoryCnt', t)
+      u.redisClient.set('categoryCnt', t)
     }
     if (labelCnt) {
       const t = (await u.dbQuery('SELECT count(id) AS count FROM label'))[0].count
-      redisClient.set('labelCnt', t)
+      u.redisClient.set('labelCnt', t)
     }
     if (blogCnt) {
       const publicCnt = (await u.dbQuery('SELECT count(id) AS count FROM blog WHERE deleted=0 AND private=0'))[0].count
       const privateCnt = (await u.dbQuery('SELECT count(id) AS count FROM blog WHERE deleted=0 && private=1'))[0].count
-      redisClient.set('publicCnt', publicCnt)
-      redisClient.set('privateCnt', privateCnt)
+      u.redisClient.set('publicCnt', publicCnt)
+      u.redisClient.set('privateCnt', privateCnt)
     }
     if (draftCnt) {
       const t = (await u.dbQuery('SELECT count(id) AS count FROM draft WHERE deleted=0'))[0].count
-      redisClient.set('draftCnt', t)
+      u.redisClient.set('draftCnt', t)
     }
     if (recycleCnt) {
       const t = (await u.dbQuery('SELECT count(id) AS count FROM blog WHERE deleted=1'))[0].count
         + (await u.dbQuery('SELECT count(id) AS count FROM draft WHERE deleted=1'))[0].count
-      redisClient.set('recycleCnt', t)
+      u.redisClient.set('recycleCnt', t)
     }
   },
-  // .finally(() => {
-  //   connection.end()
-  // }),
   /**
    * 将 fs.readFile 包装成 Promise ，方便在 async/await 中使用
    */
@@ -133,11 +163,11 @@ const u = {
   },
 
   getLoginFailedCount: async () => {
-    const count = await redisClient.getAsync('loginFailedCount')
+    const count = await u.redisClient.getAsync('loginFailedCount')
     return count || 0
   },
   setLoginFailedCount: async (count) => {
-    redisClient.set('loginFailedCount', count)
+    u.redisClient.set('loginFailedCount', count)
   },
 
   // 全局错误处理
@@ -149,10 +179,12 @@ const u = {
       ctx.set('Access-Control-Max-Age', 3600)
       await next()
     } catch (err) {
-      if (err.status) {
+      if (err.code === codes.GUEST_NOT_ALLOWED.code) {
+        ctx.body = u.response(ctx, codes.GUEST_NOT_ALLOWED)
+      } else if (err.status) {
         ctx.response.status = err.status
       } else {
-        console.log(err)
+        u.log(err)
       }
     }
   },
@@ -160,7 +192,10 @@ const u = {
     const start = Date.now()
     await next()
     const ms = Date.now() - start
-    console.log(`${ctx.method} ${decodeURIComponent(ctx.url)} - ${ms}ms`)
+    u.log(`${ctx.method} ${decodeURIComponent(ctx.url)} - ${ms}ms`)
+  },
+  log: (text) => {
+    console.log(text)
   },
 }
 

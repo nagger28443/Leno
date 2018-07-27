@@ -60,7 +60,7 @@ service.getBlogList = async (ctx) => {
   const listSql = `SELECT id,title,date,category,labels,visit_cnt as visitCount
    ${hasDetail ? ',content' : ''} FROM blog`
   const countSql = 'SELECT COUNT(id) as total FROM blog'
-  const orderSql = 'ORDER BY date DESC, visit_cnt DESC'
+  const orderSql = 'ORDER BY gmt_create DESC, visit_cnt DESC'
   const pageSql = page ? `limit ${(page - 1) * pageSize},${pageSize}` : ''
   const commonCond = `${orderSql} ${pageSql}`
 

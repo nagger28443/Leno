@@ -36,6 +36,7 @@ class Labels extends React.Component {
   constructor(props) {
     super(props)
     this.allLabels = []
+    this.labelInput = ''
     store = props.blogEditorStore
     this.state = {
       dropDownLabels: [],
@@ -49,8 +50,8 @@ class Labels extends React.Component {
   }
 
   handleInputChange = value => {
-    const v = value.trim()
-    const inputRegex = new RegExp(`.*${v}.*`, 'i')
+    this.labelInput = value.trim()
+    const inputRegex = new RegExp(`.*${this.labelInput}.*`, 'i')
     const dropDownLabels = this.allLabels.filter(c => inputRegex.test(c.name))
     this.setState({ dropDownLabels })
   }
@@ -68,7 +69,7 @@ class Labels extends React.Component {
 
   @action
   handleLabelRemove = e => {
-    const index = e.target.getAttribute('index')
+    const index = e.target.getAttribute('data-index')
     store.labels.splice(index, 1)
   }
 
@@ -78,40 +79,34 @@ class Labels extends React.Component {
     })
   }
 
-  // blur 与 click 冲突  todo
   handleInputBlur = (e) => {
-    const { target } = e
-    const { value } = target
     e.target.value = ''
     setTimeout(() => {
-      if (target.value.length > 0) {
-        this.handleLabelConfirm(value.trim())
-      }
-      this.setState({
-        isLabelInputVisible: false,
-      })
-    }, 200)
+      this.handleLabelConfirm(this.labelInput)
+    }, 100)
   }
 
   handleLabelChoose = (e) => {
-    const value = e.target.innerText
+    this.labelInput = e.target.innerText
     setTimeout(() => {
       this.setState({
-        isLabelInputVisible: false,
         isDropDownVisible: false,
       })
-    }, 200)
-    this.handleLabelConfirm(value)
+    }, 100)
   }
 
   @action
   handleLabelConfirm = (value) => {
+    this.labelInput = ''
     if (value.length > 0) {
       const { labels } = store
       if (!labels.includes(value)) {
         labels.push(value)
       }
     }
+    this.setState({
+      isLabelInputVisible: false,
+    })
   }
 
   componentDidMount() {
@@ -134,7 +129,7 @@ class Labels extends React.Component {
             <span
               className={`input-box ${classes.label}`}
               title="点击删除"
-              index={index}
+              data-index={index}
               key={label}
               onClick={this.handleLabelRemove}
             >
@@ -149,14 +144,13 @@ class Labels extends React.Component {
               onFocus={this.handleInputFocus}
               onBlur={this.handleInputBlur}
               onChange={this.handleInputChange}
-              autoFocus
             />
             <div
               className={`input-box ${classes.dropDown}`}
               style={{ display: isDropDownVisible && dropDownLabels.length > 0 ? 'block' : 'none' }}
             >
               {dropDownLabels.map(c => (
-                <div className={classes.dropDownLabel} key={c.id} onClick={this.handleLabelChoose}>
+                <div className={classes.dropDownLabel} id="label-drop-down" key={c.id} onClick={this.handleLabelChoose}>
                   {c.name}
                 </div>
               ))}

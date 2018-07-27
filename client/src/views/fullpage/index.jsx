@@ -1,5 +1,5 @@
 import {
-  React, injectSheet, action, runInAction, observer, inject, get, fail,
+  React, injectSheet, runInAction, observer, inject, get, fail,
 } from 'src/commonExports'
 import { Detail } from '../../styledComponents'
 import BlogHeader from '../commonComponents/blogHeader'
@@ -25,8 +25,7 @@ class FullPage extends React.Component {
 
   getNameFromPath = path => /.*\/(.+?)\/*$/.exec(path)[1]
 
-  @action
-  componentDidMount() {
+  async componentDidMount() {
     document.documentElement.scrollIntoView()
     const { pathname } = this.props.location
     const pathParams = this.pathDecode(pathname)
@@ -37,7 +36,7 @@ class FullPage extends React.Component {
     const title = pathParams[2]
 
     try {
-      const data = get('/blog', { date, title })
+      const data = await get('/blog', { date, title })
       runInAction(() => {
         store.blogContent = data.content
         this.setState({

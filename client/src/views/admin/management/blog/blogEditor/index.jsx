@@ -37,7 +37,10 @@ class BlogEditor extends React.Component {
     store = props.blogEditorStore
     this.titleInput = {}
     this.contentInput = {}
-    this.state = {}
+    this.state = {
+      newPostDisabled: false,
+      draftDisabled: false,
+    }
   }
 
   @action
@@ -48,38 +51,6 @@ class BlogEditor extends React.Component {
   @action
   handleContentChange = value => {
     store.content = value
-  }
-
-  postBlog = async () => {
-    const { title, content } = store
-
-    if (
-      !this.titleInput.validate(title)
-      || !this.contentInput.validate(content)
-    ) {
-      return
-    }
-    if (store.category.length === 0) {
-      message.error('Category required')
-      return
-    }
-
-    const {
-      labels, category, isPrivate, draftId,
-    } = store
-    try {
-      await post('/blog', {
-        title, content, labels: labels.join(','), category, isPrivate,
-      })
-      if (draftId) {
-        await dele('/draft', { id: draftId })
-      }
-
-      message.info('Published successfully')
-      this.props.history.push('/admin/blog/list')
-    } catch (e) {
-      fail(e)
-    }
   }
 
   @action
@@ -119,7 +90,57 @@ class BlogEditor extends React.Component {
     })
   }
 
+  validate = () => {
+    const { title, content } = store
+
+    if (
+      !this.titleInput.validate(title)
+      || !this.contentInput.validate(content)
+    ) {
+      return false
+    }
+    if (store.category.length === 0) {
+      message.error('Category required')
+      return false
+    }
+    return true
+  }
+
+  postBlog = async () => {
+    if (!this.validate()) return
+
+    this.setState({
+      newPostDisabled: true,
+    })
+
+    const {
+      labels, category, isPrivate, draftId, title, content,
+    } = store
+    try {
+      await post('/blog', {
+        title, content, labels: labels.join(','), category, isPrivate,
+      })
+      if (draftId) {
+        await dele('/draft', { id: draftId })
+      }
+
+      message.info('Published successfully')
+      this.props.history.push('/admin/blog/list')
+    } catch (e) {
+      this.setState({
+        newPostDisabled: false,
+      })
+      fail(e)
+    }
+  }
+
    saveDraft = async () => {
+     if (!this.validate()) return
+
+     this.setState({
+       draftDisabled: true,
+     })
+
      const {
        draftId, title, content, category, labels, isPrivate,
      } = store
@@ -144,11 +165,15 @@ class BlogEditor extends React.Component {
          fail(e)
        }
      }
+     this.setState({
+       draftDisabled: false,
+     })
    }
 
    render() {
      const { classes } = this.props
      const { title, content } = store
+     const { newPostDisabled, draftDisabled } = this.state
      return (
        <div className={classes.root}>
          <div className={classes.row}>
@@ -188,8 +213,20 @@ class BlogEditor extends React.Component {
              <PrivateSwitch />
            </div>
            <div className={classes.row}>
-             <Button style={{ marginRight: '0.5rem', marginLeft: '5.5rem' }} text="POST" onClick={this.postBlog} />
-             <Button text="SAVE DRAFT" onClick={this.saveDraft} />
+             <Button
+               style={{
+                 marginRight: '0.5rem',
+                 marginLeft: '5.5rem',
+                 cursor: newPostDisabled ? 'not-allowed' : 'pointer',
+               }}
+               text="POST"
+               onClick={this.postBlog}
+             />
+             <Button
+               text="SAVE DRAFT"
+               onClick={this.saveDraft}
+               style={{ cursor: draftDisabled ? 'not-allowed' : 'pointer' }}
+             />
            </div>
          </div>
        </div>

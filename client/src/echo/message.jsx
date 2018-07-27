@@ -21,23 +21,18 @@ const gap = 1
 const height = 5
 const minTopSpace = 100
 const { body } = document
-let prevBottom = gap
+const messages = {}
 
 @injectSheet(styles)
 class Message extends React.Component {
   constructor() {
     super()
-    this.ref = React.createRef()
     this.state = {
     }
   }
 
   componentDidMount() {
     const { autoClose } = this.props
-    this.parent = this.ref.current.parentElement
-    if (this.parent.offsetTop < minTopSpace) {
-      prevBottom = gap
-    }
     if (autoClose) {
       setTimeout(this.handleClose, 3000)
     }
@@ -45,13 +40,15 @@ class Message extends React.Component {
 
   // message位置不合理,前面的消息关闭后后面的消息还会向上移动,优化 todo
   handleClose = () => {
-    body.removeChild(this.parent)
+    const { ele, position } = this.props
+    body.removeChild(ele)
+    messages[position] = false
   }
 
   render() {
     const { msg, classes } = this.props
     return (
-      <div className={classes.root} ref={this.ref}>
+      <div className={classes.root}>
         <span>{msg}</span>
         <div className={classes.close} onClick={this.handleClose}>x</div>
       </div>
@@ -59,17 +56,28 @@ class Message extends React.Component {
   }
 }
 
+const getPosition = () => {
+  let s = gap
+  while (s + height + minTopSpace < window.innerHeight) {
+    if (!messages[s]) {
+      messages[s] = true
+      return s
+    }
+    s += height + gap
+  }
+  return gap
+}
 
 const baseMessage = (msg, opt, type) => {
   const ele = document.createElement('div')
 
+  const bottom = getPosition()
   ele.className = `leno-message-${type}`
   ele.style.height = `${height}rem`
-  ele.style.bottom = `${prevBottom}rem`
-  prevBottom += height + gap
+  ele.style.bottom = `${bottom}rem`
 
   body.appendChild(ele)
-  ReactDom.render(<Message msg={msg} autoClose={opt.autoClose} />, ele)
+  ReactDom.render(<Message msg={msg} autoClose={opt.autoClose} ele={ele} position={bottom} />, ele)
 
   setTimeout(() => {
     ele.style.right = `${gap}rem`
