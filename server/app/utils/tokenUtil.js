@@ -29,6 +29,8 @@ tku.checkToken = async (ctx, next) => {
   const result = await checkTK(token)
   const { method, url } = ctx.request
 
+  console.log(ctx.request.header.origin)
+
   if (result.user === guest && (authMethods.includes(method) || ctx.query.isPrivate === 1)) {
     ctx.throw(GUEST_NOT_ALLOWED)
   }

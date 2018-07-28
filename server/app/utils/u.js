@@ -44,8 +44,8 @@ const u = {
       pool = mysql.createPool({
         connectionLimit: 100,
         host: 'localhost',
-        user: 'nagger',
-        password: '123456',
+        user,
+        password,
         port: '3306',
         database: 'leno',
       })
@@ -56,11 +56,6 @@ const u = {
     // 判断数据库是否正常的简易方法
     try {
       const existTables = await u.dbQuery('SHOW TABLES')
-      console.log(existTables)
-
-      existTables.forEach((table) => {
-        console.log(table.Tables_in_leno)
-      })
 
       await dbTables.forEach(async (table) => {
         if (existTables.find(t => t.Tables_in_leno === table.name)) return
@@ -173,7 +168,7 @@ const u = {
   // 全局错误处理
   errHandler: async (ctx, next) => {
     try {
-      ctx.set('Access-Control-Allow-Origin', ctx.request.header.origin)
+      ctx.set('Access-Control-Allow-Origin', '127.0.0.1')
       ctx.set('Access-Control-Allow-Credentials', true)
       ctx.set('Access-Control-Allow-Headers', 'Content-Type')
       ctx.set('Access-Control-Max-Age', 3600)
