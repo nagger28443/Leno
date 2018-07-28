@@ -91,7 +91,7 @@ if (isDev) {
   config.output = {
     path: path.join(__dirname, '../dist'),
     filename: '[name].[hash:8].js',
-    publicPath: `./`,
+    publicPath: `/`,
   }
   config.plugins = [
     new HtmlWebpackPlugin({

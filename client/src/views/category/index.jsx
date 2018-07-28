@@ -17,6 +17,7 @@ const styles = {
 class Category extends React.Component {
   state = {
     list: [],
+    isLoading: true,
   }
 
   async componentDidMount() {
@@ -25,6 +26,7 @@ class Category extends React.Component {
       const resp = await get('/category/list')
       this.setState({
         list: resp.result,
+        isLoading: false,
       })
     } catch (e) {
       fail(e)
@@ -33,7 +35,10 @@ class Category extends React.Component {
 
   render() {
     const { classes } = this.props
-    const { list } = this.state
+    const { list, isLoading } = this.state
+    if (isLoading) {
+      return <Detail><div className="loading" /></Detail>
+    }
     return (
       <Detail>
         <h1 className={classes.header}>Category List</h1>

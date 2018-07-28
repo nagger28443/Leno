@@ -34,12 +34,21 @@ class BlogList extends React.Component {
     super(props)
     store = props.blogListStore
     this.curPage = 0
+    this.state = {
+      isLoading: true,
+    }
   }
 
   getData = async () => {
+    this.setState({
+      isLoading: true,
+    })
     const { query } = store
     try {
       const res = await get('/blog/list', { ...query, page: ++this.curPage })
+      this.setState({
+        isLoading: false,
+      })
       runInAction(() => {
         store.total = res.total
         store.data = [...store.data, ...res.result]
@@ -122,6 +131,7 @@ class BlogList extends React.Component {
   render() {
     const { classes } = this.props
     const { data, query } = store
+    const { isLoading } = this.state
     const title = Object.keys(query)[0]
 
     let content
@@ -133,28 +143,33 @@ class BlogList extends React.Component {
       content = <NormalList />
     }
 
+    const loadingIcon = <div className="loading" />
+
     const innerElements = (
-      <React.Fragment>
-        <div className={classes.title} style={{ display: query.hasDetail ? 'none' : 'block' }}>
-          <span style={{ opacity: 0.7, marginRight: '0.5rem', display: 'inline-block' }}>{`${TITLE[title]}:`}</span>
-          <span>{`${query[title] === 'all' ? 'All' : query[title]}`}</span>
-        </div>
-        <div style={{ display: data.length === 0 ? 'block' : 'none', textAlign: 'center' }}>
+      isLoading ? loadingIcon
+        : (
+          <div className="fadein">
+            <div className={classes.title} style={{ display: query.hasDetail ? 'none' : 'block' }}>
+              <span style={{ opacity: 0.7, marginRight: '0.5rem', display: 'inline-block' }}>{`${TITLE[title]}:`}</span>
+              <span>{`${query[title] === 'all' ? 'All' : query[title]}`}</span>
+            </div>
+            <div style={{ display: data.length === 0 ? 'block' : 'none', textAlign: 'center' }}>
          No records
-        </div>
-        <div style={{ display: data.length > 0 ? 'block' : 'none' }}>
-          {content}
-          <div className={classes.getMore}>
-            {data.length < this.total ? (
-              <span className="plain-link" onClick={store.getData}>
-                {'<<<READ MORE>>>'}
-              </span>
-            ) : (
-              'NO MORE LEFT'
-            )}
+            </div>
+            <div style={{ display: data.length > 0 ? 'block' : 'none' }}>
+              {content}
+              <div className={classes.getMore}>
+                {data.length < this.total ? (
+                  <span className="plain-link" onClick={store.getData}>
+                    {'<<<READ MORE>>>'}
+                  </span>
+                ) : (
+                  'NO MORE LEFT'
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </React.Fragment>
+        )
     )
 
     if (query.hasDetail) {

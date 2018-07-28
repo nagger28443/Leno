@@ -17,13 +17,12 @@ class FullPage extends React.Component {
     this.state = {
       data: {
         labels: '',
+        isLoading: true,
       },
     }
   }
 
   pathDecode = path => /^\/+blog\/+(\d{4}\/+\d{2}\/+\d{2})\/+(.+)$/.exec(path)
-
-  getNameFromPath = path => /.*\/(.+?)\/*$/.exec(path)[1]
 
   async componentDidMount() {
     document.documentElement.scrollIntoView()
@@ -40,6 +39,7 @@ class FullPage extends React.Component {
       runInAction(() => {
         store.blogContent = data.content
         this.setState({
+          isLoading: false,
           data,
         })
       })
@@ -49,7 +49,10 @@ class FullPage extends React.Component {
   }
 
   render() {
-    const { data } = this.state
+    const { data, isLoading } = this.state
+    if (isLoading) {
+      return <Detail><div className="loading" /></Detail>
+    }
     return (
       <Detail style={{ paddingTop: 0 }}>
         <article style={{ paddingTop: '4rem' }}>

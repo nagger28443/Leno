@@ -3,7 +3,7 @@ const mysql = require('mysql')
 const redis = require('redis')
 const crypto = require('crypto')
 const {
-  salt, dbTables, user, password,
+  salt, dbTables, user, password, corsOrigins,
 } = require('../config')
 const codes = require('../constants/codes')
 
@@ -165,13 +165,20 @@ const u = {
     u.redisClient.set('loginFailedCount', count)
   },
 
-  // 全局错误处理
-  errHandler: async (ctx, next) => {
-    try {
-      ctx.set('Access-Control-Allow-Origin', '127.0.0.1')
+  corsHandler: async (ctx, next) => {
+    const { origin } = ctx.request.header
+    if (corsOrigins.includes(origin)) {
+      ctx.set('Access-Control-Allow-Origin', origin)
       ctx.set('Access-Control-Allow-Credentials', true)
       ctx.set('Access-Control-Allow-Headers', 'Content-Type')
       ctx.set('Access-Control-Max-Age', 3600)
+    }
+    await next()
+  },
+
+  // 全局错误处理
+  errHandler: async (ctx, next) => {
+    try {
       await next()
     } catch (err) {
       if (err.code === codes.GUEST_NOT_ALLOWED.code) {

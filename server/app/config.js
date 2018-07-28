@@ -5,6 +5,16 @@ const config = {
   token: null,
   salt: '812032',
   secret: 'this_is_a_secret_hohoho_haha',
+  corsOrigins: [
+    'http://35.237.124.48/',
+    'https://35.237.124.48/',
+    'http://www.handler.fun',
+    'https://www.handler.fun',
+    'http://handler.fun',
+    'https://handler.fun',
+    'http://localhost:7777',
+    'https://localhost:7777',
+  ],
 
   dbTables: [
     {
@@ -13,12 +23,12 @@ const config = {
         \`id\` int(11) NOT NULL AUTO_INCREMENT,
         \`title\` varchar(255) NOT NULL DEFAULT '',
         \`content\` text NOT NULL,
-        \`date\` varchar(20) NOT NULL DEFAULT '0000-00-00',
+        \`date\` varchar(20) NOT NULL DEFAULT '2000-00-00',
         \`category\` varchar(255) NOT NULL DEFAULT '',
         \`labels\` varchar(255) NOT NULL DEFAULT '',
         \`visit_cnt\` bigint(20) NOT NULL DEFAULT '0',
-        \`gmt_create\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-        \`gmt_modify\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+        \`gmt_create\` datetime NOT NULL DEFAULT '2000-00-00 00:00:00',
+        \`gmt_modify\` datetime NOT NULL DEFAULT '2000-00-00 00:00:00',
         \`deleted\` tinyint(1) NOT NULL DEFAULT '0',
         \`private\` tinyint(3) NOT NULL DEFAULT '0',
         PRIMARY KEY (\`id\`),
@@ -41,7 +51,7 @@ const config = {
       name: 'archive',
       createSql: `CREATE TABLE \`archive\` (
           \`id\` int(11) NOT NULL AUTO_INCREMENT,
-          \`date\` varchar(20) NOT NULL DEFAULT '0000-00',
+          \`date\` varchar(20) NOT NULL DEFAULT '2000-00',
           \`count\` int(11) NOT NULL DEFAULT '0',
           PRIMARY KEY (\`id\`),
           UNIQUE KEY \`date_UNIQUE\` (\`date\`),
@@ -56,8 +66,8 @@ const config = {
         \`content\` text NOT NULL,
         \`category\` varchar(255) NOT NULL DEFAULT '',
         \`labels\` varchar(255) NOT NULL DEFAULT '',
-        \`gmt_create\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-        \`gmt_modify\` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+        \`gmt_create\` datetime NOT NULL DEFAULT '2000-00-00 00:00:00',
+        \`gmt_modify\` datetime NOT NULL DEFAULT '2000-00-00 00:00:00',
         \`deleted\` tinyint(1) NOT NULL DEFAULT '0',
         \`private\` varchar(4) NOT NULL DEFAULT '0',
         PRIMARY KEY (\`id\`),
@@ -82,7 +92,7 @@ const config = {
           \`name\` varchar(255) NOT NULL DEFAULT 'admin',
           \`password\` varchar(255) NOT NULL DEFAULT '',
           PRIMARY KEY (\`id\`)
-        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;`,
+        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf;`,
     },
   ],
 

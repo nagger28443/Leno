@@ -11,7 +11,7 @@ const styles = {
 }
 
 const Detail = injectSheet(styles)(({ classes, children, style }) => (
-  <div className={classes.detail} style={style}>
+  <div className={`${classes.detail} fadein`} style={style}>
     {children}
   </div>
 ))
