@@ -15,9 +15,9 @@ class FullPage extends React.Component {
     super(props)
     store = props.appStore
     this.state = {
+      isLoading: true,
       data: {
         labels: '',
-        isLoading: true,
       },
     }
   }
