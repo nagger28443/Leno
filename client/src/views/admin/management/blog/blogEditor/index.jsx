@@ -50,7 +50,7 @@ class BlogEditor extends React.Component {
 
   @action
   handleContentChange = value => {
-    store.content = value
+    store.md = value
   }
 
   @action
@@ -68,7 +68,7 @@ class BlogEditor extends React.Component {
     }
 
     try {
-      const data = await get(`${isDraft ? '/draft' : '/blog'}`, { id })
+      const data = await get(`${isDraft ? '/draft' : '/blog'}`, { id, editing: true })
       runInAction(() => {
         Object.assign(store, data, { labels: data.labels.length > 0 ? data.labels.split(',') : [] })
       })
@@ -83,7 +83,7 @@ class BlogEditor extends React.Component {
       blogId: null,
       draftId: null,
       title: '',
-      content: '',
+      md: '',
       labels: [],
       category: '',
       isPrivate: false,
@@ -91,11 +91,11 @@ class BlogEditor extends React.Component {
   }
 
   validate = () => {
-    const { title, content } = store
+    const { title, md } = store
 
     if (
       !this.titleInput.validate(title)
-      || !this.contentInput.validate(content)
+      || !this.contentInput.validate(md)
     ) {
       return false
     }
@@ -114,12 +114,19 @@ class BlogEditor extends React.Component {
     })
 
     const {
-      labels, category, isPrivate, draftId, title, content,
+      labels, category, isPrivate, blogId, draftId, title, md,
     } = store
     try {
-      await post('/blog', {
-        title, content, labels: labels.join(','), category, isPrivate,
-      })
+      if (blogId) {
+        await put('/blog', {
+          id: blogId, title, md, labels: labels.join(','), category, isPrivate,
+        })
+      } else {
+        await post('/blog', {
+          title, md, labels: labels.join(','), category, isPrivate,
+        })
+      }
+
       if (draftId) {
         await dele('/draft', { id: draftId })
       }
@@ -142,11 +149,11 @@ class BlogEditor extends React.Component {
      })
 
      const {
-       draftId, title, content, category, labels, isPrivate,
+       draftId, title, md, category, labels, isPrivate,
      } = store
      const data = {
        title,
-       content,
+       md,
        category,
        labels: labels.join(','),
        isPrivate,
@@ -172,7 +179,7 @@ class BlogEditor extends React.Component {
 
    render() {
      const { classes } = this.props
-     const { title, content } = store
+     const { title, md } = store
      const { newPostDisabled, draftDisabled } = this.state
      return (
        <div className={classes.root}>
@@ -180,7 +187,7 @@ class BlogEditor extends React.Component {
            <Input
              bridge={this.titleInput}
              rules={[
-               { max: 50, message: 'Title can not be longer then 50 characters' },
+               { max: 50, message: 'Title can not be more than 50 characters' },
                { required: true, message: 'Title required' },
              ]}
              boxStyle={{ width: '100%' }}
@@ -194,10 +201,10 @@ class BlogEditor extends React.Component {
              bridge={this.contentInput}
              rules={[
                { required: true, message: 'Content required' },
-               { max: 20000, message: 'Content can not be longer then 20000 characters' },
+               { max: 20000, message: 'Content can not be more than 20000 characters' },
              ]}
              className={classes.content}
-             value={content}
+             value={md}
              onChange={this.handleContentChange}
              placeholder="Post content"
            />

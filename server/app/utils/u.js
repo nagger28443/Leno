@@ -3,7 +3,7 @@ const mysql = require('mysql')
 const redis = require('redis')
 const crypto = require('crypto')
 const {
-  salt, dbTables, user, password, corsOrigins,
+  salt, dbTables, user, password, corsOrigins, dbUser, dbPassword,
 } = require('../config')
 const codes = require('../constants/codes')
 
@@ -44,8 +44,8 @@ const u = {
       pool = mysql.createPool({
         connectionLimit: 100,
         host: 'localhost',
-        user,
-        password,
+        user: dbUser,
+        password: dbPassword,
         port: '3306',
         database: 'leno',
       })

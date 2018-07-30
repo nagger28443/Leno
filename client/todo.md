@@ -1,5 +1,14 @@
 - 回收站逻辑梳理
-- loading
+
+## bugs:
+- 已发布文章编辑,恢复markdown格式,额外保存markdown原文.
+- 编辑草稿,返回的isPrivate字段变成了字符串
+- 标签页header,文字,favicon?
+- cache配置
+- xss配置
+- 获取的参数都变为字符串类型,ctx.query
+- vertical-align
+
 
 - 调用子组件ref实现失败!
 
@@ -18,6 +27,11 @@
 
 
 - 登录后重定向回原来的页面?
+
+
+
+
+
 
 
  toBase64 = file => {

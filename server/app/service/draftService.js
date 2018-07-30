@@ -5,7 +5,9 @@ const draftService = {}
 
 // 获取草稿列表
 draftService.getDraftList = async (ctx) => {
-  const { page, pageSize = 20 } = ctx.query
+  const page = ctx.query.page ? JSON.parse(ctx.query.page) : null
+  const pageSize = ctx.query.pageSize ? JSON.parse(ctx.query.pageSize) : 20
+
 
   const listSql = 'SELECT id,title, DATE_FORMAT(gmt_modify,\'%Y-%m-%d %H:%i\') as date,category,labels FROM draft'
   const countSql = 'SELECT COUNT(id) as total FROM draft'
@@ -26,7 +28,7 @@ draftService.getDraftList = async (ctx) => {
 // 获取草稿内容
 draftService.getDraft = async (ctx) => {
   const { id } = ctx.query
-  const sql = 'SELECT title,content,DATE_FORMAT(gmt_modify,\'%Y-%m-%d %H:%i\') as date,category,labels,'
+  const sql = 'SELECT title,md,category,DATE_FORMAT(gmt_modify,\'%Y-%m-%d %H:%i\') as date,md,labels,'
     + 'private as isPrivate FROM draft where id=?'
   const res = await u.dbQuery(sql, [id])
   if (res.length > 0) {
@@ -39,11 +41,14 @@ draftService.getDraft = async (ctx) => {
 // 新建草稿
 draftService.addDraft = async (ctx) => {
   const {
-    title, category, labels = '', content, isPrivate = false,
+    title, category, labels = '', md,
   } = ctx.request.body
 
+  const isPrivate = ctx.query.isPrivate ? JSON.parse(ctx.query.isPrivate) : 0
+
+
   // 是否缺少必需的参数
-  if ([title, category, content].some(item => u.isEmpty(item))) {
+  if ([title, category, md].some(item => u.isEmpty(item))) {
     const { message } = codes.INSURFICIENT_PARAMS
     ctx.body = u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
@@ -56,7 +61,7 @@ draftService.addDraft = async (ctx) => {
   const gmt = new Date()
   const res = await u.dbQuery('INSERT INTO draft SET ?', {
     title,
-    content,
+    md,
     category,
     labels,
     private: isPrivate,
@@ -72,11 +77,13 @@ draftService.addDraft = async (ctx) => {
 // 修改草稿
 draftService.updateDraft = async (ctx) => {
   const {
-    id, title, category, labels = '', content, isPrivate = false,
+    id, title, category, labels = '', md,
   } = ctx.request.body
 
+  const isPrivate = ctx.query.isPrivate ? JSON.parse(ctx.query.isPrivate) : 0
+
   // 是否缺少必需的参数
-  if ([id, title, category, content].some(item => u.isEmpty(item))) {
+  if ([id, title, category, md].some(item => u.isEmpty(item))) {
     const { message } = codes.INSURFICIENT_PARAMS
     ctx.body = u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
@@ -88,7 +95,7 @@ draftService.updateDraft = async (ctx) => {
   const gmt = new Date()
   await u.dbQuery(`UPDATE draft SET ? WHERE id=${id}`, {
     title,
-    content,
+    md,
     category,
     labels,
     private: isPrivate,

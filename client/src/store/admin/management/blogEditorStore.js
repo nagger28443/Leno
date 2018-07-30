@@ -7,7 +7,7 @@ class BlogEditorStore {
 
   @observable title = ''
 
-  @observable content = ''
+  @observable md = ''
 
   @observable labels = []
 

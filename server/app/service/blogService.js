@@ -46,12 +46,13 @@ service.getBlogList = async (ctx) => {
     category,
     labels,
     archive,
-    page,
-    pageSize = 20,
-    deleted = 0,
-    hasDetail = false,
-    isPrivate = 0,
   } = ctx.query
+
+  const page = ctx.query.page ? JSON.parse(ctx.query.page) : null
+  const pageSize = ctx.query.pageSize ? JSON.parse(ctx.query.pageSize) : 20
+  const deleted = ctx.query.deleted ? JSON.parse(ctx.query.deleted) : 0
+  const hasDetail = ctx.query.hasDetail ? JSON.parse(ctx.query.hasDetail) : false
+  const isPrivate = ctx.query.isPrivate ? JSON.parse(ctx.query.isPrivate) : 0
 
   if ((isPrivate || deleted) && !ctx.state.tokenValid) {
     ctx.throw(403)
@@ -87,10 +88,23 @@ service.getBlogList = async (ctx) => {
 
 // 获取博客内容
 service.getBlog = async (ctx) => {
-  const { id, title, date } = ctx.query
+  const {
+    id, title, date,
+  } = ctx.query
 
-  const selectSql = 'SELECT title,content,date,category,labels,visit_cnt AS visitCount,'
-    + 'private AS isPrivate,deleted FROM blog'
+  const editing = ctx.query.editing ? JSON.parse(ctx.query.editing) : false
+
+  let ctt = 'content'
+  if (editing === 'true') {
+    if (!ctx.state.tokenValid) {
+      ctx.throw(403)
+    }
+    ctt = 'md'
+  }
+
+
+  const selectSql = `SELECT title,md,${ctt},date,category,labels,visit_cnt AS visitCount,private AS isPrivate,deleted
+   FROM blog`
   let whereSql = ''
   let params = []
   if (id) {
@@ -147,9 +161,10 @@ const updateCategoryLabelArchive = ({ category, labels, date }) => {
 // 发表文章
 service.addBlog = async (ctx) => {
   const {
-    title, category, labels = '', content, isPrivate = 0,
+    title, category, labels = '', md, isPrivate = 0,
   } = ctx.request.body
-  if ([title, category, content].some(item => u.isEmpty(item))) {
+
+  if ([title, category, md].some(item => u.isEmpty(item))) {
     const { message } = codes.INSURFICIENT_PARAMS
     ctx.body = u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
@@ -157,7 +172,7 @@ service.addBlog = async (ctx) => {
     })
     return
   }
-  const contentHTMLStr = MDParser(content)
+  const content = MDParser(md)
   const gmt = new Date()
 
   const year = gmt.getFullYear()
@@ -169,7 +184,8 @@ service.addBlog = async (ctx) => {
   try {
     await u.dbQuery('INSERT INTO blog SET ?', {
       title,
-      content: contentHTMLStr,
+      md,
+      content,
       category,
       labels,
       date,
@@ -194,9 +210,9 @@ service.addBlog = async (ctx) => {
 // 修改文章
 service.updateBlog = async (ctx) => {
   const {
-    id, title, category, labels = '', content, isPrivate = 0,
+    id, title, category, labels = '', md, isPrivate = 0,
   } = ctx.request.body
-  if ([id, title, category, content].some(item => u.isEmpty(item))) {
+  if ([id, title, category, md].some(item => u.isEmpty(item))) {
     const { message } = codes.INSURFICIENT_PARAMS
     ctx.body = u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
@@ -211,7 +227,7 @@ service.updateBlog = async (ctx) => {
     ctx.throw(404)
   }
 
-  const contentHTMLStr = MDParser(content)
+  const content = MDParser(md)
   const gmt = new Date()
 
   const year = gmt.getFullYear()
@@ -222,7 +238,8 @@ service.updateBlog = async (ctx) => {
   // 更新博客信息
   await u.dbQuery(`UPDATE blog SET ? WHERE id=${id}`, {
     title,
-    content: contentHTMLStr,
+    md,
+    content,
     category,
     labels,
     date,

@@ -6,7 +6,8 @@ const recycleService = {}
 
 // 获取草稿列表
 recycleService.getRecycleList = async (ctx) => {
-  const { page = 1, pageSize = 20 } = ctx.query
+  const page = ctx.query.page ? JSON.parse(ctx.query.page) : 1
+  const pageSize = ctx.query.pageSize ? JSON.parse(ctx.query.pageSize) : 20
 
   const listSql = 'SELECT id,title,DATE_FORMAT(gmt_modify,\'%Y-%m-%d %H:%i\') as date,category,labels FROM'
   const blogCountSql = 'SELECT COUNT(id) as cnt FROM blog'

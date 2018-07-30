@@ -1,10 +1,12 @@
 const config = {
-  user: 'nagger',
+  user: 'admin',
   password: '123456',
   guest: 'guest',
   token: null,
-  salt: '812032',
-  secret: 'this_is_a_secret_hohoho_haha',
+  dbUser: 'nagger',
+  dbPassword: '123456',
+  salt: 'salt',
+  secret: 'secret',
   corsOrigins: [
     'http://35.237.124.48/',
     'https://35.237.124.48/',
@@ -22,6 +24,7 @@ const config = {
       createSql: `CREATE TABLE \`blog\` (
         \`id\` int(11) NOT NULL AUTO_INCREMENT,
         \`title\` varchar(255) NOT NULL DEFAULT '',
+        \`md\` text NOT NULL,
         \`content\` text NOT NULL,
         \`date\` varchar(20) NOT NULL DEFAULT '2000-00-00',
         \`category\` varchar(255) NOT NULL DEFAULT '',
@@ -32,7 +35,6 @@ const config = {
         \`deleted\` tinyint(1) NOT NULL DEFAULT '0',
         \`private\` tinyint(3) NOT NULL DEFAULT '0',
         PRIMARY KEY (\`id\`),
-        UNIQUE KEY \`title_UNIQUE\` (\`title\`),
         UNIQUE KEY \`id_UNIQUE\` (\`id\`)
       ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;`,
     },
@@ -63,13 +65,13 @@ const config = {
       createSql: `CREATE TABLE \`draft\` (
         \`id\` int(11) NOT NULL AUTO_INCREMENT,
         \`title\` varchar(255) NOT NULL DEFAULT '',
-        \`content\` text NOT NULL,
+        \`md\` text NOT NULL,
         \`category\` varchar(255) NOT NULL DEFAULT '',
         \`labels\` varchar(255) NOT NULL DEFAULT '',
         \`gmt_create\` datetime NOT NULL DEFAULT '2000-00-00 00:00:00',
         \`gmt_modify\` datetime NOT NULL DEFAULT '2000-00-00 00:00:00',
-        \`deleted\` tinyint(1) NOT NULL DEFAULT '0',
-        \`private\` varchar(4) NOT NULL DEFAULT '0',
+        \`deleted\` tinyint(4) NOT NULL DEFAULT '0',
+        \`private\` tinyint(4) NOT NULL DEFAULT '0',
         PRIMARY KEY (\`id\`),
         UNIQUE KEY \`id_UNIQUE\` (\`id\`)
       ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;`,
@@ -92,7 +94,7 @@ const config = {
           \`name\` varchar(255) NOT NULL DEFAULT 'admin',
           \`password\` varchar(255) NOT NULL DEFAULT '',
           PRIMARY KEY (\`id\`)
-        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf;`,
+        ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;`,
     },
   ],
 

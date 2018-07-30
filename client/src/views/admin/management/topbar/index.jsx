@@ -1,5 +1,5 @@
 import {
-  React, injectSheet, Link,
+  React, injectSheet, Link, withRouter,
 } from 'src/commonExports'
 import { Button } from 'src/echo'
 
@@ -27,6 +27,10 @@ class TopBar extends React.Component {
     window.location.href = '/admin/login'
   }
 
+  newPost = () => {
+    this.props.history.push('/admin/blog/edit/new')
+  }
+
   render() {
     const { classes, clazz } = this.props
     return (
@@ -36,8 +40,11 @@ class TopBar extends React.Component {
           <div className={classes.right}>
             <Button
               text={<Link to="/admin/blog/edit/new" className="plain-link">New post</Link>}
+              onClick={this.newPost}
               style={{ marginRight: 15 }}
             />
+            <Link to="/admin/blog/edit/new" className="link" style={{ marginRight: 15 }}>New Post</Link>
+
             <span>Greetings!</span>
             <span className="link" onClick={this.logOut} style={{ margin: '0 1rem' }}>Sign out</span>
           </div>
@@ -47,4 +54,4 @@ class TopBar extends React.Component {
   }
 }
 
-export default injectSheet(styles)(TopBar)
+export default withRouter(injectSheet(styles)(TopBar))
