@@ -43,8 +43,6 @@ class TopBar extends React.Component {
               onClick={this.newPost}
               style={{ marginRight: 15 }}
             />
-            <Link to="/admin/blog/edit/new" className="link" style={{ marginRight: 15 }}>New Post</Link>
-
             <span>Greetings!</span>
             <span className="link" onClick={this.logOut} style={{ margin: '0 1rem' }}>Sign out</span>
           </div>

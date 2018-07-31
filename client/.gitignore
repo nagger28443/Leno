@@ -5,3 +5,8 @@ dist
 dll
 database.js
 .idea
+projectConfig.js
+builds
+/builds/
+/dll/
+/projectConfig.js

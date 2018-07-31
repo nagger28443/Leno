@@ -50,12 +50,12 @@ class Statistics extends React.Component {
             <p>CATEGORY</p>
           </div>
         </Link>
-        <Link to="#">
+        <span>
           <div className={`plain-link ${classes.item}`}>
             <p>{data.label}</p>
             <p>LABEL</p>
           </div>
-        </Link>
+        </span>
       </div>
     )
   }

@@ -7,10 +7,10 @@
   "scripts": {
     "clean:dist": "rimraf dist",
     "clean:dll": "rimraf dll",
-    "dll:dev": "cross-env NODE_ENV=development npm run clean:dll && webpack --config build/webpack.dll.js --progress",
-    "dll:prod": "cross-env NODE_ENV=production npm run clean:dll && webpack --config build/webpack.dll.js -p --progress",
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --config build/webpack.config.js",
-    "build": "cross-env NODE_ENV=production npm run clean:dist && webpack --config build/webpack.config.js -p --progress",
+    "dll:dev": "cross-env NODE_ENV=development npm run clean:dll && webpack --config builds/webpack.dll.js --progress",
+    "dll:prod": "cross-env NODE_ENV=production npm run clean:dll && webpack --config builds/webpack.dll.js -p --progress",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --config builds/webpack.config.js",
+    "build": "cross-env NODE_ENV=production npm run clean:dist && webpack --config builds/webpack.config.js -p --progress",
     "test": "jest --watch"
   },
   "jest": {

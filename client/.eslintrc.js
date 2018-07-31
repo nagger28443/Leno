@@ -40,7 +40,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       webpack:{
-        config: './build/webpack.base.js'
+        config: './builds/webpack.base.js'
       }
 
     }
