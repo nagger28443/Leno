@@ -48,11 +48,13 @@ service.getBlogList = async (ctx) => {
     archive,
   } = ctx.query
 
-  const page = ctx.query.page ? JSON.parse(ctx.query.page) : null
-  const pageSize = ctx.query.pageSize ? JSON.parse(ctx.query.pageSize) : 20
   const deleted = ctx.query.deleted ? JSON.parse(ctx.query.deleted) : 0
   const hasDetail = ctx.query.hasDetail ? JSON.parse(ctx.query.hasDetail) : false
   const isPrivate = ctx.query.isPrivate ? JSON.parse(ctx.query.isPrivate) : 0
+
+  const defaultPageSize = hasDetail ? 10 : 20
+  const page = ctx.query.page ? JSON.parse(ctx.query.page) : null
+  const pageSize = ctx.query.pageSize ? JSON.parse(ctx.query.pageSize) : defaultPageSize
 
   if ((isPrivate || deleted) && !ctx.state.tokenValid) {
     ctx.throw(403)
