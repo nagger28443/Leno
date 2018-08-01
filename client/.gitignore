@@ -3,8 +3,9 @@ yarn-error.log
 yarn.lock
 dist
 dll
-database.js
 .idea
 /build/
 /projectConfig.js
 /dist/
+projectConfig.js
+/dll/

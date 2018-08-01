@@ -23,14 +23,14 @@ const thinLineRegex = /^ {0,3}-{3,}\s*$/
 const thickLineRegex = /^ {0,3}\*{3,}\s?$/
 const pRegex = /^ {0,3}[^\s]+/
 
-const codeInlineRegex = /(`{1,2})(.*?)\1/
+const codeInlineRegex = /(`{1,2})(.*?)\1/g
 // const strongAndItalicRegex = /\*{3}(?!\*)(.*?)\*{3}/
-const strongRegex = /\*{2}(?!\*)(.*?)\*{2}/
-const italicRegex = /\*(?!\*)(.*?)\*/
-const linkRegex = /<(https?:\/\/.*?)>/
-const customLinkRegex = /\[(.*?)\]\((https?:\/\/.*?)\)/
-const mailRegex = /<(.+?@.+?\..+?)>/
-const newLineRegex = /[\n\r]/
+const strongRegex = /\*{2}(?!\*)(.*?)\*{2}/g
+const italicRegex = /\*(?!\*)(.*?)\*/g
+const linkRegex = /<(https?:\/\/.*?)>/g
+const customLinkRegex = /\[(.*?)\]\((https?:\/\/.*?)\)/g
+const mailRegex = /<(.+?@.+?\..+?)>/g
+const newLineRegex = /[\n\r]/g
 
 function devideIntoBlocks(md) {
   let lastTag = null
