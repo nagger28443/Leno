@@ -51,7 +51,6 @@ class Login extends React.Component {
 
   render() {
     const { classes } = this.props
-    console.log(this.props)
     return (
       <div className={classes.root}>
         <Input className={classes.item} type="text" placeholder="User name" onChange={this.handleNameChange} />
