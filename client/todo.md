@@ -1,12 +1,15 @@
 - 回收站逻辑梳理
 
 ## bugs:
-- 颜色改为rgba, 现有颜色edge不兼容
+- 切换文章目录树不更新!!!
+- 控制台无权限状态下跳转
+- leftbar内容设计
+
+
 - cache配置
 - xss配置
-- 获取的参数都变为字符串类型,ctx.query
 - vertical-align
-
+    
 
 - 调用子组件ref实现失败!
 

@@ -1,5 +1,5 @@
 import {
-  React, injectSheet, runInAction, observer, inject, get, fail,
+  React, injectSheet, runInAction, observer, inject, get, fail, action,
 } from 'src/commonExports'
 import { Detail } from '../../styledComponents'
 import BlogHeader from '../commonComponents/blogHeader'
@@ -23,6 +23,11 @@ class FullPage extends React.Component {
   }
 
   pathDecode = path => /^\/+blog\/+(\d{4}\/+\d{2}\/+\d{2})\/+(.+)$/.exec(path)
+
+  @action
+  componentWillUnmount() {
+    store.blogContent = ''
+  }
 
   async componentDidMount() {
     document.documentElement.scrollIntoView()
