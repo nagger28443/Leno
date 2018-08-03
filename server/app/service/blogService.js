@@ -232,11 +232,6 @@ service.updateBlog = async (ctx) => {
   const content = MDParser(md)
   const gmt = new Date()
 
-  const year = gmt.getFullYear()
-  const month = gmt.getMonth() + 1
-  const day = gmt.getDate()
-  const date = `${year}-${month <= 9 ? 0 : ''}${month}-${day <= 9 ? 0 : ''}${day}`
-
   // 更新博客信息
   await u.dbQuery(`UPDATE blog SET ? WHERE id=${id}`, {
     title,
@@ -244,13 +239,15 @@ service.updateBlog = async (ctx) => {
     content,
     category,
     labels,
-    date,
     private: isPrivate,
     gmt_create: gmt,
     gmt_modify: gmt,
   })
   u.response(ctx, codes.SUCCESS)
 
+
+  const blog = res1[0]
+  const { date } = blog
   updateCategoryLabelArchive({ category, labels: labels.length > 0 ? labels : null, date })
 
   // 更新statistics
