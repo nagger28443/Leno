@@ -20,7 +20,7 @@ recycleService.getRecycleList = async (ctx) => {
   const total = blogTotal + draftTotal
 
   if (total === 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
+    u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
     const drafts = await u.dbQuery(`${listSql} draft ${whereSql}`)
     const blogs = await u.dbQuery(`${listSql} blog ${whereSql}`)
@@ -30,14 +30,14 @@ recycleService.getRecycleList = async (ctx) => {
     ]
       .sort((a, b) => (a.date < b.date ? 1 : -1))
       .slice((page - 1) * pageSize, page * pageSize)
-    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
+    u.response(ctx, codes.SUCCESS, { result, total })
   }
 }
 
 recycleService.deleteItem = async (ctx) => {
   const { id, type } = ctx.query
   await u.dbQuery(`UPDATE ${type} SET deleted=-1 WHERE id=?`, [id])
-  ctx.body = u.response(ctx, codes.SUCCESS)
+  u.response(ctx, codes.SUCCESS)
   u.updateStatistics({ recycleCnt: true })
 }
 

@@ -13,8 +13,8 @@ u.init()
 router.use('', require('./router').routes())
 
 app.use(u.errHandler)
-app.use(u.corsHandler)
 app.use(u.logger)
+app.use(u.corsHandler)
 app.use(bodyParser())
 app.use(tku.checkToken)
 

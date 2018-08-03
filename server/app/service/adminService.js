@@ -14,7 +14,7 @@ adminService.login = async (ctx) => {
     const token = tku.tokenGenerator(guest)
     ctx.state.token = token
     // ctx.cookies.set('token', token)
-    ctx.body = u.response(ctx, codes.SUCCESS)
+    u.response(ctx, codes.SUCCESS)
     return
   }
 
@@ -24,7 +24,7 @@ adminService.login = async (ctx) => {
   // 账户是否冻结
   const freezeTime = (await u.redisClient.getAsync('accountFreezeTime')) || 0
   if (Date.now() / 1000 < freezeTime) {
-    ctx.body = u.response(ctx, codes.ACCOUNR_BEING_FROZEN)
+    u.response(ctx, codes.ACCOUNR_BEING_FROZEN)
     return
   }
 
@@ -34,12 +34,12 @@ adminService.login = async (ctx) => {
     if (Number(loginFailedCount) + 1 >= LOGIN_MAX_FAIL_TIMES) {
       u.redisClient.set('loginFailedCount', 0)
       u.redisClient.set('accountFreezeTime', Date.now() / 1000 + ACCOUNT_FREEZE_TIME)
-      ctx.body = u.response(ctx, codes.ACCOUNR_BEING_FROZEN)
+      u.response(ctx, codes.ACCOUNR_BEING_FROZEN)
       return
     }
 
     u.redisClient.set('loginFailedCount', Number(loginFailedCount) + 1)
-    ctx.body = u.response(ctx, codes.PASSWORD_OR_USER_INVALID)
+    u.response(ctx, codes.PASSWORD_OR_USER_INVALID)
     return
   }
 
@@ -47,7 +47,7 @@ adminService.login = async (ctx) => {
   const token = tku.tokenGenerator()
   ctx.state.token = token
   // ctx.cookies.set('token', token)
-  ctx.body = u.response(ctx, codes.SUCCESS)
+  u.response(ctx, codes.SUCCESS)
 }
 
 

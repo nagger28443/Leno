@@ -72,15 +72,15 @@ service.getBlogList = async (ctx) => {
   })
 
   if (!whereSql) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total: 0 })
+    u.response(ctx, codes.SUCCESS, { result: [], total: 0 })
   }
 
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
   if (total === 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
+    u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
     const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
-    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
+    u.response(ctx, codes.SUCCESS, { result, total })
   }
 
   if (hasDetail) {
@@ -126,7 +126,7 @@ service.getBlog = async (ctx) => {
     if ((isPrivate || deleted) && !ctx.state.tokenValid) {
       ctx.throw(403)
     }
-    ctx.body = u.response(ctx, codes.SUCCESS, res[0])
+    u.response(ctx, codes.SUCCESS, res[0])
   } else {
     ctx.throw(404)
   }
@@ -168,7 +168,7 @@ service.addBlog = async (ctx) => {
 
   if ([title, category, md].some(item => u.isEmpty(item))) {
     const { message } = codes.INSURFICIENT_PARAMS
-    ctx.body = u.response(ctx, {
+    u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
       message: `${message}:title,category,content`,
     })
@@ -195,10 +195,10 @@ service.addBlog = async (ctx) => {
       gmt_create: gmt,
       gmt_modify: gmt,
     })
-    ctx.body = u.response(ctx, codes.SUCCESS)
+    u.response(ctx, codes.SUCCESS)
   } catch (e) {
     if (e.sqlState === '23000') {
-      ctx.body = u.response(ctx, { ...codes.DUPLICATE_ENTRY, message: `${codes.DUPLICATE_ENTRY.message}:title` })
+      u.response(ctx, { ...codes.DUPLICATE_ENTRY, message: `${codes.DUPLICATE_ENTRY.message}:title` })
     }
   }
 
@@ -216,7 +216,7 @@ service.updateBlog = async (ctx) => {
   } = ctx.request.body
   if ([id, title, category, md].some(item => u.isEmpty(item))) {
     const { message } = codes.INSURFICIENT_PARAMS
-    ctx.body = u.response(ctx, {
+    u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
       message: `${message}:id,title,category,content`,
     })
@@ -249,7 +249,7 @@ service.updateBlog = async (ctx) => {
     gmt_create: gmt,
     gmt_modify: gmt,
   })
-  ctx.body = u.response(ctx, codes.SUCCESS)
+  u.response(ctx, codes.SUCCESS)
 
   updateCategoryLabelArchive({ category, labels: labels.length > 0 ? labels : null, date })
 
@@ -267,7 +267,7 @@ service.deleteBlog = async (ctx) => {
   }
 
   await u.dbQuery('UPDATE BLOG SET deleted=1 WHERE id=?', [id])
-  ctx.body = u.response(ctx, codes.SUCCESS)
+  u.response(ctx, codes.SUCCESS)
 
   const blog = res[0]
   const { category, labels, date } = blog
