@@ -244,7 +244,6 @@ service.updateBlog = async (ctx) => {
     labels,
     date,
     private: isPrivate,
-    gmt_create: gmt,
     gmt_modify: gmt,
   })
   ctx.body = u.response(ctx, codes.SUCCESS)
