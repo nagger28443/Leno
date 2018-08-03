@@ -1,17 +1,18 @@
 - 回收站逻辑梳理
 
 ## bugs:
-- 已发布文章编辑,恢复markdown格式,额外保存markdown原文.
-- 编辑草稿,返回的isPrivate字段变成了字符串
-- 标签页header,文字,favicon?
+- leftbar内容设计
+
+
 - cache配置
 - xss配置
-- 获取的参数都变为字符串类型,ctx.query
 - vertical-align
-
+    
 
 - 调用子组件ref实现失败!
 
+- 前端优化总结
+- 轮播图
 - 原生js
 - 关于width 100%
 - sessionStorage跨标签

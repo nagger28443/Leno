@@ -12,7 +12,7 @@ statsService.getHomeStatistics = async (ctx) => {
       const privateCnt = await u.redisClient.getAsync('privateCnt')
       const draftCnt = await u.redisClient.getAsync('draftCnt')
       const recycleCnt = await u.redisClient.getAsync('recycleCnt')
-      ctx.body = u.response(ctx, codes.SUCCESS, {
+      u.response(ctx, codes.SUCCESS, {
         publicCnt, privateCnt, draftCnt, recycleCnt,
       })
       return
@@ -23,7 +23,7 @@ statsService.getHomeStatistics = async (ctx) => {
   const categoryCnt = await u.redisClient.getAsync('categoryCnt')
   const labelCnt = await u.redisClient.getAsync('labelCnt')
   const blogCnt = await u.redisClient.getAsync('publicCnt')
-  ctx.body = u.response(ctx, codes.SUCCESS, { category: categoryCnt, label: labelCnt, blog: blogCnt })
+  u.response(ctx, codes.SUCCESS, { category: categoryCnt, label: labelCnt, blog: blogCnt })
 }
 
 module.exports = statsService

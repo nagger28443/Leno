@@ -74,14 +74,17 @@ const TABS = {
 }
 const anchorRegex = /<(h[23])\sid=(.*?)>.*?<\/\1>/g
 
+let gotAnchors = false
 let prevPath = ''
 let store
+
 @inject('appStore')
 @observer
 class RightBar extends React.Component {
   constructor(props) {
     super(props)
     store = props.appStore
+    this.anchors = []
     this.state = {
       curTab: TABS.categoryArchive,
       isCatalogVisible: false,
@@ -172,6 +175,7 @@ class RightBar extends React.Component {
     const prev = prevPath
     prevPath = pathname
     if (pathname !== prev) {
+      gotAnchors = false
       return pathname.startsWith('/blog')
         ? { curTab: TABS.catalog, isCatalogVisible: true }
         : { curTab: TABS.categoryArchive, isCatalogVisible: false }
@@ -179,8 +183,7 @@ class RightBar extends React.Component {
     return null
   }
 
-  contentFormatter = data => {
-    // const ids = anchorRegex.exec(data)
+  contentFormatter = (data) => {
     let arr
     const t = []
     let ele
@@ -213,20 +216,16 @@ class RightBar extends React.Component {
     })
   }
 
-  componentDidUpdate() {
-    if (!this.gotAnchors && store.blogContent.length !== 0) {
-      this.gotAnchors = true
-      this.setState({
-        anchors: this.contentFormatter(store.blogContent),
-      })
-    }
-  }
 
   render() {
     const { classes } = this.props
     const {
-      curTab, isCatalogVisible, categories, archives, anchors, childAnchorId, parentAnchorId,
+      curTab, isCatalogVisible, categories, archives, childAnchorId, parentAnchorId,
     } = this.state
+    if (gotAnchors || store.blogContent.length === 0) {
+      gotAnchors = true
+      this.anchors = this.contentFormatter(store.blogContent)
+    }
     return (
       <aside className="bar-inside">
         <div className={classes.tabHeader}>
@@ -253,33 +252,32 @@ class RightBar extends React.Component {
           style={{ display: curTab === TABS.catalog ? 'block' : 'none' }}
         >
           <ol className={classes.catalogList}>
-            {store.blogContent.length
-              && anchors.map(item => (
-                <li key={item.title} className={classes.firstLevelItem}>
-                  <a
-                    className={`link ${
-                      childAnchorId === item.title ? classes.active : ''
-                    }`}
-                    onClick={this.handleScrollTo}
-                  >
-                    {item.title}
-                  </a>
-                  <ol style={{ height: parentAnchorId === item.title ? '100%' : 0 }}>
-                    {item.children.map(ele => (
-                      <li key={ele.title} className={classes.secondLevelItem}>
-                        <a
-                          className={`link ${
-                            childAnchorId === ele.title ? classes.active : ''
-                          }`}
-                          onClick={this.handleScrollTo}
-                        >
-                          {ele.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ol>
-                </li>
-              ))}
+            {this.anchors.map(item => (
+              <li key={item.title} className={classes.firstLevelItem}>
+                <a
+                  className={`link ${
+                    childAnchorId === item.title ? classes.active : ''
+                  }`}
+                  onClick={this.handleScrollTo}
+                >
+                  {item.title}
+                </a>
+                <ol style={{ height: parentAnchorId === item.title ? '100%' : 0 }}>
+                  {item.children.map(ele => (
+                    <li key={ele.title} className={classes.secondLevelItem}>
+                      <a
+                        className={`link ${
+                          childAnchorId === ele.title ? classes.active : ''
+                        }`}
+                        onClick={this.handleScrollTo}
+                      >
+                        {ele.title}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </li>
+            ))}
           </ol>
         </div>
         <div

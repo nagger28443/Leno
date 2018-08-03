@@ -49,6 +49,10 @@ class Management extends React.Component {
   render() {
     const { path } = this.props.match
     const { classes } = this.props
+    const { token } = window.sessionStorage
+    if (!token) {
+      this.props.history.push('/admin/login')
+    }
     return (
       <div className={classes.root}>
         <Topbar clazz={classes.topbar} />

@@ -133,6 +133,7 @@ const u = {
     if (token && code === codes.SUCCESS) {
       resp.token = token
     }
+    ctx.body = resp
     return resp
   },
   dbParamsGenerator: (ctx, checkArr) => {
@@ -172,6 +173,9 @@ const u = {
       ctx.set('Access-Control-Allow-Credentials', true)
       ctx.set('Access-Control-Allow-Headers', 'Content-Type')
       ctx.set('Access-Control-Max-Age', 3600)
+    } else {
+      u.response(ctx, codes.SUCCESS)
+      return
     }
     await next()
   },
@@ -182,7 +186,7 @@ const u = {
       await next()
     } catch (err) {
       if (err.code === codes.GUEST_NOT_ALLOWED.code) {
-        ctx.body = u.response(ctx, codes.GUEST_NOT_ALLOWED)
+        u.response(ctx, codes.GUEST_NOT_ALLOWED)
       } else if (err.status) {
         ctx.response.status = err.status
       } else {

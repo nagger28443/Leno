@@ -18,10 +18,10 @@ draftService.getDraftList = async (ctx) => {
 
   const [{ total }] = await u.dbQuery(`${countSql} ${whereSql}`)
   if (total === 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, { result: [], total })
+    u.response(ctx, codes.SUCCESS, { result: [], total })
   } else {
     const result = await u.dbQuery(`${listSql} ${whereSql} ${commonCond}`)
-    ctx.body = u.response(ctx, codes.SUCCESS, { result, total })
+    u.response(ctx, codes.SUCCESS, { result, total })
   }
 }
 
@@ -32,7 +32,7 @@ draftService.getDraft = async (ctx) => {
     + 'private as isPrivate FROM draft where id=?'
   const res = await u.dbQuery(sql, [id])
   if (res.length > 0) {
-    ctx.body = u.response(ctx, codes.SUCCESS, res[0])
+    u.response(ctx, codes.SUCCESS, res[0])
   } else {
     ctx.throw(404)
   }
@@ -50,7 +50,7 @@ draftService.addDraft = async (ctx) => {
   // 是否缺少必需的参数
   if ([title, category, md].some(item => u.isEmpty(item))) {
     const { message } = codes.INSURFICIENT_PARAMS
-    ctx.body = u.response(ctx, {
+    u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
       message: `${message}:title,category,content`,
     })
@@ -69,7 +69,7 @@ draftService.addDraft = async (ctx) => {
     gmt_modify: gmt,
   })
 
-  ctx.body = u.response(ctx, codes.SUCCESS, { id: res.insertId })
+  u.response(ctx, codes.SUCCESS, { id: res.insertId })
 
   u.updateStatistics({ draftCnt: true })
 }
@@ -85,7 +85,7 @@ draftService.updateDraft = async (ctx) => {
   // 是否缺少必需的参数
   if ([id, title, category, md].some(item => u.isEmpty(item))) {
     const { message } = codes.INSURFICIENT_PARAMS
-    ctx.body = u.response(ctx, {
+    u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
       message: `${message}:id,title,category,content`,
     })
@@ -102,14 +102,14 @@ draftService.updateDraft = async (ctx) => {
     gmt_modify: gmt,
   })
 
-  ctx.body = u.response(ctx, codes.SUCCESS)
+  u.response(ctx, codes.SUCCESS)
 }
 
 draftService.deleteDraft = async (ctx) => {
   const { id } = ctx.query
   if (!id) {
     const { message } = codes.INSURFICIENT_PARAMS
-    ctx.body = u.response(ctx, {
+    u.response(ctx, {
       ...codes.INSURFICIENT_PARAMS,
       message: `${message}:id`,
     })
@@ -122,7 +122,7 @@ draftService.deleteDraft = async (ctx) => {
     gmt_modify: gmt,
   })
 
-  ctx.body = u.response(ctx, codes.SUCCESS)
+  u.response(ctx, codes.SUCCESS)
 
   u.updateStatistics({ draftCnt: true })
 }
