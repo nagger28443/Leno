@@ -158,24 +158,18 @@ const u = {
     return hash.digest('hex')
   },
 
-  getLoginFailedCount: async () => {
-    const count = await u.redisClient.getAsync('loginFailedCount')
-    return count || 0
-  },
-  setLoginFailedCount: async (count) => {
-    u.redisClient.set('loginFailedCount', count)
-  },
-
-  corsHandler: async (ctx, next) => {
+  headersHandler: async (ctx, next) => {
     const { origin } = ctx.request.header
-    if (corsOrigins.includes(origin)) {
-      ctx.set('Access-Control-Allow-Origin', origin)
-      ctx.set('Access-Control-Allow-Credentials', true)
-      ctx.set('Access-Control-Allow-Headers', 'Content-Type')
-      ctx.set('Access-Control-Max-Age', 3600)
-    } else {
-      u.response(ctx, codes.SUCCESS)
-      return
+    if (origin) {
+      if (corsOrigins.includes(origin)) {
+        ctx.set('Access-Control-Allow-Origin', origin)
+        ctx.set('Access-Control-Allow-Credentials', true)
+        ctx.set('Access-Control-Allow-Headers', 'Content-Type')
+        ctx.set('Access-Control-Max-Age', 3600)
+      } else {
+        u.response(ctx, codes.SUCCESS)
+        return
+      }
     }
     await next()
   },

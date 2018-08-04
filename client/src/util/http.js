@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { serverHost, serverPort } from '../../projectConfig'
-
-const apiBaseUrl = `http://${serverHost}:${serverPort}/api`
+import { apiBaseUrl } from '../../projectConfig'
 
 const parseUrl = (url, params = {}) => {
   const strParams = Object.keys(params)
