@@ -1,3 +1,3 @@
 # 简易博客
   
-站点地址: http://www.handler.fun/
+站点地址: https://www.handler.fun/
