@@ -1,13 +1,16 @@
 - 回收站逻辑梳理
 
 ## bugs:
+- 目录树不跟随滚动!!!!!
+- archive列表排序不合理
+- about内容
 - leftbar内容设计
 
 
 - cache配置
 - xss配置
 - vertical-align
-    
+
 
 - 调用子组件ref实现失败!
 

@@ -8,7 +8,9 @@ const archiveService = require('../service/archiveService')
 const categoryService = require('../service/categoryService')
 const recycleService = require('../service/recycle')
 
-const router = new Router()
+const router = new Router({
+  prefix: '/api',
+})
 
 router.options('/*', async (ctx) => {
   const { headers } = ctx.request
