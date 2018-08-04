@@ -2,7 +2,6 @@
 
 ## bugs:
 - 目录树不跟随滚动!!!!!
-- archive列表排序不合理
 - about内容
 - leftbar内容设计
 

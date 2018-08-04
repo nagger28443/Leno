@@ -90,7 +90,6 @@ class RightBar extends React.Component {
       isCatalogVisible: false,
       parentAnchorId: '',
       childAnchorId: '',
-      anchors: [],
       categories: {
         title: 'CATEGORY',
         all: '/category',
@@ -111,7 +110,7 @@ class RightBar extends React.Component {
   updateAnchor = () => {
     let parent = null
     let prevId = null
-    const { anchors } = this.state
+    const { anchors } = this
     for (let i = 0; i < anchors.length && anchors[i].offset <= window.pageYOffset; ++i) {
       if (parent !== anchors[i].title) {
         parent = anchors[i].title
@@ -222,6 +221,7 @@ class RightBar extends React.Component {
     const {
       curTab, isCatalogVisible, categories, archives, childAnchorId, parentAnchorId,
     } = this.state
+    console.log(parentAnchorId, childAnchorId)
     if (gotAnchors || store.blogContent.length === 0) {
       gotAnchors = true
       this.anchors = this.contentFormatter(store.blogContent)
