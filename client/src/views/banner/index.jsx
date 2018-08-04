@@ -62,12 +62,12 @@ class Banner extends React.Component {
       >
         <h1>
           <Link to="/" className="plain-link">
-            EVO
+            Illusion
           </Link>
+          <Links />
         </h1>
         <Menu />
         <div className="leftbar-extra">
-          <Links />
           <p>Warm or cold, can not be told.</p>
           <Statistics />
           <SearchBox />

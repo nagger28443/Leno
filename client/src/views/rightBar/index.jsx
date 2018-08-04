@@ -221,7 +221,6 @@ class RightBar extends React.Component {
     const {
       curTab, isCatalogVisible, categories, archives, childAnchorId, parentAnchorId,
     } = this.state
-    console.log(parentAnchorId, childAnchorId)
     if (gotAnchors || store.blogContent.length === 0) {
       gotAnchors = true
       this.anchors = this.contentFormatter(store.blogContent)
