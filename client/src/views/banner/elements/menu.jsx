@@ -9,6 +9,7 @@ const styles = {
     padding: 0,
     fontSize: 'smaller',
     color: '#073e5b',
+    display: 'flex',
   },
 
   menuItem: {

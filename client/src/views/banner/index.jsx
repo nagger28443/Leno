@@ -60,7 +60,7 @@ class Banner extends React.Component {
         className={isTopbar ? 'banner' : 'bar-inside'}
         style={isTopbar ? { height: isBannerCollapsed ? 0 : '100vh' } : {}}
       >
-        <h1>
+        <h1 className="banner-title">
           <Link to="/" className="plain-link">
             Illusion
           </Link>

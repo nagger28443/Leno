@@ -6,7 +6,7 @@ const Links = () => (
     href="https://github.com/nagger28443"
     target="_blank"
     rel="noopener noreferrer"
-    style={{ textDecoration: 'none', marginLeft: '1rem', fontSize: 14 }}
+    style={{ textDecoration: 'none', marginLeft: '0.5rem', fontSize: 14 }}
   >
     <span className="icon-github" />
   </a>

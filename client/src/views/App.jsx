@@ -35,6 +35,7 @@ const styles = {
 class App extends React.Component {
   state = {
     isTopbar: window.matchMedia('(max-width: 1200px)').matches,
+    hasRightbar: !window.matchMedia('(max-width: 960px)').matches,
     isAtTop: true,
   }
 
@@ -52,8 +53,9 @@ class App extends React.Component {
 
   handleResize = () => {
     const isTopbar = window.matchMedia('(max-width: 1200px)').matches
+    const hasRightbar = !window.matchMedia('(max-width: 960px)').matches
     if (isTopbar !== this.state.isTopbar) {
-      this.setState({ isTopbar })
+      this.setState({ isTopbar, hasRightbar })
     }
   }
 
@@ -65,7 +67,7 @@ class App extends React.Component {
 
   render() {
     const { classes } = this.props
-    const { isTopbar, isAtTop } = this.state
+    const { isTopbar, isAtTop, hasRightbar } = this.state
     const TagInside = isTopbar ? 'div' : React.Fragment
     return (
       <React.Fragment>
@@ -83,9 +85,7 @@ class App extends React.Component {
               <Route key="404" component={Page404} />
             </Switch>
           </div>
-          <div className="rightbar">
-            <RightBar />
-          </div>
+          { hasRightbar ? (<div className="rightbar"><RightBar /></div>) : ''}
         </TagInside>
         <div
           onClick={scrollToTop}
