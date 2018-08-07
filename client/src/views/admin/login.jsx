@@ -20,23 +20,11 @@ const styles = {
 }
 
 class Login extends React.Component {
-  constructor() {
-    super()
-    this.name = ''
-    this.password = ''
-  }
-
-  handleNameChange = value => {
-    this.name = value.trim()
-  }
-
-  handlePasswordChange = value => {
-    this.password = value.trim()
-  }
-
-  handleSubmit = async () => {
+  handleSubmit = async (e) => {
+    e.preventDefault()
+    const values = Array.from(e.target).map(item => item.value.trim())
     try {
-      await post('/admin/login', { name: this.name, password: this.password })
+      await post('/admin/login', { name: values[0], password: values[1] })
       this.props.history.push('/admin/bloglist')
     } catch (err) {
       if (err.code === 2101) {
@@ -53,9 +41,11 @@ class Login extends React.Component {
     const { classes } = this.props
     return (
       <div className={classes.root}>
-        <Input className={classes.item} type="text" placeholder="User name" onChange={this.handleNameChange} />
-        <Input className={classes.item} type="password" placeholder="Password" onChange={this.handlePasswordChange} />
-        <Button className={classes.item} text="Sign in" onClick={this.handleSubmit} style={{ fontSize: 'smaller' }} />
+        <form onSubmit={this.handleSubmit}>
+          <Input className={classes.item} type="text" placeholder="User name" />
+          <Input className={classes.item} type="password" placeholder="Password" />
+          <Button className={classes.item} text="Sign in" type="submit" style={{ fontSize: 'smaller' }} />
+        </form>
       </div>
     )
   }

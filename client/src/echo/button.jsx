@@ -2,14 +2,17 @@ import React from 'react'
 import injectSheet from 'react-jss'
 
 const styles = {
-  container: {
+  btn: {
     border: props => `1px solid ${props.backgroundColor}`,
     color: props => props.color,
     borderColor: props => props.borderColor,
+    backgroundColor: props => props.backgroundColor,
+    cursor: 'pointer',
     borderRadius: '0.2rem',
     minWidth: '4rem',
     padding: '0.4rem 0.6rem',
     textAlign: 'center',
+    outline: 'none',
     '&:hover': {
       backgroundColor: props => props.color,
       color: props => props.backgroundColor,
@@ -21,17 +24,17 @@ const styles = {
 }
 
 const Button = ({
-  classes, style, text, onClick, className,
+  classes, style, text, onClick, className, type,
 }) => (
-  <div className={`plain-link ${classes.container} ${className}`} style={style} onClick={onClick}>
-    <span>{text}</span>
-  </div>
+  <button className={`${classes.btn} ${className}`} style={style} onClick={onClick} type={type}>
+    {text}
+  </button>
 )
 
 Button.defaultProps = {
-  color: '#555',
+  color: '#6c757d',
   borderColor: '#6c757d',
-  backgroundColor: '#fff',
+  backgroundColor: '#f5f5f5',
 }
 
 export default injectSheet(styles)(Button)
