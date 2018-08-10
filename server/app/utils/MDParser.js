@@ -221,7 +221,7 @@ function generateHtml(block) {
     case TAGS.codeBlockQuote:
       let len = content.length
       if (codeBlockQuoteRegex.test(content[len - 1])) --len
-      text = content.slice(1, len).join('\n')
+      text = content.slice(1, len).join('\n').replace(/</g, '&lt').replace(/>/g, '&gt')
       return `<pre className="code-block-quote">${text}</pre>`
     case TAGS.codeBlockTab:
       return `<pre className="code-block-tab">${content.join('\n')}</pre>`
