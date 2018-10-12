@@ -17,6 +17,8 @@ const f = {
 
   lastEle: arr => (Array.isArray(arr) ? arr[arr.length - 1] : undefined),
 
+  getType: obj => Object.prototype.toString(obj).slice(8, -1).toLowerCase(),
+
   getRuleName: rule => Object.keys(rule).find(item => item !== 'message'),
 
   // url参数查询decode, search, category, labels, archive...

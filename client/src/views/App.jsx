@@ -1,4 +1,6 @@
-import React from 'react'
+import {
+  React, observable, observer, action,
+} from 'src/commonExports'
 import { Route, Switch } from 'react-router-dom'
 import injectSheet from 'react-jss'
 import _ from 'lodash'
@@ -32,12 +34,13 @@ const styles = {
   },
 }
 
+@observer
 class App extends React.Component {
-  state = {
-    isTopbar: window.matchMedia('(max-width: 1200px)').matches,
-    hasRightbar: !window.matchMedia('(max-width: 960px)').matches,
-    isAtTop: true,
-  }
+  @observable isTopbar = window.matchMedia('(max-width: 1200px)').matches
+
+  @observable hasRightbar = !window.matchMedia('(max-width: 960px)').matches
+
+  @observable isAtTop = true
 
   componentDidMount() {
     this.resizeListener = _.throttle(this.handleResize, 50)
@@ -48,31 +51,27 @@ class App extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeListener)
-    window.removeEventListener('scorll', this.scrollListener)
+    window.removeEventListener('scroll', this.scrollListener)
   }
 
+  @action
   handleResize = () => {
-    const isTopbar = window.matchMedia('(max-width: 1200px)').matches
-    const hasRightbar = !window.matchMedia('(max-width: 960px)').matches
-    if (isTopbar !== this.state.isTopbar) {
-      this.setState({ isTopbar, hasRightbar })
-    }
+    this.isTopbar = window.matchMedia('(max-width: 1200px)').matches
   }
 
+  @action
   handleScroll = () => {
-    this.setState({
-      isAtTop: window.pageYOffset === 0,
-    })
+    this.isAtTop = window.pageYOffset === 0
   }
 
   render() {
     const { classes } = this.props
-    const { isTopbar, isAtTop, hasRightbar } = this.state
+    const { isTopbar, isAtTop, hasRightbar } = this
     const TagInside = isTopbar ? 'div' : React.Fragment
     return (
       <React.Fragment>
         <div className="leftbar">
-          <Banner />
+          <Banner isTopbar={isTopbar} />
         </div>
         <TagInside style={{ backgroundColor: '#f5f5f5', flex: 1, display: 'flex' }}>
           <div style={{ flex: 1, maxWidth: '60rem' }}>

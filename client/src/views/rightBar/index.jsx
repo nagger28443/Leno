@@ -3,7 +3,6 @@ import { inject, observer } from 'mobx-react'
 import injectSheet from 'react-jss'
 import _ from 'lodash'
 import CardTemplate from './cardTemplate'
-import { fail } from '../../util/utils'
 import f from '../../util/f'
 import { get } from '../../util/http'
 
@@ -135,34 +134,25 @@ class RightBar extends React.Component {
     window.addEventListener('scroll', this.scrollListener, false)
     prevPath = window.location.pathname
 
-    try {
-      const resp = await get('/category/list', { page: 1, pageSize: 5 })
-      const { categories } = this.state
-      categories.content = resp.result.map(item => ({
-        ...item,
-        link: `/list?category=${item.name}`,
-      }))
-      this.setState({
-        categories,
-      })
-    } catch (e) {
-      fail(e)
-    }
+    const resp = await Promise.all([get('/category/list', { page: 1, pageSize: 5 }),
+      get('/archive/list', { page: 1, pageSize: 5 })])
+    const { categories } = this.state
+    categories.content = resp[0].result.map(item => ({
+      ...item,
+      link: `/list?category=${item.name}`,
+    }))
 
-    try {
-      const resp = await get('/archive/list', { page: 1, pageSize: 5 })
-      const { archives } = this.state
-      archives.content = resp.result.map(item => ({
-        ...item,
-        name: item.date,
-        link: `/list?archive=${item.date}`,
-      }))
-      this.setState({
-        archives,
-      })
-    } catch (e) {
-      fail(e)
-    }
+    const { archives } = this.state
+    archives.content = resp[1].result.map(item => ({
+      ...item,
+      name: item.date,
+      link: `/list?archive=${item.date}`,
+    }))
+
+    this.setState({
+      categories,
+      archives,
+    })
   }
 
   componentWillUnmount() {

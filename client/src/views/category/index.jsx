@@ -3,7 +3,7 @@ import injectSheet from 'react-jss'
 import { Link } from 'react-router-dom'
 import { Detail } from '../../styledComponents'
 import { get } from '../../util/http'
-import { fail } from '../../util/utils'
+import { observable, observer, runInAction } from '../../commonExports'
 
 const styles = {
   header: {
@@ -14,28 +14,24 @@ const styles = {
   },
 }
 
+@observer
 class Category extends React.Component {
-  state = {
-    list: [],
-    isLoading: true,
-  }
+   @observable list= []
+
+  @observable isLoading= true
 
   async componentDidMount() {
     document.documentElement.scrollIntoView()
-    try {
-      const resp = await get('/category/list')
-      this.setState({
-        list: resp.result,
-        isLoading: false,
-      })
-    } catch (e) {
-      fail(e)
-    }
+    const resp = await get('/category/list')
+    runInAction(() => {
+      this.list = resp.result
+      this.isLoading = false
+    })
   }
 
   render() {
     const { classes } = this.props
-    const { list, isLoading } = this.state
+    const { list, isLoading } = this
     if (isLoading) {
       return <Detail><div className="loading" /></Detail>
     }

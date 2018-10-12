@@ -1,5 +1,5 @@
 import {
-  React, injectSheet, runInAction, observer, inject, get, fail, action,
+  React, injectSheet, runInAction, observer, inject, get, observable, action,
 } from 'src/commonExports'
 import { Detail } from '../../styledComponents'
 import BlogHeader from '../commonComponents/blogHeader'
@@ -14,12 +14,12 @@ class FullPage extends React.Component {
   constructor(props) {
     super(props)
     store = props.appStore
-    this.state = {
-      isLoading: true,
-      data: {
-        labels: '',
-      },
-    }
+  }
+
+  @observable isLoading = true
+
+  @observable data= {
+    labels: '',
   }
 
   pathDecode = path => /^\/+blog\/+(\d{4}\/+\d{2}\/+\d{2})\/+(.+)$/.exec(path)
@@ -39,22 +39,16 @@ class FullPage extends React.Component {
     const date = pathParams[1].split(/\/+/).join('-')
     const title = pathParams[2]
 
-    try {
-      const data = await get('/blog', { date, title })
-      runInAction(() => {
-        store.blogContent = data.content
-        this.setState({
-          isLoading: false,
-          data,
-        })
-      })
-    } catch (e) {
-      fail(e)
-    }
+    const data = await get('/blog', { date, title })
+    runInAction(() => {
+      store.blogContent = data.content
+      this.isLoading = false
+      this.data = data
+    })
   }
 
   render() {
-    const { data, isLoading } = this.state
+    const { data, isLoading } = this
     if (isLoading) {
       return <Detail><div className="loading" /></Detail>
     }

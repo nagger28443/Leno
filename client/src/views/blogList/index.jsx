@@ -1,5 +1,5 @@
 import {
-  React, injectSheet, _, get, fail, f, inject, observer, action,
+  React, injectSheet, _, get, f, inject, observer, action, observable,
 } from 'src/commonExports'
 import { runInAction } from 'mobx'
 import { Detail } from '../../styledComponents'
@@ -34,28 +34,25 @@ class BlogList extends React.Component {
     super(props)
     store = props.blogListStore
     this.curPage = 0
-    this.state = {
-      isLoading: true,
-    }
   }
 
+  @observable isLoading = true
+
+  @observable gettingMore = false
+
   getData = async () => {
-    this.setState({
-      isLoading: true,
+    runInAction(() => {
+      this.gettingMore = true
     })
+
     const { query } = store
-    try {
-      const res = await get('/blog/list', { ...query, page: ++this.curPage })
-      this.setState({
-        isLoading: false,
-      })
-      runInAction(() => {
-        store.total = res.total
-        store.data = [...store.data, ...res.result]
-      })
-    } catch (e) {
-      fail(e)
-    }
+    const res = await get('/blog/list', { ...query, page: ++this.curPage })
+    runInAction(() => {
+      store.total = res.total
+      store.data = [...store.data, ...res.result]
+      this.isLoading = false
+      this.gettingMore = false
+    })
   }
 
   @action
@@ -131,7 +128,7 @@ class BlogList extends React.Component {
   render() {
     const { classes } = this.props
     const { data, query } = store
-    const { isLoading } = this.state
+    const { isLoading, gettingMore } = this
     const title = Object.keys(query)[0]
 
     let content
@@ -144,6 +141,7 @@ class BlogList extends React.Component {
     }
 
     const loadingIcon = <div className="loading" />
+    const tips = gettingMore ? 'LOADING...' : 'NO MORE LEFT'
 
     const innerElements = (
       isLoading ? loadingIcon
@@ -154,7 +152,7 @@ class BlogList extends React.Component {
               <span>{`${query[title] === 'all' ? 'All' : query[title]}`}</span>
             </div>
             <div style={{ display: data.length === 0 ? 'block' : 'none', textAlign: 'center' }}>
-         No records
+            No records
             </div>
             <div style={{ display: data.length > 0 ? 'block' : 'none' }}>
               {content}
@@ -163,9 +161,8 @@ class BlogList extends React.Component {
                   <span className="plain-link" onClick={store.getData}>
                     {'<<<READ MORE>>>'}
                   </span>
-                ) : (
-                  'NO MORE LEFT'
-                )}
+                ) : tips
+                }
               </div>
             </div>
           </div>

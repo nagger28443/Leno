@@ -2,11 +2,8 @@
 
 ## bugs:
 - 高阶组件
-
-- cache配置
-- xss配置
 - vertical-align
-
+- 防止重复提交
 
 - 调用子组件ref实现失败!
 
@@ -14,12 +11,9 @@
 - 轮播图
 - 原生js
 - 关于width 100%
-- sessionStorage跨标签
 - text-overflow总结
 
 - cookie跨域
-
-- 安全
 
 - 图片上传?md
 - 重温网页渲染过程, 重绘重排, css世界
@@ -27,5 +21,6 @@
 
 
 - 登录后重定向回原来的页面?
+- sessionStorage跨标签
 
 

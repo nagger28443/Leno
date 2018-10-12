@@ -2,40 +2,35 @@ import React from 'react'
 import injectSheet from 'react-jss'
 import { Detail } from '../../styledComponents'
 import { mottos } from '../../../projectConfig'
+import {
+  observable, action, observer, _,
+} from '../../commonExports'
 
 const styles = {}
 
 const mottoStr = mottos.map(m => m.join('$')).join('%')
+@observer
 class About extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      mts: '',
-    }
-  }
+  @observable mts = []
 
-  output = () => {
-    const { mts } = this.state
-    if (mts.length >= mottoStr.length) return
-
-    this.setState({ mts: mottoStr.slice(0, mts.length + 1) }, () => {
-      setTimeout(() => {
-        this.output()
-      }, 50)
-    })
+  @action
+  output = (len) => {
+    if (len > mottoStr.length) return
+    this.mts = mottoStr.slice(0, len).split('%').map((m) => m.split('$'))
+    _.delay(this.output, 50, len + 1)
   }
 
   componentDidMount() {
     document.documentElement.scrollIntoView()
-    this.output()
+    this.output(1)
   }
 
   render() {
     return (
       <Detail>
-        {this.state.mts.split('%').map((m, index) => (
+        {this.mts.map((m, index) => (
           /* eslint-disable */
-          <div key={`${index}`} style={{ margin: '2rem 0' }}>{m.split('$').map((t, i) => <p key={`${index}${i}`}>{t}</p>)}</div>
+          <div key={`${index}`} style={{ margin: '2rem 0' }}>{m.map((t, i) => <p key={`${index}${i}`}>{t}</p>)}</div>
           /* eslint-enable */
         ))}
       </Detail>

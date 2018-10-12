@@ -5,12 +5,11 @@ import Links from './elements/links'
 import SearchBox from './elements/searchBox'
 import Menu from './elements/menu'
 import Statistics from './elements/statistics'
+import { observer, observable, action } from '../../commonExports'
 
+@observer
 class Banner extends React.Component {
-  state = {
-    isBannerCollapsed: false,
-    isTopbar: false,
-  }
+  @observable isBannerCollapsed = false
 
   componentDidMount() {
     this.scrollListener = _.throttle(this.handleScroll(), 50)
@@ -23,38 +22,18 @@ class Banner extends React.Component {
 
   handleScroll = () => {
     let prevY = 0
-    return () => {
-      const { isTopbar, isBannerCollapsed } = this.state
+    return action(() => {
+      if (!this.props.isTopbar) return
+
       const curY = window.pageYOffset
-      const down = curY - prevY > 0
-
+      this.isBannerCollapsed = curY - prevY > 0
       prevY = curY
-
-      if (!isTopbar) return
-      if (down && !isBannerCollapsed) {
-        this.setState({
-          isBannerCollapsed: true,
-        })
-      } else if (!down && isBannerCollapsed) {
-        this.setState({
-          isBannerCollapsed: false,
-        })
-      }
-    }
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const isTopbar = window.matchMedia('(max-width: 1200px)').matches
-    if (isTopbar !== prevState.isTopbar) {
-      return {
-        isTopbar,
-      }
-    }
-    return null
+    })
   }
 
   render() {
-    const { isBannerCollapsed, isTopbar } = this.state
+    const { isBannerCollapsed } = this
+    const { isTopbar } = this.props
     return (
       <aside
         className={isTopbar ? 'banner' : 'bar-inside'}

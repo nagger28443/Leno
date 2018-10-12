@@ -7,13 +7,16 @@ class ErrorHandler extends React.Component {
   }
 
   componentDidCatch(err) {
-    console.log(123, err)
+    this.setState({
+      crashed: true,
+    })
+    console.log(err)
   }
 
   render() {
     const { crashed } = this.state
     if (crashed) {
-      return 123
+      return '出错了'
     }
     return this.props.children
   }

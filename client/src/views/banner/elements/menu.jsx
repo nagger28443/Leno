@@ -10,6 +10,7 @@ const styles = {
     fontSize: 'smaller',
     color: '#073e5b',
     display: 'flex',
+    flexWrap: 'wrap',
   },
 
   menuItem: {
